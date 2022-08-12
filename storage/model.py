@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
 
+# Это модель для write-копии данных. Тут могут быть "лишние", то есть еще не обработанные данные.
+# Подробнее смотри в core/entities
+
+
 @dataclass(frozen=True)
 class Player:
     id: int

@@ -14,8 +14,7 @@ class CreateCompetitionHandler(AbstractHandler[CreateCompetitionEvent]):
 
     async def handle(self, current_state: RatingState, event: CreateCompetitionEvent) -> RatingState:
         new_state = RatingState(
-            id=current_state.id + 1,
-            player_states={**current_state.player_states},
+            player_states={*current_state.player_states},  # тут надо убедиться, что это действительно deepcopy
             last_competition_id=event.competition.id
         )
 
@@ -30,10 +29,13 @@ class CreateCompetitionHandler(AbstractHandler[CreateCompetitionEvent]):
                 rating_calculation_result = await self.create_match_handler.handle(current_state, create_match_event)
 
                 # тут надо аккуратно, не add делать, а создавать новый player state с новым id
+                # а зачем? можно же просто поверить до конца, что new_state - это грязный объект,
+                # и оставить эту логику на метод flush_state(state: RatingState), который все запишет правильно
                 new_state.player_states.add(rating_calculation_result.first_player_new_state)
                 new_state.player_states.add(rating_calculation_result.second_player_new_state)
             event.status = CreateCompetitionStatus.FINISHED
             return new_state
+            # потом вызываем flush_state(new_state: RatingState) - обновляем текущий current_state и пишем все в базу
         except Exception:
             event.status = CreateCompetitionStatus.FAILED
             raise
