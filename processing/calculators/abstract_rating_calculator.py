@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from core.entities import RatingState, PlayerState
+from core.entities import PlayerState
 from storage.model import Match
 
 
