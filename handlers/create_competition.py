@@ -27,7 +27,7 @@ class CreateCompetitionHandler(AbstractHandler[CreateCompetitionEvent]):
                 # rating_calculation_result = await self.create_match_handler.handle(new_state, create_match_event)
 
                 # или просто передаем current_state
-                rating_calculation_result = await self.create_match_handler.handle(new_state, create_match_event)
+                rating_calculation_result = await self.create_match_handler.handle(current_state, create_match_event)
 
                 # тут надо аккуратно, не add делать, а создавать новый player state с новым id
                 new_state.player_states.add(rating_calculation_result.first_player_new_state)
