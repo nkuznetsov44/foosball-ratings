@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-
-
-from dataclasses import dataclass
 from enum import Enum
 from storage.model import Competition, Match
 
@@ -25,4 +22,5 @@ class CreateCompetitionStatus(Enum):
 @dataclass
 class CreateCompetitionEvent(Event):
     competition: Competition
+    matches: list[Match]
     status: CreateCompetitionStatus = CreateCompetitionStatus.PROCESSING

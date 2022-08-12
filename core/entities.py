@@ -14,7 +14,7 @@ class PlayerState:
 @dataclass
 class RatingState:
     id: int
-    player_states: list[PlayerState]
+    player_states: set[PlayerState]
     last_competition_id: Optional[Competition]  # optional for initial state where no competition were played
 
     def lookup_player_state(self, Player) -> PlayerState:
