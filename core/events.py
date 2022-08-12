@@ -22,5 +22,4 @@ class CreateCompetitionStatus(Enum):
 @dataclass
 class CreateCompetitionEvent(Event):
     competition: Competition
-    matches: list[Match]
     status: CreateCompetitionStatus = CreateCompetitionStatus.PROCESSING

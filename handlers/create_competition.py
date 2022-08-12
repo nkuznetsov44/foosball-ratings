@@ -20,9 +20,15 @@ class CreateCompetitionHandler(AbstractHandler[CreateCompetitionEvent]):
         )
 
         try:
-            for match in event.matches:
+            for match in event.competition.matches:
                 create_match_event = CreateMatchEvent(match)
-                rating_calculation_result = await self.create_match_handler.handle(current_state, create_match_event)
+                # Тут если хотим обновлять рейтинги после каждой игры - передаем new_state (грязный стейт к текущему моменту)
+                # Но тогда надо посортить игры правильно перед этим
+                # rating_calculation_result = await self.create_match_handler.handle(new_state, create_match_event)
+
+                # или просто передаем current_state
+                rating_calculation_result = await self.create_match_handler.handle(new_state, create_match_event)
+
                 new_state.player_states.add(rating_calculation_result.first_player_new_state)
                 new_state.player_states.add(rating_calculation_result.second_player_new_state)
             event.status = CreateCompetitionStatus.FINISHED
