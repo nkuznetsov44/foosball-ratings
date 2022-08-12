@@ -34,6 +34,7 @@ class Match:
     def second_player_sets_score(self) -> int:
         return len(self.sets) - self.first_player_sets_score
 
+    @property
     def is_first_player_win(self) -> bool:
         return self.first_player_sets_score > self.second_player_sets_score
 
