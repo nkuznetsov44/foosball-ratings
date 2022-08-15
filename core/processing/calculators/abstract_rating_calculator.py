@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from core.entities import PlayerState
-from storage.model import Match
+from core.entities import PlayerState, Match, Competition
 
 
 @dataclass
@@ -10,12 +9,13 @@ class RatingCalculationResult:
     second_player_new_state: PlayerState
 
 
-class AbstractRatingCalculator:
+class AbstractRatingCalculator(ABC):
     @abstractmethod
     async def calculate(
         self,
         first_player_state: PlayerState,
         second_player_state: PlayerState,
-        match: Match
+        match: Match,
+        competition: Competition
     ) -> RatingCalculationResult:
         raise NotImplementedError()

@@ -1,0 +1,2 @@
+class CreateCompetitionError(Exception):
+    pass

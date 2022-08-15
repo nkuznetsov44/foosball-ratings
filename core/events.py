@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum
-from storage.model import Competition, Match
+from entities import Match, Competition
 
 
 class Event:
@@ -8,18 +7,10 @@ class Event:
 
 
 @dataclass
-class CreateMatchEvent(Event):
+class ProcessMatchEvent(Event):
     match: Match
-    is_processed: bool = False
-
-
-class CreateCompetitionStatus(Enum):
-    PROCESSING = 'PROCESSING'
-    FINISHED = 'FINISHED'
-    FAILED = 'FAILED'
 
 
 @dataclass
-class CreateCompetitionEvent(Event):
+class ProcessCompetitionEvent(Event):
     competition: Competition
-    status: CreateCompetitionStatus = CreateCompetitionStatus.PROCESSING

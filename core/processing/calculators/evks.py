@@ -1,6 +1,5 @@
 from abstract_rating_calculator import AbstractRatingCalculator, RatingCalculationResult
-from storage.model import Match
-from core.entities import PlayerState
+from core.entities import PlayerState, Match, Competition
 
 
 class EvksRatingCalculator(AbstractRatingCalculator):
@@ -8,7 +7,8 @@ class EvksRatingCalculator(AbstractRatingCalculator):
         self,
         first_player_state: PlayerState,
         second_player_state: PlayerState,
-        match: Match
+        match: Match,
+        competition: Competition
     ) -> RatingCalculationResult:
         # implement evks calculation logic here
         pass

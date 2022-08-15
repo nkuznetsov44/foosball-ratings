@@ -1,5 +1,5 @@
 from strategies.abstract_calculation_strategy import AbstractCalculationStrategy
-from calculators.evks_rating_calculator import EvksRatingCalculator
+from calculators.evks import EvksRatingCalculator
 
 
 class AbstractCalculationStrategy(AbstractCalculationStrategy):
