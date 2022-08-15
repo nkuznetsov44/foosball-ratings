@@ -1,12 +1,11 @@
 from typing import Generic, TypeVar, Any
 from abc import ABC, abstractmethod
-from core.entities import RatingState
 
 
-EventType = TypeVar('EventType')
+ActionType = TypeVar('ActionType')
 
 
-class AbstractHandler(Generic[EventType], ABC):
+class AbstractHandler(Generic[ActionType], ABC):
     @abstractmethod
-    def handle(current_state: RatingState, event: EventType) -> Any:
+    def handle(action: ActionType) -> Any:
         raise NotImplementedError()

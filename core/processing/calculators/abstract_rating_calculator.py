@@ -1,21 +1,25 @@
-from dataclasses import dataclass
+from typing import ClassVar, Sequence
 from abc import ABC, abstractmethod
-from core.entities import PlayerState, Match, Competition
+from core.entities.rating import RatingType
+from core.entities.player import Player
+from core.entities.match import Match
+from core.entities.competition import Competition
+from core.entities.state import RatingsState
 
 
-@dataclass
-class RatingCalculationResult:
-    first_player_new_state: PlayerState
-    second_player_new_state: PlayerState
+class PlayersRatingCalculationResult:
+    player: Player
+    value: int
 
 
 class AbstractRatingCalculator(ABC):
+    rating_type = ClassVar[RatingType]
+
     @abstractmethod
     async def calculate(
         self,
-        first_player_state: PlayerState,
-        second_player_state: PlayerState,
+        ratings_state: RatingsState,
         match: Match,
         competition: Competition
-    ) -> RatingCalculationResult:
+    ) -> Sequence[PlayersRatingCalculationResult]:
         raise NotImplementedError()
