@@ -9,19 +9,15 @@ class AbstractCalculationStrategy:
 
 
 class Pre2018RatingCalculationStrategy(AbstractCalculationStrategy):
-    calculators = {
-        RatingType.EVKS: evks.Pre2018EvksRatingCalculator
-    }
+    calculators = {RatingType.EVKS: evks.Pre2018EvksRatingCalculator}
 
 
 class EvksOnlyRatingCalculationStrategy(AbstractCalculationStrategy):
-    calculators = {
-        RatingType.EVKS: evks.Pre2018EvksRatingCalculator
-    }
+    calculators = {RatingType.EVKS: evks.Pre2018EvksRatingCalculator}
 
 
 class EvksAndCumulativeRatingCalculationStrategy(AbstractCalculationStrategy):
     calculators = {
         RatingType.EVKS: evks.EvksRatingCalculator,
-        RatingType.CUMULATIVE: cumulative.CumulativeRatingCalculator
+        RatingType.CUMULATIVE: cumulative.CumulativeRatingCalculator,
     }

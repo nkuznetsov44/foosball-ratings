@@ -1,5 +1,8 @@
 from core.api.handlers.abstract_handler import AbstractHandler
-from core.api.requests.schemas import CreateCompetitionRequestSchema, CreateCompetitionResponseSchema
+from core.api.requests.schemas import (
+    CreateCompetitionRequestSchema,
+    CreateCompetitionResponseSchema,
+)
 from core.api.requests.competition import CreateCompetitionRequest
 from core.entities.competition import Competition
 from core.actions.competition import CreateCompetitionAction

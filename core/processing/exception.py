@@ -11,4 +11,6 @@ class CoreProcessingError(Exception):
 class PlayerNotFoundInCurrentState(CoreProcessingError):
     def __init__(self, player: Player, current_state: RatingsState) -> None:
         self.player = player
-        super().__init__(f'Player {player} not found in current ratings state', current_state)
+        super().__init__(
+            f"Player {player} not found in current ratings state", current_state
+        )

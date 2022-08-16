@@ -28,9 +28,7 @@ class CreatePlayerStateAction(AbstractAction):
 
 class CreateRatingsStateAction(AbstractAction):
     def __init__(
-        self,
-        current_state: RatingsState,
-        new_player_states: Sequence[PlayerState]
+        self, current_state: RatingsState, new_player_states: Sequence[PlayerState]
     ) -> None:
         self.current_state = current_state
         self.new_player_states = new_player_states

@@ -5,9 +5,9 @@ from core.entities.match import Match
 
 
 class CompetitionType(Enum):
-    OS = 'OS'
-    OD = 'OD'
-    COD = 'COD'
+    OS = "OS"
+    OD = "OD"
+    COD = "COD"
 
 
 @dataclass

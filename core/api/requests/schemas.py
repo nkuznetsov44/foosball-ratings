@@ -21,5 +21,7 @@ class CreatePlayersResponseSchema(BaseSchema):
     players = fields.List(fields.Nested(PlayerStateSchema))
 
 
-CreateCompetitionRequestSchema = class_schema(CreateCompetitionRequest, base_schema=BaseSchema)
+CreateCompetitionRequestSchema = class_schema(
+    CreateCompetitionRequest, base_schema=BaseSchema
+)
 CreateCompetitionResponseSchema = class_schema(Competition, base_schema=BaseSchema)

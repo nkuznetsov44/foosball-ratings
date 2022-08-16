@@ -43,7 +43,7 @@ class Match:
     @property
     def first_team_sets_score(self) -> int:
         return len(filter(MatchSet.is_first_team_win, self.sets))
-    
+
     @property
     def second_team_sets_score(self) -> int:
         return len(self.sets) - self.first_team_sets_score

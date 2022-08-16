@@ -12,9 +12,6 @@ class AbstractRatingCalculator(ABC):
 
     @abstractmethod
     async def calculate(
-        self,
-        ratings_state: RatingsState,
-        match: Match,
-        competition: Competition
+        self, ratings_state: RatingsState, match: Match, competition: Competition
     ) -> dict[Player, int]:
         raise NotImplementedError()

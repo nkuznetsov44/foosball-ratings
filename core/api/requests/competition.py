@@ -22,8 +22,12 @@ class MatchReq:
     first_team: TeamReq
     second_team: TeamReq
     sets: list[MatchSetReq]
-    start_datetime: DatetimeWithTZ = field(metadata=dict(marshmallow_field=fields.DateTime()))
-    end_datetime: DatetimeWithTZ = field(metadata=dict(marshmallow_field=fields.DateTime()))
+    start_datetime: DatetimeWithTZ = field(
+        metadata=dict(marshmallow_field=fields.DateTime())
+    )
+    end_datetime: DatetimeWithTZ = field(
+        metadata=dict(marshmallow_field=fields.DateTime())
+    )
 
 
 @dataclass

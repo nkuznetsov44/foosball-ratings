@@ -42,7 +42,7 @@ class ProcessCompetitionAction(AbstractAction):
 
         return await CreateRatingsStateAction(
             current_state=self.current_state,
-            new_player_states=player_states_after_competition
+            new_player_states=player_states_after_competition,
         )
 
     def _choose_calculation_strategy(self):
@@ -54,10 +54,12 @@ class ProcessCompetitionAction(AbstractAction):
             return strategies.EvksAndCumulativeRatingCalculationStrategy
 
     def _prepare_matches(self) -> Sequence[Match]:
-        return sorted(self.competition.matches , key=lambda match: match.end_datetime)
+        return sorted(self.competition.matches, key=lambda match: match.end_datetime)
 
     async def _create_player_states(
-        self, ratings_calculation_result: dict[RatingType, dict[Player, int]], last_match: Match
+        self,
+        ratings_calculation_result: dict[RatingType, dict[Player, int]],
+        last_match: Match,
     ) -> set[PlayerState]:
         # TODO: maybe itertools has a convinience method for this
 
@@ -69,10 +71,10 @@ class ProcessCompetitionAction(AbstractAction):
         player_states: set[PlayerState] = set()
         for player, rating_values in player_ratings.items():
             # TODO: maybe async yield is good here
-            player_states.add(await CreatePlayerStateAction(
-                player=player,
-                last_match=last_match,
-                rating_values=rating_values
-            ))
+            player_states.add(
+                await CreatePlayerStateAction(
+                    player=player, last_match=last_match, rating_values=rating_values
+                )
+            )
 
         return player_states
