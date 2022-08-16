@@ -16,14 +16,13 @@ class EvksPlayerRank(Enum):
     MASTER = 'Master'
 
 
-@dataclass(frozen=True)
+@dataclass
 class PlayerState:
     """Описывает состояние рейтингов игрока после истории сыгранных матчей."""
     id: int
     player: Player
     last_match: Optional[Match]  # optional for players initial state where no matches were played
     ratings: dict[RatingType, int]
-    evks_rank: EvksPlayerRank
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -32,8 +31,9 @@ class PlayerState:
 @dataclass
 class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
-    id: Optional[int]  # None for dirty state
+    id: Optional[int]
     player_states: set[PlayerState]
+    player_evks_ranks: dict[int, EvksPlayerRank]  # maps player_id -> EvksPlayerRank
     last_competition_id: Optional[Competition]  # optional for initial state where no competition were played
 
     def lookup_player_state(self, player: Player) -> Optional[PlayerState]:

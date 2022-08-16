@@ -1,6 +1,6 @@
 from typing import Optional
 from dataclasses import dataclass
-from utils import DatetimeWithTZ
+from common.utils import DatetimeWithTZ
 from core.entities.player import Player
 
 
@@ -16,8 +16,12 @@ class Team:
 
 @dataclass
 class MatchSet:
+    id: int
     first_team_score: int
     second_team_score: int
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     @property
     def is_first_team_win(self) -> bool:
@@ -32,6 +36,9 @@ class Match:
     sets: list[MatchSet]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     @property
     def first_team_sets_score(self) -> int:

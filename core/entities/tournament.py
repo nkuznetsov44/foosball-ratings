@@ -8,3 +8,6 @@ class Tournament:
     name: str
     city: str
     competitions: list[Competition]
+
+    def __hash__(self) -> int:
+        return hash(self.id)

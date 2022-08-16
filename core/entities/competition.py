@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from core.utils import DatetimeWithTZ
+from common.utils import DatetimeWithTZ
 from core.entities.match import Match
 
 
@@ -17,3 +17,6 @@ class Competition:
     matches: list[Match]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+
+    def __hash__(self) -> int:
+        return hash(self.id)

@@ -1,12 +1,11 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import ClassVar, Sequence
+from typing import ClassVar
 from core.entities.rating import RatingType
-from core.processing.calculators.abstract_rating_calculator import (
-    AbstractRatingCalculator, PlayersRatingCalculationResult
-)
+from core.processing.calculators.abstract_rating_calculator import AbstractRatingCalculator
 from core.entities.competition import Competition
 from core.entities.match import Match
+from core.entities.player import Player
 from core.entities.state import RatingsState
 
 
@@ -26,7 +25,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         ratings_state: RatingsState,
         match: Match,
         competition: Competition
-    ) -> Sequence[PlayersRatingCalculationResult]:
+    ) -> dict[Player, int]:
         # implement evks calculation logic here
         pass
 

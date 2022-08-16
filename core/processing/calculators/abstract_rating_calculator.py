@@ -1,15 +1,10 @@
-from typing import ClassVar, Sequence
+from typing import ClassVar
 from abc import ABC, abstractmethod
 from core.entities.rating import RatingType
 from core.entities.player import Player
 from core.entities.match import Match
 from core.entities.competition import Competition
 from core.entities.state import RatingsState
-
-
-class PlayersRatingCalculationResult:
-    player: Player
-    value: int
 
 
 class AbstractRatingCalculator(ABC):
@@ -21,5 +16,5 @@ class AbstractRatingCalculator(ABC):
         ratings_state: RatingsState,
         match: Match,
         competition: Competition
-    ) -> Sequence[PlayersRatingCalculationResult]:
+    ) -> dict[Player, int]:
         raise NotImplementedError()
