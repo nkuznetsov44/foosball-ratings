@@ -11,7 +11,7 @@ class AbstractRatingCalculator(ABC):
     rating_type = ClassVar[RatingType]
 
     @abstractmethod
-    async def calculate(
+    def calculate(
         self, ratings_state: RatingsState, match: Match, competition: Competition
     ) -> dict[Player, int]:
         raise NotImplementedError()

@@ -11,7 +11,7 @@ from core.entities.state import RatingsState
 class CumulativeRatingCalculator(AbstractRatingCalculator):
     rating_type = RatingType.CUMULATIVE
 
-    async def calculate(
+    def calculate(
         self, ratings_state: RatingsState, match: Match, competition: Competition
     ) -> dict[Player, int]:
         # implement cumulative rating calcuation logic here

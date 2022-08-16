@@ -51,7 +51,7 @@ class ProcessCompetitionAction(AbstractAction):
         for match in self._prepare_matches():
             ratings_calculation_result: dict[RatingType, dict[Player, int]] = {}
             for rating_type, calculator in strategy.calculators.items():
-                ratings_calculation_result[rating_type] = await calculator.calculate(
+                ratings_calculation_result[rating_type] = calculator.calculate(
                     current_state, match, self.competition
                 )
             player_states = await self._create_player_states(ratings_calculation_result)
