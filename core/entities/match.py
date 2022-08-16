@@ -44,23 +44,27 @@ class Match:
     first_team: Team
     second_team: Team
     sets: list[MatchSet]
-    force_qualification: Optional[bool]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+    force_qualification: Optional[bool] = False
 
     def __hash__(self) -> int:
         return hash(self.id)
 
     @property
     def is_qualification(self) -> bool:
-        if self.force_qualification is not None:
-            return self.force_qualification
-
-        return len(self.sets) == 1 and (
-            (self.sets[0].first_team_score == 7 and self.sets[0].second_team_score < 7)
-            or (
-                self.sets[0].first_team_score < 7
-                and self.sets[0].second_team_score == 7
+        return (
+            self.force_qualification
+            or len(self.sets) == 1
+            and (
+                (
+                    self.sets[0].first_team_score == 7
+                    and self.sets[0].second_team_score < 7
+                )
+                or (
+                    self.sets[0].first_team_score < 7
+                    and self.sets[0].second_team_score == 7
+                )
             )
         )
 
@@ -70,7 +74,7 @@ class Match:
 
     @property
     def first_team_sets_score(self) -> int:
-        return len(filter(MatchSet.is_first_team_win, self.sets))
+        return len([s for s in self.sets if s.is_first_team_win])
 
     @property
     def second_team_sets_score(self) -> int:

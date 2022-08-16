@@ -8,6 +8,7 @@ def competition_request():
         "tournament_id": 1,
         "competition_type": "OS",
         "city": "Москва",
+        "evks_importance_coefficient": "0.75",
         "matches": [
             {
                 "first_team": {"first_player_id": 1},

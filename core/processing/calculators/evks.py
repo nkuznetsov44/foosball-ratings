@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
 from typing import ClassVar
 from itertools import permutations, chain
@@ -26,21 +26,19 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     def __init__(self, ratings_state: RatingsState) -> None:
         self.ratings_state = ratings_state
 
-    async def calculate(
-        self, match: Match, competition: Competition
-    ) -> dict[Player, int]:
+    def calculate(self, match: Match, competition: Competition) -> dict[Player, int]:
         match_players_states = self._get_match_participants_states(match)
 
         if match.is_first_team_win:
             winner_team = match.first_team
             looser_team = match.second_team
-            rw = self._get_team_rating(match.first_team)
-            rl = self._get_team_rating(match.second_team)
+            rw = self._get_team_rating(match.first_team, match_players_states)
+            rl = self._get_team_rating(match.second_team, match_players_states)
         else:
             winner_team = match.second_team
             looser_team = match.first_team
-            rw = self._get_team_rating(match.second_team)
-            rl = self._get_team_rating(match.first_team)
+            rw = self._get_team_rating(match.second_team, match_players_states)
+            rl = self._get_team_rating(match.first_team, match_players_states)
 
         t = competition.evks_importance_coefficient
         d = self._calculate_reliability_coefficients(match, match_players_states)
@@ -49,20 +47,22 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
 
+        print(rw, rl, t, k, fraction, base_rating)
+
         res: dict[Player, int] = {}
 
         for winner_player in winner_team.players:
             r = d[winner_player] * base_rating
-            r_rounded = int(r.quantize(Decimal("1"), Decimal.ROUND_HALF_UP))
+            r_rounded = int(r.quantize(Decimal("1"), ROUND_HALF_UP))
             res[winner_player] = (
                 match_players_states[winner_player].evks_rating + r_rounded
             )
 
         for looser_player in looser_team.players:
             r = d[looser_player] * base_rating
-            r_rounded = int(r.quantize(Decimal("1"), Decimal.ROUND_HALF_UP))
-            res[winner_player] = (
-                match_players_states[winner_player].evks_rating - r_rounded
+            r_rounded = int(r.quantize(Decimal("1"), ROUND_HALF_UP))
+            res[looser_player] = (
+                match_players_states[looser_player].evks_rating - r_rounded
             )
 
         return res
@@ -71,25 +71,25 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         player_state = self.ratings_state.lookup_player_state(player)
         if not player_state:
             raise PlayerStateNotFound(player, self.ratings_state)
+        return player_state
 
     def _get_match_participants_states(self, match: Match) -> dict[Player, PlayerState]:
-        players = chain(match.first_team.players, match.second_team.players)
-        return dict(zip(players, map(self._get_player_state, players)))
+        players = list(chain(match.first_team.players, match.second_team.players))
+        player_states = map(self._get_player_state, players)
+        return dict(zip(players, player_states))
 
     def _get_team_rating(
         self, team: Team, player_states: dict[Player, PlayerState]
     ) -> Decimal:
         first_player_state = player_states[team.first_player]
-
-        if not team.is_single_player:
+        if team.is_single_player:
             return Decimal(first_player_state.evks_rating)
 
         second_player_state = player_states[team.second_player]
-
         r1, r2 = sorted(
             [first_player_state.evks_rating, second_player_state.evks_rating]
         )
-        return Decimal(2 * (r1 + r2)) / Decimal(3)
+        return Decimal(2 * r2 + r1) / 3
 
     def _calculate_reliability_coefficients(
         self, match: Match, match_players_states: dict[Player, PlayerState]
@@ -129,7 +129,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     ) -> dict[Player, Decimal]:
         res: dict[Player, Decimal] = {}
 
-        for team, opp_team in permutations(match.first_team, match.second_team):
+        for team, opp_team in permutations([match.first_team, match.second_team]):
             team_states = map(match_players_states.get, team.players)
             opp_states = map(match_players_states.get, opp_team.players)
 
@@ -164,7 +164,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
             match.sets[0].first_team_score == 5
             and match.sets[0].second_team_score < 5
             or match.sets[0].first_team_score < 5
-            and match.sets[0].second_team_score < 5
+            and match.sets[0].second_team_score == 5
         ):
             return EvksGameType.SET_TO_5
         return EvksGameType.OTHER
