@@ -8,7 +8,7 @@ class CoreProcessingError(Exception):
         super().__init__()
 
 
-class PlayerNotFoundInCurrentState(CoreProcessingError):
+class PlayerStateNotFound(CoreProcessingError):
     def __init__(self, player: Player, current_state: RatingsState) -> None:
         self.player = player
         super().__init__(

@@ -22,11 +22,28 @@ DATE_2022_01_01 = DatetimeWithTZ(
 
 
 class ProcessCompetitionAction(AbstractAction):
-    def __init__(self, current_state: RatingsState, competition: Competition) -> None:
-        self.current_state = current_state
+    def __init__(self, competition: Competition) -> None:
         self.competition = competition
 
+    async def _get_start_ratings_state(self) -> RatingsState:
+        """
+        Здесь нужно достать актуальное состояние рейтинга
+        на момент начала обрабатываемой категории. Это может
+        быть и не актуальное состояние на текущий момент, потому
+        что не гарантируется, что турниры будут загружаться в
+        правильном порядке. Порядок состояний обеспечивается
+        ссылкой на previous_state_id в RatingsState.
+        """
+
+        pass
+
     async def run(self) -> RatingsState:
+        """
+        Action должен не только обсчитывать этот рейтинг, но и
+        запускать пересчет всех турниров, которые были после.
+        """
+
+        current_state = self._get_start_ratings_state()
         player_states_after_competition: set[PlayerState] = set()
 
         strategy = self._choose_calculation_strategy()
@@ -35,13 +52,15 @@ class ProcessCompetitionAction(AbstractAction):
             ratings_calculation_result: dict[RatingType, dict[Player, int]] = {}
             for rating_type, calculator in strategy.calculators.items():
                 ratings_calculation_result[rating_type] = await calculator.calculate(
-                    self.current_state, match, self.competition
+                    current_state, match, self.competition
                 )
             player_states = await self._create_player_states(ratings_calculation_result)
             player_states_after_competition.update(player_states)
 
+        # TODO: вот тут на самом деле надо еще пересчитывать
+        # турниры после self.competition
         return await CreateRatingsStateAction(
-            current_state=self.current_state,
+            current_state=current_state,
             new_player_states=player_states_after_competition,
         )
 

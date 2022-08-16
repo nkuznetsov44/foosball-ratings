@@ -1,3 +1,4 @@
+from decimal import Decimal
 from dataclasses import dataclass
 from enum import Enum
 from common.utils import DatetimeWithTZ
@@ -14,6 +15,7 @@ class CompetitionType(Enum):
 class Competition:
     id: int
     competition_type: CompetitionType
+    evks_importance_coefficient: Decimal
     matches: list[Match]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ

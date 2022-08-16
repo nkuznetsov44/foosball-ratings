@@ -22,10 +22,20 @@ class PlayerState:
 
     id: int
     player: Player
+    matches_played: int  # суммарное количество матчей, сыгранное к этому моменту
     last_match: Optional[
         Match
     ]  # optional for players initial state where no matches were played
     ratings: dict[RatingType, int]
+    is_evks_rating_active: bool
+
+    @property
+    def evks_rating(self) -> Optional[int]:
+        return self.ratings.get(RatingType.EVKS)
+
+    @property
+    def cumulative_rating(self) -> Optional[int]:
+        return self.rating.get(RatingType.CUMULATIVE)
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -35,10 +45,11 @@ class PlayerState:
 class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
 
-    id: Optional[int]
+    id: int
+    previous_state_id: int  # начальное состояние указывает само на себя
     player_states: set[PlayerState]
     player_evks_ranks: dict[int, EvksPlayerRank]  # maps player_id -> EvksPlayerRank
-    last_competition_id: Optional[
+    last_competition: Optional[
         Competition
     ]  # optional for initial state where no competition were played
 

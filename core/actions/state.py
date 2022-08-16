@@ -23,6 +23,9 @@ class CreatePlayerStateAction(AbstractAction):
     async def run(self) -> PlayerState:
         # реализовать универсальный метод создания PlayerState
         # как для нового игрока, так и для обновления рейтинга существующего игрока
+        # не забыть посчитать значения поля is_evks_rating_active:
+        # - if player.last_match.end_time < now - 1Y then False
+        # - if player.matches_played < 10 then False
         pass
 
 
