@@ -1,4 +1,4 @@
-from core.api.handlers.abstract_handler import AbstractHandler
+from common.handlers.abstract_handler import AbstractHandler
 from core.api.requests.schemas import (
     CreateCompetitionRequestSchema,
     CreateCompetitionResponseSchema,

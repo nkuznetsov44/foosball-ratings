@@ -1,9 +1,21 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from sqlalchemy import Table, Column, String, Integer
+from common.entities.mixins import TableMixin
+from core.storage.mapping import mapper_registry
 
 
+@mapper_registry.mapped
 @dataclass
-class Player:
-    id: int
+class Player(TableMixin):
+    __table__ = Table(
+        "players",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("first_name", String(50)),
+        Column("last_name", String(50)),
+    )
+
+    id: int = field(init=False)
     first_name: str
     last_name: str
 

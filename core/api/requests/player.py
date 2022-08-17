@@ -6,7 +6,6 @@ from dataclasses import dataclass
 class PlayerReq:
     first_name: str
     last_name: str
-    sex: str
     initial_evks_rating: Optional[int]
 
 

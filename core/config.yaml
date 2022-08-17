@@ -1,0 +1,10 @@
+common:
+  port: 8080
+postgres:
+  database: ratings_core
+  user: ratings
+  password: ratings
+  host: localhost
+  port: 5432
+  minsize: 1
+  maxsize: 5

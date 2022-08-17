@@ -6,6 +6,7 @@ from core.api.requests.competition import CreateCompetitionRequest
 
 from core.entities.competition import Competition
 from core.entities.state import PlayerState
+from core.entities.player import Player
 
 
 class BaseSchema(Schema):
@@ -15,6 +16,11 @@ class BaseSchema(Schema):
 
 CreatePlayersRequestSchema = class_schema(CreatePlayersRequest, base_schema=BaseSchema)
 PlayerStateSchema = class_schema(PlayerState, base_schema=BaseSchema)
+PlayerSchema = class_schema(Player, base_schema=BaseSchema)
+
+
+class GetPlayersResponseSchema(BaseSchema):
+    players = fields.List(fields.Nested(PlayerSchema))
 
 
 class CreatePlayersResponseSchema(BaseSchema):
