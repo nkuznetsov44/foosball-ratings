@@ -10,7 +10,7 @@ from core.entities.competition import Competition
 from core.entities.match import Match, Team
 from core.entities.player import Player
 from core.entities.state import PlayerState, RatingsState
-from core.processing.exception import PlayerStateNotFound
+from core.exceptions import PlayerStateNotFound
 
 
 class EvksGameType(Enum):
@@ -46,8 +46,6 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
 
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
-
-        print(rw, rl, t, k, fraction, base_rating)
 
         res: dict[Player, int] = {}
 

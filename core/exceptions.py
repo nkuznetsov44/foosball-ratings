@@ -12,5 +12,14 @@ class PlayerStateNotFound(CoreProcessingError):
     def __init__(self, player: Player, current_state: RatingsState) -> None:
         self.player = player
         super().__init__(
-            f"Player {player} not found in current ratings state", current_state
+            f"PlayerState of player {player} not found in current ratings state",
+            current_state,
+        )
+
+
+class PlayerStateAlreadyExists(CoreProcessingError):
+    def __init__(self, player: Player, current_state: RatingsState) -> None:
+        self.player = player
+        super().__init__(
+            f"PlayerState of player {player} already exists", current_state
         )

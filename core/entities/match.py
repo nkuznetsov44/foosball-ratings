@@ -83,3 +83,15 @@ class Match:
     @property
     def is_first_team_win(self) -> bool:
         return self.first_team_sets_score > self.second_team_sets_score
+
+    @property
+    def winner_team(self) -> Team:
+        if self.is_first_team_win:
+            return self.first_team
+        return self.second_team
+
+    @property
+    def looser_team(self) -> Team:
+        if self.is_first_team_win:
+            return self.second_team
+        return self.first_team

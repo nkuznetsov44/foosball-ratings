@@ -23,6 +23,7 @@ class PlayerState:
     id: int
     player: Player
     matches_played: int  # суммарное количество матчей, сыгранное к этому моменту
+    matches_won: int
     last_match: Optional[
         Match
     ]  # optional for players initial state where no matches were played
