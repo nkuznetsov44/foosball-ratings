@@ -1,7 +1,7 @@
 from aiopg.sa.engine import Engine
 from typing import Any
+from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from marshmallow_dataclass import dataclass
 from core.entities.state import RatingsState
 
 

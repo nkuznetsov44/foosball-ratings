@@ -1,12 +1,36 @@
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from sqlalchemy import Table, Column, ForeignKey, String, Integer, Boolean, DateTime
+from sqlalchemy.orm import relationship
+from common.entities.mixins import TableMixin
+from core.storage.mapping import mapper_registry
 from common.utils import DatetimeWithTZ
 from core.entities.player import Player
 
 
+@mapper_registry.mapped
 @dataclass
-class Team:
-    id: int
+class Team(TableMixin):
+    __table__ = Table(
+        "teams",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("first_player_id", Integer, ForeignKey("players.id")),
+        Column("second_player_id", Integer, ForeignKey("players.id"), nullable=True),
+    )
+
+    __mapper_args__ = {  # type: ignore
+        "properties": {
+            "first_player": relationship(
+                Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"
+            ),
+            "second_player": relationship(
+                Player, uselist=False, primaryjoin="Team.second_player_id == Player.id"
+            ),
+        }
+    }
+
+    id: int = field(init=False)
     first_player: Player
     second_player: Optional[Player]  # None for singles
 
@@ -24,9 +48,27 @@ class Team:
         return hash(self.id)
 
 
+@mapper_registry.mapped
 @dataclass
-class MatchSet:
-    id: int
+class MatchSet(TableMixin):
+    __table__ = Table(
+        "sets",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("match_id", Integer, ForeignKey("matches.id")),
+        Column("order", Integer),
+        Column("first_team_score", Integer),
+        Column("second_team_score", Integer, nullable=True),
+    )
+
+    __mapper_args__ = {  # type: ignore
+        "properties": {
+            "match": relationship("Match", backref="sets"),
+        }
+    }
+
+    id: int = field(init=False)
+    order: int
     first_team_score: int
     second_team_score: int
 
@@ -38,9 +80,28 @@ class MatchSet:
         return self.first_team_score > self.second_team_score
 
 
+@mapper_registry.mapped
 @dataclass
-class Match:
-    id: int
+class Match(TableMixin):
+    __table__ = Table(
+        "matches",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("first_team_id", Integer, ForeignKey("teams.id")),
+        Column("second_team_id", Integer, ForeignKey("teams.id")),
+        Column("start_datetime", DateTime),
+        Column("end_datetime", DateTime),
+        Column("force_qualification", Boolean),
+    )
+
+    __mapper_args__ = {  # type: ignore
+        "properties": {
+            "first_team": relationship("Team", primaryjoin="Match.first_team_id == Team.id"),
+            "second_team": relationship("Team", primaryjoin="Match.second_team_id == Team.id"),
+        }
+    }
+
+    id: int = field(init=False)
     first_team: Team
     second_team: Team
     sets: list[MatchSet]

@@ -5,7 +5,7 @@ from core.entities.player import Player
 class CoreProcessingError(Exception):
     def __init__(self, message: str, current_state: RatingsState) -> None:
         self.current_state = current_state
-        super().__init__()
+        super().__init__(message)
 
 
 class PlayerStateNotFound(CoreProcessingError):

@@ -29,16 +29,8 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     def calculate(self, match: Match, competition: Competition) -> dict[Player, int]:
         match_players_states = self._get_match_participants_states(match)
 
-        if match.is_first_team_win:
-            winner_team = match.first_team
-            looser_team = match.second_team
-            rw = self._get_team_rating(match.first_team, match_players_states)
-            rl = self._get_team_rating(match.second_team, match_players_states)
-        else:
-            winner_team = match.second_team
-            looser_team = match.first_team
-            rw = self._get_team_rating(match.second_team, match_players_states)
-            rl = self._get_team_rating(match.first_team, match_players_states)
+        rw = self._get_team_rating(match.winner_team)
+        rl = self._get_team_rating(match.looser_team)
 
         t = competition.evks_importance_coefficient
         d = self._calculate_reliability_coefficients(match, match_players_states)
@@ -49,21 +41,24 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
 
         res: dict[Player, int] = {}
 
-        for winner_player in winner_team.players:
+        for winner_player in match.winner_team.players:
             r = d[winner_player] * base_rating
-            r_rounded = int(r.quantize(Decimal("1"), ROUND_HALF_UP))
+            r_rounded = self._round_decimal(r)
             res[winner_player] = (
                 match_players_states[winner_player].evks_rating + r_rounded
             )
 
-        for looser_player in looser_team.players:
+        for looser_player in match.looser_team.players:
             r = d[looser_player] * base_rating
-            r_rounded = int(r.quantize(Decimal("1"), ROUND_HALF_UP))
+            r_rounded = self._round_decimal(r)
             res[looser_player] = (
                 match_players_states[looser_player].evks_rating - r_rounded
             )
 
         return res
+
+    def _round_decimal(self, value: Decimal) -> int:
+        return int(value.quantize(Decimal("1"), ROUND_HALF_UP))
 
     def _get_player_state(self, player: Player) -> PlayerState:
         player_state = self.ratings_state.lookup_player_state(player)

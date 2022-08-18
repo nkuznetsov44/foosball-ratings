@@ -11,8 +11,8 @@ class Player(TableMixin):
         "players",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
-        Column("first_name", String(50)),
-        Column("last_name", String(50)),
+        Column("first_name", String(255)),
+        Column("last_name", String(255)),
     )
 
     id: int = field(init=False)
