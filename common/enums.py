@@ -2,14 +2,14 @@ from enum import Enum
 
 
 class City(Enum):
-    MOSCOW = 'Moscow'
-    SAINT_PETERSBURG = 'SaintPeresburg'
-    KALININGRAD = 'Kaliningrad'
-    NOVOSIBIRSK = 'Novosibirsk'
-    TOMSK = 'Tomsk'
-    EKATERINBURG = 'Ekaterinburg'
-    YAROSLAVL = 'Yaroslavl'
-    TULA = 'Tula'
+    MOSCOW = "Moscow"
+    SAINT_PETERSBURG = "SaintPeresburg"
+    KALININGRAD = "Kaliningrad"
+    NOVOSIBIRSK = "Novosibirsk"
+    TOMSK = "Tomsk"
+    EKATERINBURG = "Ekaterinburg"
+    YAROSLAVL = "Yaroslavl"
+    TULA = "Tula"
 
 
 class RatingType(Enum):

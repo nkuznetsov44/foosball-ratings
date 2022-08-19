@@ -13,5 +13,7 @@ class TournamentHandler(AbstractDbHandler):
     @response_schema(TournamentSchema)
     async def post(self) -> web.Response:
         create_tournament_request = await self.get_request_data()
-        tournament = await self.run_action(CreateTournamentAction, request=create_tournament_request)
+        tournament = await self.run_action(
+            CreateTournamentAction, request=create_tournament_request
+        )
         return self.make_response(tournament)

@@ -7,6 +7,7 @@ from core.api.handlers.tournament import TournamentHandler
 def uri_v1(uri: str) -> str:
     return f"/api/v1/{uri}"
 
+
 def setup_routes(app: web.Application) -> None:
     app.router.add_view(uri_v1("players"), PlayersHandler)
     app.router.add_view(uri_v1("competitions"), CompetitionHandler)
