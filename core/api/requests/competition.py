@@ -37,5 +37,4 @@ class CreateCompetitionRequest:
     tournament_id: int
     competition_type: CompetitionType
     evks_importance_coefficient: Decimal
-    city: str
     matches: list[MatchReq]

@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
 from sqlalchemy import Table, Column, String, Integer
-from common.entities.mixins import TableMixin
 from core.storage.mapping import mapper_registry
 
 
 @mapper_registry.mapped
 @dataclass
-class Player(TableMixin):
+class Player:
     __table__ = Table(
         "players",
         mapper_registry.metadata,

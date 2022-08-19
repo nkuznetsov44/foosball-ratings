@@ -1,5 +1,5 @@
 import pytest
-from core.api.requests.schemas import CreateCompetitionRequestSchema
+from core.api.schemas.competition import CreateCompetitionRequestSchema
 
 
 @pytest.fixture

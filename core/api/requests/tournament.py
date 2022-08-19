@@ -3,4 +3,5 @@ from dataclasses import dataclass
 
 @dataclass
 class CreateTournamentRequest:
-    pass
+    city: str
+    name: str

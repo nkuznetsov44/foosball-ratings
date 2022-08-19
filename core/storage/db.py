@@ -1,20 +1,13 @@
-import aiopg.sa
+from typing import Optional
+from aiohttp import web
+from sqlalchemy.ext.asyncio import create_async_engine
 
 
-async def pg_context(app):
-    conf = app["config"]["postgres"]
-    engine = await aiopg.sa.create_engine(
-        database=conf["database"],
-        user=conf["user"],
-        password=conf["password"],
-        host=conf["host"],
-        port=conf["port"],
-        minsize=conf["minsize"],
-        maxsize=conf["maxsize"],
+def setup_db_engine(app: web.Application, echo: Optional[bool] = False) -> None:
+    db_cfg = app["config"]["postgres"]
+    connection_string = (
+        "postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
+            **db_cfg
+        )
     )
-    app["db"] = engine
-
-    yield
-
-    app["db"].close()
-    await app["db"].wait_closed()
+    app["db"] = create_async_engine(connection_string, echo=echo)

@@ -9,23 +9,11 @@ from core.exceptions import PlayerStateAlreadyExists
 
 class BasePlayerStateAction(AbstractAction):
     async def _save_player_state(self, player_state: PlayerState) -> PlayerState:
-        async with self.context.db.acquire() as conn:
-            await conn.execute(
-                PlayerState.table()
-                .insert()
-                .values(
-                    player_id=player_state.player.id,
-                    matches_played=player_state.matches_played,
-                    matches_won=player_state.matches_won,
-                    last_match_id=player_state.last_match,
-                    ratings=player_state.ratings,  # TODO: fixme
-                    is_evks_rating_active=player_state.is_evks_rating_active,
-                )
-            )
-
-        # TODO: implement insert returning id
-        player_state.id = player_state_id
-        return player_state
+        async with self._make_db_session()() as session:
+            session.add(player_state)
+            await session.commit()
+            assert player_state.id is not None
+            return player_state
 
 
 class CreateInitialPlayerStateAction(BasePlayerStateAction):
@@ -37,36 +25,46 @@ class CreateInitialPlayerStateAction(BasePlayerStateAction):
     def __init__(
         self,
         *,
-        player: Player,
         context: ActionContext,
-        rating_values: Optional[dict[RatingType, int]],
+        player: Player,
+        evks_rating: Optional[int],
+        cumulative_rating: Optional[int],
         matches_played: Optional[int],
         matches_won: Optional[int],
         is_evks_rating_active: Optional[bool],
     ):
         super().__init__(context)
         self._player = player
-        self._rating_values = rating_values
+        self._evks_rating = evks_rating
+        self._cumulative_rating = cumulative_rating
         self._matches_played = matches_played
         self._matches_won = matches_won
         self._is_evks_rating_active = is_evks_rating_active
 
     async def run(self) -> PlayerState:
-        if self.context.ratings_state.lookup_player_state(self._player):
+        if self._ratings_state.lookup_player_state(self._player):
             raise PlayerStateAlreadyExists(
-                player=self._player, current_state=self.context.ratings_state
+                player=self._player, current_state=self._ratings_state
             )
 
         matches_played = self._matches_played or 0
         is_evks_rating_active = self._is_evks_rating_active or (matches_played > 10)
 
+        ratings: dict[RatingType, int] = {}
+        if self._evks_rating:
+            ratings[RatingType.EVKS] = self._evks_rating
+        if self._cumulative_rating:
+            ratings[RatingType.CUMULATIVE] = self._cumulative_rating
+
+        ratings = ratings | self.INITIAL_RATING_VALUES
+
         return await self._save_player_state(
             PlayerState(
-                player=self.player,
+                player=self._player,
                 matches_played=matches_played,
-                matches_won=self.matches_won or 0,
+                matches_won=self._matches_won or 0,
                 last_match=None,
-                ratings=self._rating_values or self.INITIAL_RATING_VALUES,
+                ratings=ratings,
                 is_evks_rating_active=is_evks_rating_active,
             )
         )
@@ -76,27 +74,28 @@ class CreatePlayerStateAction(BasePlayerStateAction):
     def __init__(
         self,
         *,
-        player: Player,
         context: ActionContext,
+        player: Player,
         last_match: Match,
-        rating_values: dict[RatingType, int],
+        ratings: dict[RatingType, int],
     ) -> None:
         super().__init__(context)
         self._player = player
         self._last_match = last_match
-        self._rating_values = rating_values
-        self._current_player_state = self.context.ratings_state.lookup_player_state(
-            player
-        )
+        self._ratings = ratings
+        self._current_player_state = self._ratings_state.lookup_player_state(player)
 
     async def run(self) -> PlayerState:
+        assert self._ratings.get(RatingType.EVKS) is not None
+        assert self._ratings.get(RatingType.CUMULATIVE) is not None
+
         if (
             self._last_match.start_datetime
-            < self.context.ratings_state.last_competition.end_datetime
+            < self._ratings_state.last_competition.end_datetime
         ):
             raise NotImplementedError(
                 f"Match {self._last_match} starts before last processed competition "
-                f"{self.context.ratings_state.last_competition}. "
+                f"{self._ratings_state.last_competition}. "
                 "Processing competitions in not historical order is not implemented."
             )
 
@@ -117,7 +116,7 @@ class CreatePlayerStateAction(BasePlayerStateAction):
                 matches_played=new_matches_played,
                 matches_won=new_matches_won,
                 last_match=self._last_match,
-                ratings=self._rating_values,
+                ratings=self._ratings,
                 is_evks_rating_active=is_evks_rating_active,
             )
         )

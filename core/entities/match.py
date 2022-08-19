@@ -1,8 +1,7 @@
 from typing import Optional
 from dataclasses import dataclass, field
-from sqlalchemy import Table, Column, ForeignKey, String, Integer, Boolean, DateTime
+from sqlalchemy import Table, Column, ForeignKey, Integer, Boolean, DateTime
 from sqlalchemy.orm import relationship
-from common.entities.mixins import TableMixin
 from core.storage.mapping import mapper_registry
 from common.utils import DatetimeWithTZ
 from core.entities.player import Player
@@ -10,7 +9,7 @@ from core.entities.player import Player
 
 @mapper_registry.mapped
 @dataclass
-class Team(TableMixin):
+class Team:
     __table__ = Table(
         "teams",
         mapper_registry.metadata,
@@ -50,7 +49,7 @@ class Team(TableMixin):
 
 @mapper_registry.mapped
 @dataclass
-class MatchSet(TableMixin):
+class MatchSet:
     __table__ = Table(
         "sets",
         mapper_registry.metadata,
@@ -82,7 +81,7 @@ class MatchSet(TableMixin):
 
 @mapper_registry.mapped
 @dataclass
-class Match(TableMixin):
+class Match:
     __table__ = Table(
         "matches",
         mapper_registry.metadata,
@@ -96,8 +95,12 @@ class Match(TableMixin):
 
     __mapper_args__ = {  # type: ignore
         "properties": {
-            "first_team": relationship("Team", primaryjoin="Match.first_team_id == Team.id"),
-            "second_team": relationship("Team", primaryjoin="Match.second_team_id == Team.id"),
+            "first_team": relationship(
+                "Team", primaryjoin="Match.first_team_id == Team.id"
+            ),
+            "second_team": relationship(
+                "Team", primaryjoin="Match.second_team_id == Team.id"
+            ),
         }
     }
 

@@ -3,6 +3,7 @@ from core.storage.mapping import mapper_registry
 
 from core.entities.player import Player  # noqa
 from core.entities.match import Match, Team, MatchSet  # noqa
+from core.entities.state import PlayerState, RatingsState  # noqa
 
 
 if __name__ == "__main__":

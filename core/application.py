@@ -1,13 +1,13 @@
 from aiohttp import web
 from core.settings import config
 from core.routes import setup_routes
-from core.storage.db import pg_context
+from core.storage.db import setup_db_engine
 
 
 app = web.Application()
 setup_routes(app)
 app["config"] = config
-app.cleanup_ctx.append(pg_context)
+setup_db_engine(app)
 
 
 if __name__ == "__main__":

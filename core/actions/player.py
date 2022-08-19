@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from core.actions.abstract_action import AbstractAction, ActionContext
 from core.api.requests.player import CreatePlayersRequest
 from core.entities.state import PlayerState
@@ -5,31 +6,45 @@ from core.entities.player import Player
 from core.actions.state import CreateInitialPlayerStateAction
 
 
+class GetPlayersAction(AbstractAction):
+    def __init__(self, context: ActionContext) -> None:
+        super().__init__(context)
+
+    async def run(self) -> list[Player]:
+        async with self._make_db_session()() as session:
+            result = await session.execute(select(Player))
+            return result.scalars().all()
+
+
 class CreatePlayersAction(AbstractAction):
     def __init__(self, request: CreatePlayersRequest, context: ActionContext) -> None:
         super().__init__(context)
-        self.request = request
+        self._request = request
 
     async def run(self) -> list[PlayerState]:
-        async with self.context.db.acquire() as conn:
-            for player in self.request.players:
-                await conn.execute(
-                    Player.table()
-                    .insert()
-                    .values(first_name=player.first_name, last_name=player.last_name)
-                )
-
-        # TODO: update self.request.players with ids of inserted players
         player_states: list[PlayerState] = []
-        for player_req in self.request.players:
-            player_states.append(
-                CreateInitialPlayerStateAction(
-                    context=self.context,
-                    player=None,  # TODO: fixme
-                    rating_values=None,  # TODO: fixme
-                    matches_played=None,  # TODO: fixme
-                    matches_won=None,  # TODO: fixme
-                    is_evks_rating_active=None,  # TODO: fixme
-                )
+
+        for player_req in self._request.players:
+            player = Player(
+                first_name=player_req.first_name,
+                last_name=player_req.last_name,
             )
+
+            async with self._make_db_session()() as session:
+                session.add(player)
+                await session.commit()
+                assert player.id is not None
+
+            player_states.append(
+                await CreateInitialPlayerStateAction(
+                    context=self._context,
+                    player=player,
+                    evks_rating=player_req.initial_evks_rating,
+                    cumulative_rating=player_req.initial_cumulative_rating,
+                    matches_played=player_req.initial_matches_played,
+                    matches_won=player_req.initial_matches_won,
+                    is_evks_rating_active=player_req.is_evks_rating_active,
+                ).run()
+            )
+
         return player_states

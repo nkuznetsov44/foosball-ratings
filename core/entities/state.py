@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from sqlalchemy import Table, Column, ForeignKey, Integer, Boolean, JSON
+from core.storage.mapping import mapper_registry
 from core.entities.player import Player
 from core.entities.match import Match
 from core.entities.rating import RatingType
@@ -16,11 +18,23 @@ class EvksPlayerRank(Enum):
     MASTER = "Master"
 
 
+@mapper_registry.mapped
 @dataclass
 class PlayerState:
     """Описывает состояние рейтингов игрока после истории сыгранных матчей."""
 
-    id: int
+    __table__ = Table(
+        "player_states",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("player_id", Integer, ForeignKey("players.id")),
+        Column("matches_won", Integer),
+        Column("last_match_id", Integer, ForeignKey("matches.id")),
+        Column("ragings", JSON),
+        Column("is_evks_rating_active", Boolean),
+    )
+
+    id: int = field(init=False)
     player: Player
     matches_played: int  # суммарное количество матчей, сыгранное к этому моменту
     matches_won: int
@@ -46,7 +60,7 @@ class PlayerState:
 class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
 
-    id: int
+    id: int = field(init=False)
     previous_state_id: int  # начальное состояние указывает само на себя
     player_states: set[PlayerState]
     player_evks_ranks: dict[int, EvksPlayerRank]  # maps player_id -> EvksPlayerRank
