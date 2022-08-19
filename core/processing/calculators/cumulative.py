@@ -1,4 +1,4 @@
-from core.entities.rating import RatingType
+from common.enums import RatingType
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
 )

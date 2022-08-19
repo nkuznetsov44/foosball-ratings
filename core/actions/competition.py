@@ -14,9 +14,4 @@ class CreateCompetitionAction(AbstractAction):
         self._request = request
 
     async def run(self) -> Competition:
-        # create new competition in database
-        # create all teams, sets, matches in database
-        # return Competition entity
-        # Dont forget to inherit evks_importance from tournament
-        # tournament = await get_tournament(id=self.request.tournament_id)
         pass

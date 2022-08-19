@@ -60,12 +60,6 @@ class MatchSet:
         Column("second_team_score", Integer, nullable=True),
     )
 
-    __mapper_args__ = {  # type: ignore
-        "properties": {
-            "match": relationship("Match", backref="sets"),
-        }
-    }
-
     id: int = field(init=False)
     order: int
     first_team_score: int
@@ -88,8 +82,8 @@ class Match:
         Column("id", Integer, primary_key=True),
         Column("first_team_id", Integer, ForeignKey("teams.id")),
         Column("second_team_id", Integer, ForeignKey("teams.id")),
-        Column("start_datetime", DateTime),
-        Column("end_datetime", DateTime),
+        Column("start_datetime", DateTime(timezone=True)),
+        Column("end_datetime", DateTime(timezone=True)),
         Column("force_qualification", Boolean),
     )
 
@@ -101,19 +95,17 @@ class Match:
             "second_team": relationship(
                 "Team", primaryjoin="Match.second_team_id == Team.id"
             ),
+            "sets": relationship("MatchSet"),
         }
     }
 
-    id: int = field(init=False)
+    id: Optional[int] = field(init=False)
     first_team: Team
     second_team: Team
     sets: list[MatchSet]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
     force_qualification: Optional[bool] = False
-
-    def __hash__(self) -> int:
-        return hash(self.id)
 
     @property
     def is_qualification(self) -> bool:

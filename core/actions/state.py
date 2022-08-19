@@ -1,9 +1,10 @@
 from typing import Sequence, Optional
+from common.enums import EvksPlayerRank
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import PlayerState, RatingsState, EvksPlayerRank
+from core.entities.state import PlayerState, RatingsState
 from core.entities.player import Player
 from core.entities.match import Match
-from core.entities.rating import RatingType
+from common.enums import RatingType
 from core.exceptions import PlayerStateAlreadyExists
 
 
@@ -60,6 +61,7 @@ class CreateInitialPlayerStateAction(BasePlayerStateAction):
 
         return await self._save_player_state(
             PlayerState(
+                previous_state_id=None,
                 player=self._player,
                 matches_played=matches_played,
                 matches_won=self._matches_won or 0,
@@ -112,6 +114,7 @@ class CreatePlayerStateAction(BasePlayerStateAction):
 
         return await self._save_player_state(
             PlayerState(
+                previous_state_id=self._current_player_state.id,
                 player=self._player,
                 matches_played=new_matches_played,
                 matches_won=new_matches_won,

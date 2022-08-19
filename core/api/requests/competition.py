@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from marshmallow import fields
 from common.utils import DatetimeWithTZ
-from core.entities.competition import CompetitionType
+from common.enums import CompetitionType
 
 
 @dataclass

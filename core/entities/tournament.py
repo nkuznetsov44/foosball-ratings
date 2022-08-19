@@ -1,15 +1,37 @@
-from decimal import Decimal
-from dataclasses import dataclass
+from typing import Optional
+from dataclasses import dataclass, field
+from datetime import date
+from sqlalchemy import Date, Table, Column, Integer, String
+from sqlalchemy.orm import relationship
+from common.enums import City
+from core.storage.mapping import mapper_registry
 from core.entities.competition import Competition
 
 
+@mapper_registry.mapped
 @dataclass
 class Tournament:
-    id: int
-    name: str
-    city: str
-    evks_importance_coefficient: Decimal
-    competitions: list[Competition]
+    __table__ = Table(
+        "tournaments",
+        mapper_registry.metadata,
+        Column("id", Integer, primary_key=True),
+        Column("name", String(255)),
+        Column("city", String(63)),
+        Column("start_date", Date),
+        Column("end_date", Date),
+        Column("url", String(511), nullable=True),
+    )
 
-    def __hash__(self) -> int:
-        return hash(self.id)
+    __mapper_args__ = {  # type: ignore
+        "properties": {
+            "competitions": relationship("Competition"),
+        }
+    }
+
+    id: Optional[int] = field(init=False)
+    name: str
+    city: City
+    start_date: date
+    end_date: date
+    url: Optional[str]
+    competitions: list[Competition]

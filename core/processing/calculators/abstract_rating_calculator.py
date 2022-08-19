@@ -1,6 +1,6 @@
 from typing import ClassVar
 from abc import ABC, abstractmethod
-from core.entities.rating import RatingType
+from common.enums import RatingType
 from core.entities.player import Player
 from core.entities.match import Match
 from core.entities.competition import Competition

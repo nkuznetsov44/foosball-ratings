@@ -1,21 +1,11 @@
-from enum import Enum
 from typing import Optional
 from dataclasses import dataclass, field
 from sqlalchemy import Table, Column, ForeignKey, Integer, Boolean, JSON
+from common.enums import RatingType, EvksPlayerRank
 from core.storage.mapping import mapper_registry
 from core.entities.player import Player
 from core.entities.match import Match
-from core.entities.rating import RatingType
 from core.entities.competition import Competition
-
-
-class EvksPlayerRank(Enum):
-    BEGINNER = "Beginner"
-    NOVICE = "Novice"
-    AMATEUR = "Amateur"
-    SEMIPRO = "Semipro"
-    PRO = "Pro"
-    MASTER = "Master"
 
 
 @mapper_registry.mapped
@@ -27,6 +17,7 @@ class PlayerState:
         "player_states",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("previous_state_id", Integer, ForeignKey("player_states.id")),
         Column("player_id", Integer, ForeignKey("players.id")),
         Column("matches_won", Integer),
         Column("last_match_id", Integer, ForeignKey("matches.id")),
@@ -34,7 +25,8 @@ class PlayerState:
         Column("is_evks_rating_active", Boolean),
     )
 
-    id: int = field(init=False)
+    id: Optional[int] = field(init=False)
+    previous_state_id: Optional[int]
     player: Player
     matches_played: int  # суммарное количество матчей, сыгранное к этому моменту
     matches_won: int
@@ -52,16 +44,13 @@ class PlayerState:
     def cumulative_rating(self) -> Optional[int]:
         return self.rating.get(RatingType.CUMULATIVE)
 
-    def __hash__(self) -> int:
-        return hash(self.id)
-
 
 @dataclass
 class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
 
-    id: int = field(init=False)
-    previous_state_id: int  # начальное состояние указывает само на себя
+    id: Optional[int] = field(init=False)
+    previous_state_id: Optional[int]
     player_states: set[PlayerState]
     player_evks_ranks: dict[int, EvksPlayerRank]  # maps player_id -> EvksPlayerRank
     last_competition: Optional[
@@ -72,6 +61,3 @@ class RatingsState:
         return next(
             filter(lambda ps: ps.player.id == player.id, self.player_states), None
         )
-
-    def __hash__(self) -> int:
-        return hash(self.id)

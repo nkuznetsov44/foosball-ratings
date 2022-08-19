@@ -1,7 +1,7 @@
 from typing import ClassVar
 from calculators.abstract_rating_calculator import AbstractRatingCalculator
 from calculators import evks, cumulative
-from core.entities.rating import RatingType
+from common.enums import RatingType
 
 
 class AbstractCalculationStrategy:
