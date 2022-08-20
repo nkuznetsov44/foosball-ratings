@@ -7,7 +7,7 @@ from core.storage.db import setup_db_engine
 app = web.Application()
 setup_routes(app)
 app["config"] = config
-setup_db_engine(app)
+setup_db_engine(app, echo=True)
 
 
 if __name__ == "__main__":

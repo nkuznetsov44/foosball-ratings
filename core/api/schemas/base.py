@@ -1,10 +1,5 @@
-from marshmallow import Schema, fields
-
-
-class BaseSchema(Schema):
-    # TYPEMAP common.utils.DatetimeWithTZ -> fields.DateTime
-    class Meta:
-        strict = True
+from marshmallow import fields
+from common.schemas import BaseSchema
 
 
 class BaseSchemaWithId(BaseSchema):

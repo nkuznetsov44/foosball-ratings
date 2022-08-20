@@ -1,5 +1,5 @@
 from aiohttp import web
-from common.handlers.abstract_handler import request_schema, response_schema
+from common.handlers import request_schema, response_schema
 from core.api.handlers.abstract_db_handler import AbstractDbHandler
 from core.api.schemas.tournament import (
     CreateTournamentRequestSchema,

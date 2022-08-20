@@ -1,7 +1,6 @@
 from typing import Optional
 from dataclasses import dataclass, field
-from datetime import date
-from sqlalchemy import Date, Table, Column, Integer, String
+from sqlalchemy import Table, Column, Integer, String, Enum
 from sqlalchemy.orm import relationship
 from common.enums import City
 from core.storage.mapping import mapper_registry
@@ -16,22 +15,18 @@ class Tournament:
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
         Column("name", String(255)),
-        Column("city", String(63)),
-        Column("start_date", Date),
-        Column("end_date", Date),
+        Column("city", Enum(City)),
         Column("url", String(511), nullable=True),
     )
 
     __mapper_args__ = {  # type: ignore
         "properties": {
-            "competitions": relationship("Competition"),
+            "competitions": relationship(Competition),
         }
     }
 
-    id: Optional[int] = field(init=False)
+    id: int = field(init=False)
     name: str
     city: City
-    start_date: date
-    end_date: date
     url: Optional[str]
-    competitions: list[Competition]
+    competitions: list[Competition] = field(default_factory=list)

@@ -6,6 +6,19 @@ from core.entities.player import Player
 from core.actions.state import CreateInitialPlayerStateAction
 
 
+class GetPlayerAction(AbstractAction):
+    def __init__(self, context: ActionContext, player_id: int) -> None:
+        super().__init__(context)
+        self._player_id = player_id
+
+    async def run(self) -> Player:
+        async with self._make_db_session()() as session:
+            result = await session.execute(
+                select(Player).where(Player.id == self._player_id)
+            )
+            return result.scalars().first()
+
+
 class GetPlayersAction(AbstractAction):
     def __init__(self, context: ActionContext) -> None:
         super().__init__(context)
@@ -28,6 +41,7 @@ class CreatePlayersAction(AbstractAction):
             player = Player(
                 first_name=player_req.first_name,
                 last_name=player_req.last_name,
+                city=player_req.city,
             )
 
             async with self._make_db_session()() as session:

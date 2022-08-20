@@ -1,6 +1,7 @@
 from marshmallow_dataclass import class_schema
 from marshmallow import fields
-from core.api.schemas.base import BaseSchema, BaseSchemaWithId
+from common.schemas import BaseSchema
+from core.api.schemas.base import BaseSchemaWithId
 from core.entities.player import Player
 from core.entities.state import PlayerState
 from core.api.requests.player import CreatePlayersRequest

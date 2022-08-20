@@ -1,7 +1,14 @@
-from typing import Optional
 from decimal import Decimal
 from dataclasses import dataclass, field
-from sqlalchemy import DateTime, Table, Column, ForeignKey, Integer, String, Numeric
+from sqlalchemy import (
+    DateTime,
+    Table,
+    Column,
+    ForeignKey,
+    Integer,
+    Numeric,
+    Enum,
+)
 from sqlalchemy.orm import relationship
 from common.utils import DatetimeWithTZ
 from common.enums import CompetitionType
@@ -17,22 +24,22 @@ class Competition:
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
         Column("tournament_id", Integer, ForeignKey("tournaments.id")),
-        Column("competition_type", String(63)),
+        Column("competition_type", Enum(CompetitionType)),
         Column("evks_importance_coefficient", Numeric),
-        Column("match_id", Integer, ForeignKey("matches.id")),
         Column("start_datetime", DateTime(timezone=True)),
         Column("end_datetime", DateTime(timezone=True)),
     )
 
     __mapper_args__ = {  # type: ignore
         "properties": {
-            "matches": relationship("Match"),
+            "matches": relationship(Match),
         }
     }
 
-    id: Optional[int] = field(init=False)
+    id: int = field(init=False)
+    tournament_id: int = field(init=False)
     competition_type: CompetitionType
     evks_importance_coefficient: Decimal
-    matches: list[Match]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+    matches: list[Match] = field(default_factory=list)

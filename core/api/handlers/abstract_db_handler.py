@@ -1,6 +1,6 @@
 from typing import Type, Any
 from sqlalchemy.ext.asyncio import AsyncEngine
-from common.handlers.abstract_handler import AbstractHandler
+from common.handlers import AbstractHandler
 from core.actions.abstract_action import AbstractAction, ActionContext
 from core.entities.state import RatingsState
 

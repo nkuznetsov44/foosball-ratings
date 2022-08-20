@@ -61,6 +61,7 @@ class MatchSet:
     )
 
     id: int = field(init=False)
+    match_id: int = field(init=False)
     order: int
     first_team_score: int
     second_team_score: int
@@ -80,6 +81,7 @@ class Match:
         "matches",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("competition_id", Integer, ForeignKey("competitions.id")),
         Column("first_team_id", Integer, ForeignKey("teams.id")),
         Column("second_team_id", Integer, ForeignKey("teams.id")),
         Column("start_datetime", DateTime(timezone=True)),
@@ -90,22 +92,23 @@ class Match:
     __mapper_args__ = {  # type: ignore
         "properties": {
             "first_team": relationship(
-                "Team", primaryjoin="Match.first_team_id == Team.id"
+                Team, primaryjoin="Match.first_team_id == Team.id"
             ),
             "second_team": relationship(
-                "Team", primaryjoin="Match.second_team_id == Team.id"
+                Team, primaryjoin="Match.second_team_id == Team.id"
             ),
-            "sets": relationship("MatchSet"),
+            "sets": relationship(MatchSet),
         }
     }
 
-    id: Optional[int] = field(init=False)
+    id: int = field(init=False)
+    competition_id: int = field(init=False)
     first_team: Team
     second_team: Team
-    sets: list[MatchSet]
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
     force_qualification: Optional[bool] = False
+    sets: list[MatchSet] = field(default_factory=list)
 
     @property
     def is_qualification(self) -> bool:
