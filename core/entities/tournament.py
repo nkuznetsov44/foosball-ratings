@@ -14,6 +14,7 @@ class Tournament:
         "tournaments",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("external_id", Integer, nullable=True, unique=True),
         Column("name", String(255)),
         Column("city", Enum(City)),
         Column("url", String(511), nullable=True),
@@ -30,3 +31,4 @@ class Tournament:
     city: City
     url: Optional[str]
     competitions: list[Competition] = field(default_factory=list)
+    external_id: Optional[int] = None

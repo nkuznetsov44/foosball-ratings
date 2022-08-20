@@ -29,8 +29,8 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     def calculate(self, match: Match, competition: Competition) -> dict[Player, int]:
         match_players_states = self._get_match_participants_states(match)
 
-        rw = self._get_team_rating(match.winner_team)
-        rl = self._get_team_rating(match.looser_team)
+        rw = self._get_team_rating(match.winner_team, match_players_states)
+        rl = self._get_team_rating(match.looser_team, match_players_states)
 
         t = competition.evks_importance_coefficient
         d = self._calculate_reliability_coefficients(match, match_players_states)

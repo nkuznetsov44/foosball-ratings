@@ -14,6 +14,7 @@ class Team:
         "teams",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("external_id", Integer, nullable=True, unique=True),
         Column("first_player_id", Integer, ForeignKey("players.id")),
         Column("second_player_id", Integer, ForeignKey("players.id"), nullable=True),
     )
@@ -32,6 +33,7 @@ class Team:
     id: int = field(init=False)
     first_player: Player
     second_player: Optional[Player]  # None for singles
+    external_id: Optional[int] = None
 
     @property
     def is_single_player(self) -> bool:
@@ -54,6 +56,7 @@ class MatchSet:
         "sets",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("external_id", Integer, nullable=True, unique=True),
         Column("match_id", Integer, ForeignKey("matches.id")),
         Column("order", Integer),
         Column("first_team_score", Integer),
@@ -65,6 +68,7 @@ class MatchSet:
     order: int
     first_team_score: int
     second_team_score: int
+    external_id: Optional[int] = None
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -81,6 +85,7 @@ class Match:
         "matches",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("external_id", Integer, nullable=True, unique=True),
         Column("competition_id", Integer, ForeignKey("competitions.id")),
         Column("first_team_id", Integer, ForeignKey("teams.id")),
         Column("second_team_id", Integer, ForeignKey("teams.id")),
@@ -108,6 +113,7 @@ class Match:
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
     force_qualification: Optional[bool] = False
+    external_id: Optional[int] = None
     sets: list[MatchSet] = field(default_factory=list)
 
     @property

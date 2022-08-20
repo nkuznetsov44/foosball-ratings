@@ -1,3 +1,4 @@
+from typing import Optional
 from decimal import Decimal
 from dataclasses import dataclass, field
 from sqlalchemy import (
@@ -23,6 +24,7 @@ class Competition:
         "competitions",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
+        Column("external_id", Integer, nullable=True, unique=True),
         Column("tournament_id", Integer, ForeignKey("tournaments.id")),
         Column("competition_type", Enum(CompetitionType)),
         Column("evks_importance_coefficient", Numeric),
@@ -42,4 +44,5 @@ class Competition:
     evks_importance_coefficient: Decimal
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+    external_id: Optional[int] = None
     matches: list[Match] = field(default_factory=list)

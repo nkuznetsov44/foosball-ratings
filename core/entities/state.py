@@ -26,7 +26,7 @@ class PlayerState:
     )
 
     id: int = field(init=False)
-    previous_state_id: Optional[int]  # = field(init=False)
+    previous_state_id: Optional[int]
     player: Player
     matches_played: int  # суммарное количество матчей, сыгранное к этому моменту
     matches_won: int
@@ -50,7 +50,7 @@ class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
 
     id: int = field(init=False)
-    previous_state_id: Optional[int]  # = field(init=False)
+    previous_state_id: Optional[int]
     player_states: set[PlayerState]
     player_evks_ranks: dict[int, EvksPlayerRank]  # maps player_id -> EvksPlayerRank
     last_competition: Optional[

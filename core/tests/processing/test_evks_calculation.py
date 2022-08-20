@@ -1,7 +1,7 @@
 import pytest
 from hamcrest import assert_that, equal_to
 from decimal import Decimal
-from common.enums import RatingType, CompetitionType, EvksPlayerRank
+from common.enums import RatingType, CompetitionType, EvksPlayerRank, City
 from core.processing.calculators.evks import EvksRatingCalculator
 from core.entities.player import Player
 from core.entities.match import Match, Team, MatchSet
@@ -11,58 +11,69 @@ from core.entities.state import PlayerState, RatingsState
 
 @pytest.fixture
 def player1():
-    return Player(id=1, first_name="Никита", last_name="Кузнецов")
+    player = Player(first_name="Никита", last_name="Кузнецов", city=City.MOSCOW)
+    player.id = 1
+    return player
 
 
 @pytest.fixture
 def player2():
-    return Player(id=2, first_name="Артем", last_name="Бочков")
+    player = Player(first_name="Артем", last_name="Бочков", city=City.MOSCOW)
+    player.id = 2
+    return player
 
 
 @pytest.fixture
 def player3():
-    return Player(id=3, first_name="Роман", last_name="Бушуев")
+    player = Player(first_name="Роман", last_name="Бушуев", city=City.MOSCOW)
+    player.id = 3
+    return player
 
 
 @pytest.fixture
 def player4():
-    return Player(id=4, first_name="Анна", last_name="Мамаева")
+    player = Player(first_name="Анна", last_name="Мамаева", city=City.MOSCOW)
+    player.id = 4
+    return player
 
 
 @pytest.fixture
 def ratings_state(player1, player2, player3, player4):
     return RatingsState(
-        id=1,
-        previous_state_id=1,
+        previous_state_id=None,
         player_states=[
             PlayerState(
-                id=1,
+                previous_state_id=None,
                 player=player1,
                 matches_played=100,
+                matches_won=50,
                 last_match=None,
                 ratings={RatingType.EVKS: 1710},
                 is_evks_rating_active=True,
             ),
             PlayerState(
-                id=2,
+                previous_state_id=None,
                 player=player2,
                 matches_played=100,
+                matches_won=50,
                 last_match=None,
                 ratings={RatingType.EVKS: 2063},
                 is_evks_rating_active=True,
             ),
             PlayerState(
-                id=3,
+                previous_state_id=None,
                 player=player3,
                 matches_played=100,
+                matches_won=50,
                 last_match=None,
                 ratings={RatingType.EVKS: 1638},
                 is_evks_rating_active=True,
             ),
             PlayerState(
-                id=4,
+                previous_state_id=None,
                 player=player4,
                 matches_played=100,
+                matches_won=50,
                 last_match=None,
                 ratings={RatingType.EVKS: 1218},
                 is_evks_rating_active=True,
@@ -81,14 +92,13 @@ def ratings_state(player1, player2, player3, player4):
 @pytest.fixture
 def match1(player1, player2, player3, player4):
     return Match(
-        id=1,
-        first_team=Team(id=1, first_player=player1, second_player=player2),
-        second_team=Team(id=2, first_player=player3, second_player=player4),
+        first_team=Team(first_player=player1, second_player=player2),
+        second_team=Team(first_player=player3, second_player=player4),
         sets=[
-            MatchSet(id=1, first_team_score=5, second_team_score=2),
-            MatchSet(id=2, first_team_score=5, second_team_score=2),
-            MatchSet(id=3, first_team_score=2, second_team_score=5),
-            MatchSet(id=4, first_team_score=5, second_team_score=2),
+            MatchSet(order=1, first_team_score=5, second_team_score=2),
+            MatchSet(order=2, first_team_score=5, second_team_score=2),
+            MatchSet(order=3, first_team_score=2, second_team_score=5),
+            MatchSet(order=4, first_team_score=5, second_team_score=2),
         ],
         start_datetime="2022-08-13T03:12:58.019077+00:00",
         end_datetime="2022-08-13T03:12:58.019077+00:00",
@@ -98,14 +108,13 @@ def match1(player1, player2, player3, player4):
 @pytest.fixture
 def match2(player2, player4):
     return Match(
-        id=2,
-        first_team=Team(id=3, first_player=player2, second_player=None),
-        second_team=Team(id=4, first_player=player4, second_player=None),
+        first_team=Team(first_player=player2, second_player=None),
+        second_team=Team(first_player=player4, second_player=None),
         sets=[
-            MatchSet(id=5, first_team_score=1, second_team_score=5),
-            MatchSet(id=6, first_team_score=2, second_team_score=5),
-            MatchSet(id=7, first_team_score=5, second_team_score=3),
-            MatchSet(id=8, first_team_score=4, second_team_score=5),
+            MatchSet(order=1, first_team_score=1, second_team_score=5),
+            MatchSet(order=2, first_team_score=2, second_team_score=5),
+            MatchSet(order=3, first_team_score=5, second_team_score=3),
+            MatchSet(order=4, first_team_score=4, second_team_score=5),
         ],
         start_datetime="2022-08-13T03:12:58.019077+00:00",
         end_datetime="2022-08-13T03:12:58.019077+00:00",
@@ -115,7 +124,6 @@ def match2(player2, player4):
 @pytest.fixture
 def competition(match1, match2):
     return Competition(
-        id=1,
         competition_type=CompetitionType.COD,
         evks_importance_coefficient=Decimal("0.75"),
         start_datetime="2022-08-13T03:12:58.019077+00:00",

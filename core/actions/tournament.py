@@ -28,6 +28,7 @@ class CreateTournamentAction(AbstractAction):
                 ) = await self._construct_team_entities_for_match_req(match_req)
                 sets = [
                     MatchSet(
+                        external_id=req.external_id,
                         order=req.order,
                         first_team_score=req.first_team_score,
                         second_team_score=req.second_team_score,
@@ -35,6 +36,7 @@ class CreateTournamentAction(AbstractAction):
                     for req in match_req.sets
                 ]
                 match = Match(
+                    external_id=match_req.external_id,
                     first_team=first_team,
                     second_team=second_team,
                     start_datetime=match_req.start_datetime,
@@ -45,6 +47,7 @@ class CreateTournamentAction(AbstractAction):
                 competition_matches.append(match)
 
             competition = Competition(
+                external_id=competition_req.external_id,
                 competition_type=competition_req.competition_type,
                 evks_importance_coefficient=self._request.evks_importance_coefficient,
                 start_datetime=competition_req.start_datetime,
@@ -54,6 +57,7 @@ class CreateTournamentAction(AbstractAction):
             tournament_competitions.append(competition)
 
         tournament = Tournament(
+            external_id=self._request.external_id,
             name=self._request.name,
             city=self._request.city,
             url=self._request.url,
@@ -85,8 +89,16 @@ class CreateTournamentAction(AbstractAction):
         else:
             team2_player2 = None
 
-        team1 = Team(first_player=team1_player1, second_player=team1_player2)
-        team2 = Team(first_player=team2_player1, second_player=team2_player2)
+        team1 = Team(
+            external_id=match_req.first_team.external_id,
+            first_player=team1_player1,
+            second_player=team1_player2,
+        )
+        team2 = Team(
+            external_id=match_req.second_team.external_id,
+            first_player=team2_player1,
+            second_player=team2_player2,
+        )
         return team1, team2
 
     async def _get_player(self, player_id: int) -> Player:

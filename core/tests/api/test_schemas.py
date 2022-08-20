@@ -5,17 +5,20 @@ from core.api.schemas.tournament import CreateTournamentRequestSchema
 @pytest.fixture
 def create_tournament_request():
     return {
+        "external_id": 1,
         "name": "Тестовый турнир",
         "city": "MOSCOW",
         "evks_importance_coefficient": "0.75",
         "url": "https://vk.invalid/tournament",
         "competitions": [
             {
+                "external_id": 1,
                 "competition_type": "OS",
                 "start_datetime": "2022-12-22T03:12:58.019077+00:00",
                 "end_datetime": "2022-12-22T03:12:58.019077+00:00",
                 "matches": [
                     {
+                        "external_id": 1,
                         "first_team": {"first_player_id": 1, "second_player_id": None},
                         "second_team": {"first_player_id": 2, "second_player_id": None},
                         "sets": [

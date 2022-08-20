@@ -5,6 +5,7 @@ from common.enums import City
 
 @dataclass
 class PlayerReq:
+    external_id: Optional[int]
     first_name: str
     last_name: str
     city: City
