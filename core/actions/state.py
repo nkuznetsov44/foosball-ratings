@@ -4,6 +4,7 @@ from core.actions.abstract_action import AbstractAction, ActionContext
 from core.entities.state import PlayerState, RatingsState
 from core.entities.player import Player
 from core.entities.match import Match
+from core.entities.competition import Competition
 from common.enums import RatingType
 from core.exceptions import PlayerStateAlreadyExists
 
@@ -91,16 +92,6 @@ class CreatePlayerStateAction(BasePlayerStateAction):
         assert self._ratings.get(RatingType.EVKS) is not None
         assert self._ratings.get(RatingType.CUMULATIVE) is not None
 
-        if (
-            self._last_match.start_datetime
-            < self._ratings_state.last_competition.end_datetime
-        ):
-            raise NotImplementedError(
-                f"Match {self._last_match} starts before last processed competition "
-                f"{self._ratings_state.last_competition}. "
-                "Processing competitions in not historical order is not implemented."
-            )
-
         new_matches_played = self._current_player_state.matches_played + 1
 
         new_matches_won = self._current_player_state.matches_won
@@ -127,14 +118,19 @@ class CreatePlayerStateAction(BasePlayerStateAction):
 
 class CreateRatingsStateAction(AbstractAction):
     def __init__(
-        self, current_state: RatingsState, new_player_states: Sequence[PlayerState]
+        self,
+        *,
+        context: ActionContext,
+        player_states: Sequence[PlayerState],
+        last_competition: Competition,
     ) -> None:
-        self.current_state = current_state
-        self.new_player_states = new_player_states
+        super().__init__(context)
+        self._player_states = player_states
+        self._last_competition = last_competition
 
-    def _get_player_evks_rank(self, player_state: PlayerState) -> EvksPlayerRank:
-        # реализовать логику перехода между рангами после категории
+    def _get_evks_player_rank(self, player_state: PlayerState) -> EvksPlayerRank:
+        # TODO: реализовать логику перехода между рангами после категории
         pass
 
     async def run(self) -> RatingsState:
-        pass
+        raise NotImplementedError()  # TODO: implement

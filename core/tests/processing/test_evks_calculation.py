@@ -39,48 +39,66 @@ def player4():
 
 
 @pytest.fixture
-def ratings_state(player1, player2, player3, player4):
+def player_states(player1, player2, player3, player4):
+    player_states = set()
+
+    p1_state = PlayerState(
+        previous_state_id=None,
+        player=player1,
+        matches_played=100,
+        matches_won=50,
+        last_match=None,
+        ratings={RatingType.EVKS: 1710},
+        is_evks_rating_active=True,
+    )
+    p1_state.id = 1
+    player_states.add(p1_state)
+
+    p2_state = PlayerState(
+        previous_state_id=None,
+        player=player2,
+        matches_played=100,
+        matches_won=50,
+        last_match=None,
+        ratings={RatingType.EVKS: 2063},
+        is_evks_rating_active=True,
+    )
+    p2_state.id = 2
+    player_states.add(p2_state)
+
+    p3_state = PlayerState(
+        previous_state_id=None,
+        player=player3,
+        matches_played=100,
+        matches_won=50,
+        last_match=None,
+        ratings={RatingType.EVKS: 1638},
+        is_evks_rating_active=True,
+    )
+    p3_state.id = 3
+    player_states.add(p3_state)
+
+    p4_state = PlayerState(
+        previous_state_id=None,
+        player=player4,
+        matches_played=100,
+        matches_won=50,
+        last_match=None,
+        ratings={RatingType.EVKS: 1218},
+        is_evks_rating_active=True,
+    )
+    p4_state.id = 1
+    player_states.add(p4_state)
+
+    return player_states
+
+
+@pytest.fixture
+def ratings_state(player_states):
     return RatingsState(
         previous_state_id=None,
-        player_states=[
-            PlayerState(
-                previous_state_id=None,
-                player=player1,
-                matches_played=100,
-                matches_won=50,
-                last_match=None,
-                ratings={RatingType.EVKS: 1710},
-                is_evks_rating_active=True,
-            ),
-            PlayerState(
-                previous_state_id=None,
-                player=player2,
-                matches_played=100,
-                matches_won=50,
-                last_match=None,
-                ratings={RatingType.EVKS: 2063},
-                is_evks_rating_active=True,
-            ),
-            PlayerState(
-                previous_state_id=None,
-                player=player3,
-                matches_played=100,
-                matches_won=50,
-                last_match=None,
-                ratings={RatingType.EVKS: 1638},
-                is_evks_rating_active=True,
-            ),
-            PlayerState(
-                previous_state_id=None,
-                player=player4,
-                matches_played=100,
-                matches_won=50,
-                last_match=None,
-                ratings={RatingType.EVKS: 1218},
-                is_evks_rating_active=True,
-            ),
-        ],
-        player_evks_ranks={
+        player_states=player_states,
+        evks_player_ranks={
             1: EvksPlayerRank.SEMIPRO,
             2: EvksPlayerRank.MASTER,
             3: EvksPlayerRank.SEMIPRO,
@@ -91,14 +109,18 @@ def ratings_state(player1, player2, player3, player4):
 
 
 @pytest.fixture
-def match1(player1, player2, player3, player4):
+def match1_teams(player1, player2, player3, player4):
+    first_team = Team(first_player=player1, second_player=player2, competition_place=1)
+    second_team = Team(first_player=player3, second_player=player4, competition_place=2)
+    return first_team, second_team
+
+
+@pytest.fixture
+def match1(match1_teams):
+    first_team, second_team = match1_teams
     return Match(
-        first_team=Team(
-            first_player=player1, second_player=player2, competition_place=1
-        ),
-        second_team=Team(
-            first_player=player3, second_player=player4, competition_place=2
-        ),
+        first_team=first_team,
+        second_team=second_team,
         sets=[
             MatchSet(order=1, first_team_score=5, second_team_score=2),
             MatchSet(order=2, first_team_score=5, second_team_score=2),
@@ -111,10 +133,18 @@ def match1(player1, player2, player3, player4):
 
 
 @pytest.fixture
-def match2(player2, player4):
+def match2_teams(player2, player4):
+    first_team = Team(first_player=player2, second_player=None, competition_place=1)
+    second_team = Team(first_player=player4, second_player=None, competition_place=2)
+    return first_team, second_team
+
+
+@pytest.fixture
+def match2(match2_teams):
+    first_team, second_team = match2_teams
     return Match(
-        first_team=Team(first_player=player2, second_player=None, competition_place=1),
-        second_team=Team(first_player=player4, second_player=None, competition_place=2),
+        first_team=first_team,
+        second_team=second_team,
         sets=[
             MatchSet(order=1, first_team_score=1, second_team_score=5),
             MatchSet(order=2, first_team_score=2, second_team_score=5),
@@ -127,13 +157,15 @@ def match2(player2, player4):
 
 
 @pytest.fixture
-def competition(match1, match2):
+def competition(match1, match2, match1_teams, match2_teams):
+    teams = list(match1_teams) + list(match2_teams)
     return Competition(
         competition_type=CompetitionType.COD,
         evks_importance_coefficient=Decimal("0.75"),
         start_datetime="2022-08-13T03:12:58.019077+00:00",
         end_datetime="2022-08-13T03:12:58.019077+00:00",
         matches=[match1, match2],
+        teams=teams,
     )
 
 

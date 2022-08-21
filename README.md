@@ -5,12 +5,8 @@ pre-commit:
 - `flake8 .`
 
 db:
-```
-create database ratings_core;
-create user ratings with encrypted password 'ratings';
-grant all privileges on database ratings_core to ratings;
-```
-
-`cat core/storage/db/schema/init_schema.sql | psql -U ratings ratings_core`
+- `chmod +x ./core/storage/db/create_db.sh`
+- `./core/storage/db/create_db.sh`
+- `python core/storage/db/schema/create_schema.py`
 
 console: `psql -U ratings ratings_core`

@@ -49,6 +49,6 @@ class Competition:
     evks_importance_coefficient: Decimal
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+    matches: list[Match]
+    teams: list[Team]
     external_id: Optional[int] = None
-    matches: list[Match] = field(default_factory=list)
-    teams: list[Team] = field(default_factory=list)

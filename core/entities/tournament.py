@@ -30,5 +30,5 @@ class Tournament:
     name: str
     city: City
     url: Optional[str]
-    competitions: list[Competition] = field(default_factory=list)
+    competitions: list[Competition]
     external_id: Optional[int] = None

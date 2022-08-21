@@ -16,7 +16,7 @@ class AbstractDbHandler(AbstractHandler):
             ratings_state=RatingsState(  # TODO: fixme
                 previous_state_id=0,
                 player_states=set(),
-                player_evks_ranks=dict(),
+                evks_player_ranks=dict(),
                 last_competition=None,
             ),
         )

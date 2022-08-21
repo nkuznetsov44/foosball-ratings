@@ -6,7 +6,7 @@ from core.actions.abstract_action import AbstractAction, ActionContext
 from core.entities.competition import Competition
 from core.entities.match import Match
 from core.entities.player import Player
-from core.entities.state import PlayerState, RatingsState
+from core.entities.state import RatingsState
 from common.enums import RatingType
 from core.processing import strategies
 from core.actions.state import CreatePlayerStateAction, CreateRatingsStateAction
@@ -33,27 +33,44 @@ class ProcessCompetitionAction(AbstractAction):
 
     async def run(self) -> RatingsState:
         """
-        Action должен не только обсчитывать этот рейтинг, но и
-        запускать пересчет всех турниров, которые были после.
+        Action должен не только обсчитывать рейтинг после competition,
+        но и запускать пересчет всех турниров, которые ранее посчитаны,
+        но исторически были после competition. Но это потом...
+
+        Логика должна быть примерно такая:
+        1. Найти состояние RatingsState, актуальное перед категорией competition.
+           Это можно сделать, пройдя в цикле while по ссылкам previous_state_id,
+           собирая по пути last_competition в competitions_for_processing, пока
+           не дойдем до last_competition.end_date < competition.start_date.
+        2. Добавить competition в конец competitions_for_processing.
+        3. Подожить в intermediate_ratings_state dirty_copy найденного состояния.
+        4. Вынести код текущей верссии action'a в метод _process_single_competition,
+           в ней в конце запускать CreateRatingsStateAction с правильным контекстом.
+        3. Запустить _process_single_competition для всех competitions_for_processing.
         """
 
-        player_states_after_competition: set[PlayerState] = set()
-
         strategy = self._choose_calculation_strategy()
+        intermediate_ratings_state = self._ratings_state.dirty_copy()
 
         for match in self._prepare_matches():
-            ratings_calculation_result: dict[RatingType, dict[Player, int]] = {}
-            for rating_type, calculator in strategy.calculators.items():
-                ratings_calculation_result[rating_type] = calculator.calculate(
-                    self._ratings_state, match, self._competition
-                )
-            player_states = await self._create_player_states(ratings_calculation_result)
-            player_states_after_competition.update(player_states)
+            for player, ratings in self._calculate_ratings_after_match(
+                match, strategy
+            ).items():
+                player_state = await CreatePlayerStateAction(
+                    context=ActionContext(
+                        db_engine=self._context.db_engine,
+                        ratings_state=intermediate_ratings_state,
+                    ),
+                    player=player,
+                    last_match=match,
+                    ratings=ratings,
+                ).run()
+                intermediate_ratings_state.player_states.add(player_state)
 
-        # TODO: вот тут на самом деле надо еще пересчитывать турниры после competition
         return await CreateRatingsStateAction(
             context=self._context,
-            player_states=player_states_after_competition,
+            player_states=intermediate_ratings_state.player_states,
+            last_competition=self._competition,
         ).run()
 
     def _choose_calculation_strategy(self):
@@ -67,26 +84,16 @@ class ProcessCompetitionAction(AbstractAction):
     def _prepare_matches(self) -> Sequence[Match]:
         return sorted(self.competition.matches, key=lambda match: match.end_datetime)
 
-    async def _create_player_states(
-        self,
-        ratings_calculation_result: dict[RatingType, dict[Player, int]],
-        last_match: Match,
-    ) -> set[PlayerState]:
-        player_ratings: dict[Player, dict[RatingType, int]] = defaultdict({})
-        # TODO: maybe itertools has a convinience method for this
-        for rating_type, rating_result in ratings_calculation_result.items():
-            for player, rating_value in rating_result.items():
-                player_ratings[player][rating_type] = rating_value
-
-        player_states: set[PlayerState] = set()
-        for player, ratings in player_ratings.items():
-            player_states.add(
-                await CreatePlayerStateAction(
-                    context=self._context,
-                    player=player,
-                    last_match=last_match,
-                    ratings=ratings,
-                ).run()
+    def _calculate_ratings_after_match(
+        self, match: Match, strategy: strategies.AbstractCalculationStrategy
+    ) -> dict[Player, dict[RatingType, int]]:
+        ratings_calculation_results: dict[Player, dict[RatingType, int]] = defaultdict(
+            {}
+        )
+        for rating_type, calculator in strategy.calculators.items():
+            calc_result_by_player = calculator.calculate(
+                self._ratings_state, match, self._competition
             )
-
-        return player_states
+            for player, rating_value in calc_result_by_player.items():
+                ratings_calculation_results[player][rating_type] = rating_value
+        return ratings_calculation_results

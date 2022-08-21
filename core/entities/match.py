@@ -65,10 +65,14 @@ class Match:
     __mapper_args__ = {  # type: ignore
         "properties": {
             "first_team": relationship(
-                Team, primaryjoin="Match.first_team_id == Team.id"
+                Team,
+                uselist=False,
+                primaryjoin="Match.first_team_id == Team.id",
             ),
             "second_team": relationship(
-                Team, primaryjoin="Match.second_team_id == Team.id"
+                Team,
+                uselist=False,
+                primaryjoin="Match.second_team_id == Team.id",
             ),
             "sets": relationship(MatchSet),
         }
@@ -82,9 +86,9 @@ class Match:
     second_team: Team
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
+    sets: list[MatchSet]
     force_qualification: Optional[bool] = False
     external_id: Optional[int] = None
-    sets: list[MatchSet] = field(default_factory=list)
 
     @property
     def is_qualification(self) -> bool:
