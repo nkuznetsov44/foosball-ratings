@@ -1,52 +1,18 @@
 from typing import Optional
 from dataclasses import dataclass, field
-from sqlalchemy import Table, Column, ForeignKey, Integer, Boolean, DateTime
+from sqlalchemy import (
+    Table,
+    Column,
+    ForeignKey,
+    Integer,
+    Boolean,
+    DateTime,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 from core.storage.mapping import mapper_registry
 from common.utils import DatetimeWithTZ
-from core.entities.player import Player
-
-
-@mapper_registry.mapped
-@dataclass
-class Team:
-    __table__ = Table(
-        "teams",
-        mapper_registry.metadata,
-        Column("id", Integer, primary_key=True),
-        Column("external_id", Integer, nullable=True, unique=True),
-        Column("first_player_id", Integer, ForeignKey("players.id")),
-        Column("second_player_id", Integer, ForeignKey("players.id"), nullable=True),
-    )
-
-    __mapper_args__ = {  # type: ignore
-        "properties": {
-            "first_player": relationship(
-                Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"
-            ),
-            "second_player": relationship(
-                Player, uselist=False, primaryjoin="Team.second_player_id == Player.id"
-            ),
-        }
-    }
-
-    id: int = field(init=False)
-    first_player: Player
-    second_player: Optional[Player]  # None for singles
-    external_id: Optional[int] = None
-
-    @property
-    def is_single_player(self) -> bool:
-        return self.second_player is None
-
-    @property
-    def players(self) -> list[Player]:
-        if self.second_player:
-            return [self.first_player, self.second_player]
-        return [self.first_player]
-
-    def __hash__(self) -> int:
-        return hash(self.id)
+from core.entities.team import Team
 
 
 @mapper_registry.mapped
@@ -56,12 +22,14 @@ class MatchSet:
         "sets",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
-        Column("external_id", Integer, nullable=True, unique=True),
+        Column("external_id", Integer, nullable=True),
         Column("match_id", Integer, ForeignKey("matches.id")),
         Column("order", Integer),
         Column("first_team_score", Integer),
         Column("second_team_score", Integer, nullable=True),
     )
+
+    __table_args__ = (UniqueConstraint("match_id", "external_id"),)
 
     id: int = field(init=False)
     match_id: int = field(init=False)
@@ -85,7 +53,7 @@ class Match:
         "matches",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
-        Column("external_id", Integer, nullable=True, unique=True),
+        Column("external_id", Integer, nullable=True),
         Column("competition_id", Integer, ForeignKey("competitions.id")),
         Column("first_team_id", Integer, ForeignKey("teams.id")),
         Column("second_team_id", Integer, ForeignKey("teams.id")),
@@ -105,6 +73,8 @@ class Match:
             "sets": relationship(MatchSet),
         }
     }
+
+    __table_args__ = (UniqueConstraint("competition_id", "external_id"),)
 
     id: int = field(init=False)
     competition_id: int = field(init=False)

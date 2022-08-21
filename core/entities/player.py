@@ -1,4 +1,3 @@
-from typing import Optional
 from dataclasses import dataclass, field
 from sqlalchemy import Table, Column, String, Integer, Enum
 from common.enums import City
@@ -12,7 +11,6 @@ class Player:
         "players",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
-        Column("external_id", Integer, nullable=True, unique=True),
         Column("first_name", String(255)),
         Column("last_name", String(255)),
         Column("city", Enum(City)),
@@ -22,7 +20,6 @@ class Player:
     first_name: str
     last_name: str
     city: City
-    external_id: Optional[int] = None
 
     def __hash__(self) -> int:
         assert self.id is not None

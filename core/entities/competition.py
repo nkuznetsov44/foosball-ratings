@@ -9,12 +9,14 @@ from sqlalchemy import (
     Integer,
     Numeric,
     Enum,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 from common.utils import DatetimeWithTZ
 from common.enums import CompetitionType
 from core.storage.mapping import mapper_registry
 from core.entities.match import Match
+from core.entities.team import Team
 
 
 @mapper_registry.mapped
@@ -24,7 +26,7 @@ class Competition:
         "competitions",
         mapper_registry.metadata,
         Column("id", Integer, primary_key=True),
-        Column("external_id", Integer, nullable=True, unique=True),
+        Column("external_id", Integer, nullable=True),
         Column("tournament_id", Integer, ForeignKey("tournaments.id")),
         Column("competition_type", Enum(CompetitionType)),
         Column("evks_importance_coefficient", Numeric),
@@ -32,9 +34,12 @@ class Competition:
         Column("end_datetime", DateTime(timezone=True)),
     )
 
+    __table_args__ = (UniqueConstraint("tournament_id", "external_id"),)
+
     __mapper_args__ = {  # type: ignore
         "properties": {
             "matches": relationship(Match),
+            "teams": relationship(Team),
         }
     }
 
@@ -46,3 +51,4 @@ class Competition:
     end_datetime: DatetimeWithTZ
     external_id: Optional[int] = None
     matches: list[Match] = field(default_factory=list)
+    teams: list[Team] = field(default_factory=list)

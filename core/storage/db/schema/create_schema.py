@@ -3,7 +3,8 @@ from core.storage.mapping import mapper_registry
 
 from core.entities.tournament import Tournament  # noqa
 from core.entities.competition import Competition  # noqa
-from core.entities.match import Match, Team, MatchSet  # noqa
+from core.entities.match import Match, MatchSet  # noqa
+from core.entities.team import Team  # noqa
 from core.entities.player import Player  # noqa
 from core.entities.state import PlayerState, RatingsState  # noqa
 

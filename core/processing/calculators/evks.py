@@ -7,7 +7,8 @@ from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
 )
 from core.entities.competition import Competition
-from core.entities.match import Match, Team
+from core.entities.match import Match
+from core.entities.team import Team
 from core.entities.player import Player
 from core.entities.state import PlayerState, RatingsState
 from core.exceptions import PlayerStateNotFound

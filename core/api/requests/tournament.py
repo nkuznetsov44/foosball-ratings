@@ -8,7 +8,8 @@ from common.enums import CompetitionType, City
 
 @dataclass
 class TeamReq:
-    external_id: Optional[int]
+    external_id: int
+    competition_place: int
     first_player_id: int
     second_player_id: Optional[int]  # None for singles
 
@@ -24,8 +25,8 @@ class MatchSetReq:
 @dataclass
 class MatchReq:
     external_id: Optional[int]
-    first_team: TeamReq
-    second_team: TeamReq
+    first_team_external_id: int
+    second_team_external_id: int
     sets: list[MatchSetReq]
     force_qualification: Optional[bool]
     start_datetime: DatetimeWithTZ = field(
@@ -47,6 +48,7 @@ class CompetitionReq:
         metadata=dict(marshmallow_field=fields.DateTime())
     )
     matches: list[MatchReq]
+    teams: list[TeamReq]
 
 
 @dataclass

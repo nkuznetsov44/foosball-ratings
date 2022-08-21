@@ -4,7 +4,8 @@ from decimal import Decimal
 from common.enums import RatingType, CompetitionType, EvksPlayerRank, City
 from core.processing.calculators.evks import EvksRatingCalculator
 from core.entities.player import Player
-from core.entities.match import Match, Team, MatchSet
+from core.entities.match import Match, MatchSet
+from core.entities.team import Team
 from core.entities.competition import Competition
 from core.entities.state import PlayerState, RatingsState
 
@@ -92,8 +93,12 @@ def ratings_state(player1, player2, player3, player4):
 @pytest.fixture
 def match1(player1, player2, player3, player4):
     return Match(
-        first_team=Team(first_player=player1, second_player=player2),
-        second_team=Team(first_player=player3, second_player=player4),
+        first_team=Team(
+            first_player=player1, second_player=player2, competition_place=1
+        ),
+        second_team=Team(
+            first_player=player3, second_player=player4, competition_place=2
+        ),
         sets=[
             MatchSet(order=1, first_team_score=5, second_team_score=2),
             MatchSet(order=2, first_team_score=5, second_team_score=2),
@@ -108,8 +113,8 @@ def match1(player1, player2, player3, player4):
 @pytest.fixture
 def match2(player2, player4):
     return Match(
-        first_team=Team(first_player=player2, second_player=None),
-        second_team=Team(first_player=player4, second_player=None),
+        first_team=Team(first_player=player2, second_player=None, competition_place=1),
+        second_team=Team(first_player=player4, second_player=None, competition_place=2),
         sets=[
             MatchSet(order=1, first_team_score=1, second_team_score=5),
             MatchSet(order=2, first_team_score=2, second_team_score=5),
