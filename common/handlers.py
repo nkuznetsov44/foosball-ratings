@@ -1,6 +1,8 @@
+from json import JSONDecodeError
 from typing import Any
 from aiohttp import web
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
+from common.exceptions import MalformedRequest
 
 
 def response_schema(schema: Schema):
@@ -30,7 +32,12 @@ class AbstractHandler(web.View):
 
     async def get_request_data(self) -> Any:
         schema_cls = self._get_handler_method().request_schema
-        return schema_cls().load(await self.request.json())
+        try:
+            return schema_cls().load(await self.request.json())
+        except JSONDecodeError as jde:
+            raise MalformedRequest(reason=jde.msg)
+        except ValidationError as ve:
+            raise MalformedRequest(validation_errors=ve.messages)
 
     def make_response(self, response_data: Any) -> web.Response:
         schema_cls = self._get_handler_method().response_schema

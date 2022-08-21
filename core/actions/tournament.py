@@ -104,6 +104,7 @@ class CreateTournamentAction(AbstractAction):
                 start_datetime=competition_req.start_datetime,
                 end_datetime=competition_req.end_datetime,
                 matches=competition_matches,
+                teams=list(competition_teams.values()),
             )
             tournament_competitions.append(competition)
         return tournament_competitions
