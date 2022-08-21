@@ -10,7 +10,7 @@ from core.entities.competition import Competition
 from core.entities.match import Match
 from core.entities.team import Team
 from core.entities.player import Player
-from core.entities.state import PlayerState, RatingsState
+from core.entities.state import PlayerState
 from core.exceptions import PlayerStateNotFound
 
 
@@ -23,9 +23,6 @@ class EvksGameType(Enum):
 class BaseEvksRatingCalculator(AbstractRatingCalculator):
     rating_type = RatingType.EVKS
     game_coefficients = ClassVar[dict[EvksGameType, int]]
-
-    def __init__(self, ratings_state: RatingsState) -> None:
-        self.ratings_state = ratings_state
 
     def calculate(self, match: Match, competition: Competition) -> dict[Player, int]:
         match_players_states = self._get_match_participants_states(match)

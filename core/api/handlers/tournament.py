@@ -1,6 +1,6 @@
 from aiohttp import web
 from common.handlers import request_schema, response_schema
-from core.api.handlers.abstract_db_handler import AbstractDbHandler
+from core.api.handlers.abstract_core_handler import AbstractCoreHandler
 from core.api.schemas.tournament import (
     CreateTournamentRequestSchema,
     TournamentSchema,
@@ -8,7 +8,7 @@ from core.api.schemas.tournament import (
 from core.actions.tournament import CreateTournamentAction
 
 
-class TournamentHandler(AbstractDbHandler):
+class TournamentHandler(AbstractCoreHandler):
     @request_schema(CreateTournamentRequestSchema)
     @response_schema(TournamentSchema)
     async def post(self) -> web.Response:

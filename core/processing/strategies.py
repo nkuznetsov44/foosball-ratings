@@ -1,6 +1,8 @@
 from typing import ClassVar
-from calculators.abstract_rating_calculator import AbstractRatingCalculator
-from calculators import evks, cumulative
+from core.processing.calculators.abstract_rating_calculator import (
+    AbstractRatingCalculator,
+)
+from core.processing.calculators import evks, cumulative
 from common.enums import RatingType
 
 

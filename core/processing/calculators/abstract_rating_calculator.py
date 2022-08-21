@@ -10,6 +10,9 @@ from core.entities.state import RatingsState
 class AbstractRatingCalculator(ABC):
     rating_type = ClassVar[RatingType]
 
+    def __init__(self, ratings_state: RatingsState) -> None:
+        self.ratings_state = ratings_state
+
     @abstractmethod
     def calculate(
         self, ratings_state: RatingsState, match: Match, competition: Competition

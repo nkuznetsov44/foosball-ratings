@@ -134,3 +134,6 @@ class Match:
         if self.is_first_team_win:
             return self.second_team
         return self.first_team
+
+    def is_before(self, other: "Match") -> bool:
+        return self.end_datetime < other.start_datetime

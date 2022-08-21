@@ -1,4 +1,4 @@
-from typing import Sequence, Optional
+from typing import Optional
 from common.enums import EvksPlayerRank
 from core.actions.abstract_action import AbstractAction, ActionContext
 from core.entities.state import PlayerState, RatingsState
@@ -6,7 +6,11 @@ from core.entities.player import Player
 from core.entities.match import Match
 from core.entities.competition import Competition
 from common.enums import RatingType
-from core.exceptions import PlayerStateAlreadyExists
+from core.exceptions import (
+    PlayerStateAlreadyExists,
+    PlayerStateNotFound,
+    PlayerStateSequenceError,
+)
 
 
 class BasePlayerStateAction(AbstractAction):
@@ -89,8 +93,24 @@ class CreatePlayerStateAction(BasePlayerStateAction):
         self._current_player_state = self._ratings_state.lookup_player_state(player)
 
     async def run(self) -> PlayerState:
-        assert self._ratings.get(RatingType.EVKS) is not None
-        assert self._ratings.get(RatingType.CUMULATIVE) is not None
+        assert (
+            self._ratings.get(RatingType.EVKS) is not None
+        ), "Need EVKS rating value to create player state"
+        assert (
+            self._ratings.get(RatingType.CUMULATIVE) is not None
+        ), "Need Cumulative rating value to create player state"
+
+        if not self._current_player_state:
+            raise PlayerStateNotFound(
+                player=self._player, current_state=self._ratings_state
+            )
+
+        if self._current_player_state.last_match and self._last_match.is_before(
+            self._current_player_state.last_match
+        ):
+            raise PlayerStateSequenceError(
+                match=self._last_match, current_state=self._ratings_state
+            )
 
         new_matches_played = self._current_player_state.matches_played + 1
 
@@ -121,7 +141,7 @@ class CreateRatingsStateAction(AbstractAction):
         self,
         *,
         context: ActionContext,
-        player_states: Sequence[PlayerState],
+        player_states: set[PlayerState],
         last_competition: Competition,
     ) -> None:
         super().__init__(context)
@@ -133,4 +153,20 @@ class CreateRatingsStateAction(AbstractAction):
         pass
 
     async def run(self) -> RatingsState:
-        raise NotImplementedError()  # TODO: implement
+        new_state = RatingsState(
+            previous_state_id=self._ratings_state.id,
+            last_competition=self._last_competition,
+            player_states=self._player_states,
+            evks_player_ranks=self._ratings_state.evks_player_ranks,  # TODO: fixme
+        )
+        async with self._make_db_session()() as session:
+            # TODO: resolve
+            # Can't attach instance <Player at 0x105b23d30>;
+            # another instance with key (<Player>, (21,), None)
+            # is already present in this session.
+            session.add(new_state)
+            await session.commit()
+            assert (
+                new_state.id is not None
+            ), "RatingsState id is null after session commit"
+            self._context.ratings_state = new_state

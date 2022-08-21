@@ -1,6 +1,6 @@
 from aiohttp import web
 from common.handlers import request_schema, response_schema
-from core.api.handlers.abstract_db_handler import AbstractDbHandler
+from core.api.handlers.abstract_core_handler import AbstractCoreHandler
 from core.api.schemas.player import (
     GetPlayersResponseSchema,
     CreatePlayersRequestSchema,
@@ -9,7 +9,7 @@ from core.api.schemas.player import (
 from core.actions.player import GetPlayersAction, CreatePlayersAction
 
 
-class PlayersHandler(AbstractDbHandler):
+class PlayersHandler(AbstractCoreHandler):
     @response_schema(GetPlayersResponseSchema)
     async def get(self) -> web.Response:
         players = await self.run_action(GetPlayersAction)

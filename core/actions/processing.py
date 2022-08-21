@@ -1,6 +1,6 @@
 from typing import Sequence
 from collections import defaultdict
-from datetime import tzinfo
+from pytz import UTC
 from common.utils import DatetimeWithTZ
 from core.actions.abstract_action import AbstractAction, ActionContext
 from core.entities.competition import Competition
@@ -12,12 +12,11 @@ from core.processing import strategies
 from core.actions.state import CreatePlayerStateAction, CreateRatingsStateAction
 
 
-BASE_TZ = tzinfo()
 DATE_2018_01_01 = DatetimeWithTZ(
-    year=2018, month=1, day=1, hour=0, minute=0, second=0, tzinfo=BASE_TZ
+    year=2018, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC
 )
 DATE_2022_01_01 = DatetimeWithTZ(
-    year=2022, month=1, day=1, hour=0, minute=0, second=0, tzinfo=BASE_TZ
+    year=2022, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC
 )  # TODO: уточнить, с какого момента начали считать накопительный рейтинг и поправить
 
 
@@ -56,44 +55,38 @@ class ProcessCompetitionAction(AbstractAction):
             for player, ratings in self._calculate_ratings_after_match(
                 match, strategy
             ).items():
-                player_state = await CreatePlayerStateAction(
-                    context=ActionContext(
-                        db_engine=self._context.db_engine,
-                        ratings_state=intermediate_ratings_state,
-                    ),
+                player_state = await self.run_action(
+                    CreatePlayerStateAction,
                     player=player,
                     last_match=match,
                     ratings=ratings,
-                ).run()
+                )
                 intermediate_ratings_state.player_states.add(player_state)
 
-        return await CreateRatingsStateAction(
-            context=self._context,
+        return await self.run_action(
+            CreateRatingsStateAction,
             player_states=intermediate_ratings_state.player_states,
             last_competition=self._competition,
-        ).run()
+        )
 
     def _choose_calculation_strategy(self):
-        if self.competition.end_datetime < DATE_2018_01_01:
+        if self._competition.end_datetime < DATE_2018_01_01:
             return strategies.Pre2018RatingCalculationStrategy
-        elif self.competition.end_datetime < DATE_2022_01_01:
+        elif self._competition.end_datetime < DATE_2022_01_01:
             return strategies.EvksOnlyRatingCalculationStrategy
         else:
             return strategies.EvksAndCumulativeRatingCalculationStrategy
 
     def _prepare_matches(self) -> Sequence[Match]:
-        return sorted(self.competition.matches, key=lambda match: match.end_datetime)
+        return sorted(self._competition.matches, key=lambda match: match.end_datetime)
 
     def _calculate_ratings_after_match(
         self, match: Match, strategy: strategies.AbstractCalculationStrategy
     ) -> dict[Player, dict[RatingType, int]]:
-        ratings_calculation_results: dict[Player, dict[RatingType, int]] = defaultdict(
-            {}
-        )
-        for rating_type, calculator in strategy.calculators.items():
-            calc_result_by_player = calculator.calculate(
-                self._ratings_state, match, self._competition
-            )
+        result: dict[Player, dict[RatingType, int]] = defaultdict(dict)
+        for rating_type, calculator_cls in strategy.calculators.items():
+            calculator = calculator_cls(ratings_state=self._ratings_state)
+            calc_result_by_player = calculator.calculate(match, self._competition)
             for player, rating_value in calc_result_by_player.items():
-                ratings_calculation_results[player][rating_type] = rating_value
-        return ratings_calculation_results
+                result[player][rating_type] = rating_value
+        return result

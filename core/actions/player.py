@@ -3,7 +3,7 @@ from core.actions.abstract_action import AbstractAction, ActionContext
 from core.api.requests.player import CreatePlayersRequest
 from core.entities.state import PlayerState
 from core.entities.player import Player
-from core.actions.state import CreateInitialPlayerStateAction
+from core.actions.state import CreateInitialPlayerStateAction, CreateRatingsStateAction
 
 
 class GetPlayerAction(AbstractAction):
@@ -34,8 +34,9 @@ class CreatePlayersAction(AbstractAction):
         super().__init__(context)
         self._request = request
 
-    async def run(self) -> list[PlayerState]:
-        player_states: list[PlayerState] = []
+    async def run(self) -> set[PlayerState]:
+        # TODO: transactional
+        player_states: set[PlayerState] = set()
 
         for player_req in self._request.players:
             player = Player(
@@ -47,18 +48,26 @@ class CreatePlayersAction(AbstractAction):
             async with self._make_db_session()() as session:
                 session.add(player)
                 await session.commit()
-                assert player.id is not None
+                assert player.id is not None, "Player id is null after session commit"
 
-            player_states.append(
-                await CreateInitialPlayerStateAction(
-                    context=self._context,
+            player_states.add(
+                await self.run_action(
+                    CreateInitialPlayerStateAction,
                     player=player,
                     evks_rating=player_req.initial_evks_rating,
                     cumulative_rating=player_req.initial_cumulative_rating,
                     matches_played=player_req.initial_matches_played,
                     matches_won=player_req.initial_matches_won,
                     is_evks_rating_active=player_req.is_evks_rating_active,
-                ).run()
+                )
             )
+
+        new_state = self._ratings_state.dirty_copy()
+        new_state.player_states.update(player_states)
+        await self.run_action(
+            CreateRatingsStateAction,
+            player_states=player_states,
+            last_competition=self._ratings_state.last_competition,
+        )
 
         return player_states

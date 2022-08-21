@@ -22,5 +22,5 @@ class Player:
     city: City
 
     def __hash__(self) -> int:
-        assert self.id is not None
+        assert self.id is not None, "Can't hash Player with no id"
         return hash(self.id)

@@ -11,6 +11,7 @@ from core.entities.match import Match, MatchSet
 from core.entities.team import Team
 from core.entities.competition import Competition
 from core.entities.tournament import Tournament
+from core.actions.processing import ProcessCompetitionAction
 
 
 class CreateTournamentAction(AbstractAction):
@@ -24,6 +25,7 @@ class CreateTournamentAction(AbstractAction):
         self._request = request
 
     async def run(self) -> Tournament:
+        # TODO: transactional
         tournament_competitions = await self._construct_tournament_competitions(
             self._request.competitions
         )
@@ -38,8 +40,17 @@ class CreateTournamentAction(AbstractAction):
         async with self._make_db_session()() as session:
             session.add(tournament)
             await session.commit()
-            assert tournament.id is not None
-            return tournament
+            assert (
+                tournament.id is not None
+            ), "Tournament id is null after session commit"
+
+        for competition in tournament.competitions:
+            await self.run_action(
+                ProcessCompetitionAction,
+                competition=competition,
+            )
+
+        return Tournament
 
     async def _construct_competition_teams(
         self, team_reqs: list[TeamReq]
@@ -110,4 +121,4 @@ class CreateTournamentAction(AbstractAction):
         return tournament_competitions
 
     async def _get_player(self, player_id: int) -> Player:
-        return await GetPlayerAction(context=self._context, player_id=player_id).run()
+        return await self.run_action(GetPlayerAction, player_id=player_id)

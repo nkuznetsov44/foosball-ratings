@@ -1,6 +1,6 @@
-from typing import Optional, NoReturn
+from typing import Optional
 from dataclasses import dataclass, field
-from sqlalchemy import Table, Column, ForeignKey, Integer, Boolean, JSON
+from sqlalchemy import types, Table, Column, ForeignKey, Integer, Boolean, JSON
 from sqlalchemy.orm import relationship
 from common.enums import RatingType, EvksPlayerRank
 from core.storage.mapping import mapper_registry
@@ -10,6 +10,20 @@ from core.entities.competition import Competition
 
 
 _RatingValue = int
+
+
+class _RatingsJSON(types.TypeDecorator):
+    impl = JSON
+
+    def process_bind_param(
+        self, value: dict[RatingType, _RatingValue], _
+    ) -> dict[str, int]:
+        return {key.name: val for key, val in value.items()}
+
+    def process_result_value(
+        self, value: dict[int, str], _
+    ) -> dict[RatingType, _RatingValue]:
+        return {RatingType[key]: val for key, val in value.items()}
 
 
 @mapper_registry.mapped
@@ -27,7 +41,7 @@ class PlayerState:
         Column("player_id", Integer, ForeignKey("players.id")),
         Column("matches_won", Integer),
         Column("last_match_id", Integer, ForeignKey("matches.id")),
-        Column("ratings", JSON),
+        Column("ratings", _RatingsJSON),
         Column("is_evks_rating_active", Boolean),
     )
 
@@ -52,10 +66,10 @@ class PlayerState:
 
     @property
     def cumulative_rating(self) -> Optional[int]:
-        return self.rating.get(RatingType.CUMULATIVE)
+        return self.ratings.get(RatingType.CUMULATIVE)
 
     def __hash__(self) -> int:
-        assert self.id is not None
+        assert self.id is not None, "Can't hash PlayerState with no id"
         return hash(self.id)
 
 
@@ -70,6 +84,20 @@ association_table = Table(
 )
 
 
+class _EvksPlayerRanksJSON(types.TypeDecorator):
+    impl = JSON
+
+    def process_bind_param(
+        self, value: dict[_PlayerId, EvksPlayerRank], _
+    ) -> dict[int, str]:
+        return {key: val.name for key, val in value.items()}
+
+    def process_result_value(
+        self, value: dict[int, str], _
+    ) -> dict[_PlayerId, EvksPlayerRank]:
+        return {key: EvksPlayerRank[val] for key, val in value.items()}
+
+
 @mapper_registry.mapped
 @dataclass
 class RatingsState:
@@ -82,7 +110,7 @@ class RatingsState:
         Column(
             "previous_state_id", Integer, ForeignKey("ratings_states.id"), nullable=True
         ),
-        Column("evks_player_ranks", JSON),
+        Column("evks_player_ranks", _EvksPlayerRanksJSON),
         Column("last_competition_id", Integer, ForeignKey("competitions.id")),
     )
 
@@ -105,34 +133,11 @@ class RatingsState:
             filter(lambda ps: ps.player.id == player.id, self.player_states), None
         )
 
-    def dirty_copy(self) -> "DirtyRatingsState":
-        return DirtyRatingsState.from_state(self)
-
-
-class DirtyRatingsState(RatingsState):
-    READ_FROM_DIRTY_STATE = ValueError("Read from dirty state")
-
-    @property
-    def id(self) -> NoReturn:
-        raise self.READ_FROM_DIRTY_STATE
-
-    @property
-    def previous_state_id(self) -> NoReturn:
-        raise self.READ_FROM_DIRTY_STATE
-
-    @property
-    def evks_player_ranks(self) -> NoReturn:
-        raise self.READ_FROM_DIRTY_STATE
-
-    @property
-    def last_competition(self) -> NoReturn:
-        raise self.READ_FROM_DIRTY_STATE
-
-    @classmethod
-    def from_state(cls, state: RatingsState) -> "DirtyRatingsState":
-        return DirtyRatingsState(
-            previous_state_id=None,
-            player_states=state.player_states.copy(),  # a shallow copy of player states
-            evks_player_ranks={},
-            last_competition=None,
+    def dirty_copy(self) -> "RatingsState":
+        """Returns a dirty shallow copy of self"""
+        return RatingsState(
+            previous_state_id=self.previous_state_id,
+            player_states=self.player_states.copy(),
+            evks_player_ranks=self.evks_player_ranks.copy(),
+            last_competition=self.last_competition,
         )
