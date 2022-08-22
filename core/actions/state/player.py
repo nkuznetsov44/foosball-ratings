@@ -1,10 +1,8 @@
 from typing import Optional
-from common.enums import EvksPlayerRank
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import PlayerState, RatingsState, PlayerStates
+from core.entities.state import PlayerState
 from core.entities.player import Player
 from core.entities.match import Match
-from core.entities.competition import Competition
 from common.enums import RatingType
 from core.exceptions import (
     PlayerStateAlreadyExists,
@@ -134,35 +132,3 @@ class CreatePlayerStateAction(BasePlayerStateAction):
                 is_evks_rating_active=is_evks_rating_active,
             )
         )
-
-
-class CreateRatingsStateAction(AbstractAction):
-    def __init__(
-        self,
-        *,
-        context: ActionContext,
-        player_states: PlayerStates,
-        last_competition: Competition,
-    ) -> None:
-        super().__init__(context)
-        self._player_states = player_states
-        self._last_competition = last_competition
-
-    def _get_evks_player_rank(self, player_state: PlayerState) -> EvksPlayerRank:
-        # TODO: реализовать логику перехода между рангами после категории
-        pass
-
-    async def run(self) -> RatingsState:
-        new_state = RatingsState(
-            previous_state_id=self.ratings_state.id,
-            last_competition=self._last_competition,
-            player_states=self._player_states,
-            evks_player_ranks=self.ratings_state.evks_player_ranks,  # TODO: fixme
-        )
-        async with self.make_db_session()() as session:
-            session.add(new_state)
-            await session.commit()
-            assert (
-                new_state.id is not None
-            ), "RatingsState id is null after session commit"
-            self._context.ratings_state = new_state

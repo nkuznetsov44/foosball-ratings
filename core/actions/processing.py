@@ -8,7 +8,8 @@ from core.entities.match import Match
 from core.entities.state import RatingsState
 from common.enums import RatingType
 from core.processing import strategies
-from core.actions.state import CreatePlayerStateAction, CreateRatingsStateAction
+from core.actions.state.player import CreatePlayerStateAction
+from core.actions.state.rating import CreateRatingsStateAction
 
 
 DATE_2018_01_01 = DatetimeWithTZ(

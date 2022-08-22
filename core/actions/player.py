@@ -3,7 +3,8 @@ from core.actions.abstract_action import AbstractAction, ActionContext
 from core.api.requests.player import CreatePlayersRequest
 from core.entities.state import PlayerStates
 from core.entities.player import Player
-from core.actions.state import CreateInitialPlayerStateAction, CreateRatingsStateAction
+from core.actions.state.player import CreateInitialPlayerStateAction
+from core.actions.state.rating import CreateRatingsStateAction
 
 
 class GetPlayerAction(AbstractAction):
@@ -64,7 +65,7 @@ class CreatePlayersAction(AbstractAction):
         new_state.player_states |= player_states
         await self.run_action(
             CreateRatingsStateAction,
-            player_states=player_states,
+            player_states=new_state.player_states,
             last_competition=self.ratings_state.last_competition,
         )
 

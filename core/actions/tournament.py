@@ -11,7 +11,7 @@ from core.entities.team import Team
 from core.entities.competition import Competition
 from core.entities.tournament import Tournament
 from core.actions.processing import ProcessCompetitionAction
-from ..exceptions import PlayerStateNotFound
+from core.exceptions import PlayerStateNotFound
 
 
 class CreateTournamentAction(AbstractAction):

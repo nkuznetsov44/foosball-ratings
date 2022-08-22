@@ -135,6 +135,10 @@ class RatingsState:
     player_states: PlayerStates
     evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
 
+    @property
+    def player_states_list(self) -> list[PlayerState]:
+        return self.player_states.values()
+
     def __getitem__(self, item: Union[_PlayerId, Player]) -> Optional[PlayerState]:
         if isinstance(item, Player):
             player_id = item.id
