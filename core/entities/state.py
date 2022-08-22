@@ -40,6 +40,7 @@ class PlayerState:
             "previous_state_id", Integer, ForeignKey("player_states.id"), nullable=True
         ),
         Column("player_id", Integer, ForeignKey("players.id")),
+        Column("matches_played", Integer),
         Column("matches_won", Integer),
         Column("last_match_id", Integer, ForeignKey("matches.id")),
         Column("ratings", _RatingsJSON),
@@ -49,7 +50,8 @@ class PlayerState:
     __mapper_args__ = {  # type: ignore
         "properties": {
             "player": relationship(Player, uselist=False),
-        }
+            "last_match": relationship(Match, uselist=False),
+        },
     }
 
     id: int = field(init=False)
@@ -123,6 +125,7 @@ class RatingsState:
                 secondary=association_table,
                 collection_class=attribute_mapped_collection("player_id"),
             ),
+            "last_competition": relationship(Competition, uselist=False),
         }
     }
 
