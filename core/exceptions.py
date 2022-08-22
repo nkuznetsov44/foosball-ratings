@@ -1,7 +1,5 @@
 from typing import ClassVar
 from core.entities.state import RatingsState
-from core.entities.player import Player
-from core.entities.match import Match
 
 
 class CoreProcessingError(Exception):
@@ -17,22 +15,22 @@ class CoreProcessingError(Exception):
 class PlayerStateNotFound(CoreProcessingError):
     REASON_CODE = "PLAYER_STATE_NOT_FOUND"
 
-    def __init__(self, player: Player, current_state: RatingsState) -> None:
+    def __init__(self, player_id: int, current_state: RatingsState) -> None:
         super().__init__(current_state)
-        self.params["player"] = str(player)
+        self.params["player_id"] = player_id
 
 
 class PlayerStateAlreadyExists(CoreProcessingError):
     REASON_CODE = "PLAYER_STATE_ALREADY_EXISTS"
 
-    def __init__(self, player: Player, current_state: RatingsState) -> None:
+    def __init__(self, player_id: int, current_state: RatingsState) -> None:
         super().__init__(current_state)
-        self.params["player"] = str(player)
+        self.params["player_id"] = player_id
 
 
 class PlayerStateSequenceError(CoreProcessingError):
     REASON_CODE = "NEW_MATCH_IS_BEFORE_LAST_PROCESSED_MATCH"
 
-    def __init__(self, match: Match, current_state: RatingsState) -> None:
+    def __init__(self, match_id: int, current_state: RatingsState) -> None:
         super().__init__(current_state)
-        self.params["match"] = str(match)
+        self.params["match_id"] = match_id

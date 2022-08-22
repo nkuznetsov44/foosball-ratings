@@ -22,4 +22,4 @@ class PlayersHandler(AbstractCoreHandler):
         player_states = await self.run_action(
             CreatePlayersAction, request=create_players_request
         )
-        return self.make_response({"player_states": player_states})
+        return self.make_response({"player_states": player_states.values()})

@@ -1,7 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 from dataclasses import dataclass, field
 from sqlalchemy import types, Table, Column, ForeignKey, Integer, Boolean, JSON
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.collections import attribute_mapped_collection
 from common.enums import RatingType, EvksPlayerRank
 from core.storage.mapping import mapper_registry
 from core.entities.player import Player
@@ -74,6 +75,7 @@ class PlayerState:
 
 
 _PlayerId = int
+PlayerStates = dict[_PlayerId, PlayerState]
 
 
 association_table = Table(
@@ -117,7 +119,9 @@ class RatingsState:
     __mapper_args__ = {  # type: ignore
         "properties": {
             "player_states": relationship(
-                PlayerState, secondary=association_table, collection_class=set
+                PlayerState,
+                secondary=association_table,
+                collection_class=attribute_mapped_collection("player_id"),
             ),
         }
     }
@@ -125,13 +129,19 @@ class RatingsState:
     id: int = field(init=False)
     previous_state_id: Optional[int]
     last_competition: Optional[Competition]
-    player_states: set[PlayerState]
+    player_states: PlayerStates
     evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
 
-    def lookup_player_state(self, player: Player) -> Optional[PlayerState]:
-        return next(
-            filter(lambda ps: ps.player.id == player.id, self.player_states), None
-        )
+    def __getitem__(self, item: Union[_PlayerId, Player]) -> Optional[PlayerState]:
+        if isinstance(item, Player):
+            player_id = item.id
+            if player_id is None:
+                raise KeyError(f"Can't get player state for player with no id {item}")
+        elif isinstance(item, _PlayerId):
+            player_id = item
+        else:
+            raise KeyError(f"Incorrect player state key type {type(item)}")
+        return self.player_states.get(player_id)
 
     def dirty_copy(self) -> "RatingsState":
         """Returns a dirty shallow copy of self"""

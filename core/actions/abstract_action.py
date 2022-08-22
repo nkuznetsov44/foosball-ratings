@@ -33,10 +33,10 @@ class AbstractAction(ABC):
         raise NotImplementedError()
 
     @property
-    def _ratings_state(self) -> RatingsState:
+    def ratings_state(self) -> RatingsState:
         return self._context.ratings_state
 
-    def _make_db_session(self) -> Type[AsyncSession]:
+    def make_db_session(self) -> Type[AsyncSession]:
         return sessionmaker(
             self._context.db_engine, expire_on_commit=False, class_=AsyncSession
         )

@@ -1,5 +1,4 @@
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.actions.player import GetPlayerAction
 from core.api.requests.tournament import (
     CompetitionReq,
     CreateTournamentRequest,
@@ -12,6 +11,7 @@ from core.entities.team import Team
 from core.entities.competition import Competition
 from core.entities.tournament import Tournament
 from core.actions.processing import ProcessCompetitionAction
+from ..exceptions import PlayerStateNotFound
 
 
 class CreateTournamentAction(AbstractAction):
@@ -26,7 +26,7 @@ class CreateTournamentAction(AbstractAction):
 
     async def run(self) -> Tournament:
         # TODO: transactional
-        tournament_competitions = await self._construct_tournament_competitions(
+        tournament_competitions = self._construct_tournament_competitions(
             self._request.competitions
         )
         tournament = Tournament(
@@ -37,7 +37,7 @@ class CreateTournamentAction(AbstractAction):
             competitions=tournament_competitions,
         )
 
-        async with self._make_db_session()() as session:
+        async with self.make_db_session()() as session:
             session.add(tournament)
             await session.commit()
             assert (
@@ -50,18 +50,16 @@ class CreateTournamentAction(AbstractAction):
                 competition=competition,
             )
 
-        return Tournament
+        return tournament
 
-    async def _construct_competition_teams(
-        self, team_reqs: list[TeamReq]
-    ) -> dict[int, Team]:
+    def _construct_competition_teams(self, team_reqs: list[TeamReq]) -> dict[int, Team]:
         """Returns a map of team_external_id -> Team"""
         teams_map: dict[int, Team] = {}
         for team_req in team_reqs:
-            first_player = await self._get_player(team_req.first_player_id)
+            first_player = self._get_player(team_req.first_player_id)
             second_player = None
             if team_req.second_player_id:
-                second_player = await self._get_player(team_req.second_player_id)
+                second_player = self._get_player(team_req.second_player_id)
 
             teams_map[team_req.external_id] = Team(
                 external_id=team_req.external_id,
@@ -71,7 +69,7 @@ class CreateTournamentAction(AbstractAction):
             )
         return teams_map
 
-    async def _construct_competition_matches(
+    def _construct_competition_matches(
         self, match_reqs: list[MatchReq], competition_teams: dict[int, Team]
     ) -> list[Match]:
         competition_matches: list[Match] = []
@@ -97,15 +95,13 @@ class CreateTournamentAction(AbstractAction):
             competition_matches.append(match)
         return competition_matches
 
-    async def _construct_tournament_competitions(
+    def _construct_tournament_competitions(
         self, competition_reqs: list[CompetitionReq]
     ) -> list[Competition]:
         tournament_competitions: list[Competition] = []
         for competition_req in competition_reqs:
-            competition_teams = await self._construct_competition_teams(
-                competition_req.teams
-            )
-            competition_matches = await self._construct_competition_matches(
+            competition_teams = self._construct_competition_teams(competition_req.teams)
+            competition_matches = self._construct_competition_matches(
                 competition_req.matches, competition_teams
             )
             competition = Competition(
@@ -120,5 +116,10 @@ class CreateTournamentAction(AbstractAction):
             tournament_competitions.append(competition)
         return tournament_competitions
 
-    async def _get_player(self, player_id: int) -> Player:
-        return await self.run_action(GetPlayerAction, player_id=player_id)
+    def _get_player(self, player_id: int) -> Player:
+        player_state = self.ratings_state[player_id]
+        if player_state is None:
+            raise PlayerStateNotFound(
+                player_id=player_id, current_state=self.ratings_state
+            )
+        return player_state.player

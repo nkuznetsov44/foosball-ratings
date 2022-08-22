@@ -19,7 +19,7 @@ setup_db_engine(app, echo=True)
 app["ratings_state"] = RatingsState(
     previous_state_id=None,
     last_competition=None,
-    player_states=set(),
+    player_states=dict(),
     evks_player_ranks=dict(),
 )
 

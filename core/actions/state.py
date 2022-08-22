@@ -1,7 +1,7 @@
 from typing import Optional
 from common.enums import EvksPlayerRank
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import PlayerState, RatingsState
+from core.entities.state import PlayerState, RatingsState, PlayerStates
 from core.entities.player import Player
 from core.entities.match import Match
 from core.entities.competition import Competition
@@ -15,7 +15,7 @@ from core.exceptions import (
 
 class BasePlayerStateAction(AbstractAction):
     async def _save_player_state(self, player_state: PlayerState) -> PlayerState:
-        async with self._make_db_session()() as session:
+        async with self.make_db_session()() as session:
             session.add(player_state)
             await session.commit()
             assert player_state.id is not None
@@ -48,9 +48,9 @@ class CreateInitialPlayerStateAction(BasePlayerStateAction):
         self._is_evks_rating_active = is_evks_rating_active
 
     async def run(self) -> PlayerState:
-        if self._ratings_state.lookup_player_state(self._player):
+        if self.ratings_state[self._player]:
             raise PlayerStateAlreadyExists(
-                player=self._player, current_state=self._ratings_state
+                player_id=self._player.id, current_state=self.ratings_state
             )
 
         matches_played = self._matches_played or 0
@@ -90,7 +90,7 @@ class CreatePlayerStateAction(BasePlayerStateAction):
         self._player = player
         self._last_match = last_match
         self._ratings = ratings
-        self._current_player_state = self._ratings_state.lookup_player_state(player)
+        self._current_player_state = self.ratings_state[player]
 
     async def run(self) -> PlayerState:
         assert (
@@ -102,14 +102,14 @@ class CreatePlayerStateAction(BasePlayerStateAction):
 
         if not self._current_player_state:
             raise PlayerStateNotFound(
-                player=self._player, current_state=self._ratings_state
+                player_id=self._player.id, current_state=self.ratings_state
             )
 
         if self._current_player_state.last_match and self._last_match.is_before(
             self._current_player_state.last_match
         ):
             raise PlayerStateSequenceError(
-                match=self._last_match, current_state=self._ratings_state
+                match_id=self._last_match.id, current_state=self.ratings_state
             )
 
         new_matches_played = self._current_player_state.matches_played + 1
@@ -141,7 +141,7 @@ class CreateRatingsStateAction(AbstractAction):
         self,
         *,
         context: ActionContext,
-        player_states: set[PlayerState],
+        player_states: PlayerStates,
         last_competition: Competition,
     ) -> None:
         super().__init__(context)
@@ -154,16 +154,12 @@ class CreateRatingsStateAction(AbstractAction):
 
     async def run(self) -> RatingsState:
         new_state = RatingsState(
-            previous_state_id=self._ratings_state.id,
+            previous_state_id=self.ratings_state.id,
             last_competition=self._last_competition,
             player_states=self._player_states,
-            evks_player_ranks=self._ratings_state.evks_player_ranks,  # TODO: fixme
+            evks_player_ranks=self.ratings_state.evks_player_ranks,  # TODO: fixme
         )
-        async with self._make_db_session()() as session:
-            # TODO: resolve
-            # Can't attach instance <Player at 0x105b23d30>;
-            # another instance with key (<Player>, (21,), None)
-            # is already present in this session.
+        async with self.make_db_session()() as session:
             session.add(new_state)
             await session.commit()
             assert (

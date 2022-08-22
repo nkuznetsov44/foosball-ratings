@@ -1,5 +1,9 @@
 from aiohttp import web
+from logging import getLogger
 from core.exceptions import CoreProcessingError
+
+
+logger = getLogger(__name__)
 
 
 @web.middleware
@@ -9,4 +13,5 @@ async def core_processing_error_500_middleware(
     try:
         return await handler(request)
     except CoreProcessingError as e:
-        return handler.make_error_response(e)
+        logger.exception("CORE_PROCESSING_ERROR")
+        return web.json_response({"reason": e.reason, "params": e.params})

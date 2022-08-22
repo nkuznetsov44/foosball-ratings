@@ -40,7 +40,7 @@ def player4():
 
 @pytest.fixture
 def player_states(player1, player2, player3, player4):
-    player_states = set()
+    player_states = {}
 
     p1_state = PlayerState(
         previous_state_id=None,
@@ -52,7 +52,8 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
     p1_state.id = 1
-    player_states.add(p1_state)
+    p1_state.player_id = 1
+    player_states[player1.id] = p1_state
 
     p2_state = PlayerState(
         previous_state_id=None,
@@ -64,7 +65,8 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
     p2_state.id = 2
-    player_states.add(p2_state)
+    p2_state.player_id = 2
+    player_states[player2.id] = p2_state
 
     p3_state = PlayerState(
         previous_state_id=None,
@@ -76,7 +78,8 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
     p3_state.id = 3
-    player_states.add(p3_state)
+    p3_state.player_id = 3
+    player_states[player3.id] = p3_state
 
     p4_state = PlayerState(
         previous_state_id=None,
@@ -87,8 +90,9 @@ def player_states(player1, player2, player3, player4):
         ratings={RatingType.EVKS: 1218},
         is_evks_rating_active=True,
     )
-    p4_state.id = 1
-    player_states.add(p4_state)
+    p4_state.id = 4
+    p4_state.player_id = 4
+    player_states[player4.id] = p4_state
 
     return player_states
 
@@ -179,14 +183,14 @@ def test_evks_calculation_doubles(
 ):
     result = calculator.calculate(match=match1, competition=competition)
     # r = 2.547396728611409795104721012
-    assert_that(result[player1], equal_to(1713))
-    assert_that(result[player2], equal_to(2066))
-    assert_that(result[player3], equal_to(1635))
-    assert_that(result[player4], equal_to(1215))
+    assert_that(result[player1.id], equal_to(1713))
+    assert_that(result[player2.id], equal_to(2066))
+    assert_that(result[player3.id], equal_to(1635))
+    assert_that(result[player4.id], equal_to(1215))
 
 
 def test_evks_calculation_singles(calculator, competition, match2, player2, player4):
     result = calculator.calculate(match=match2, competition=competition)
     # r = 35.72428301468905220089739857
-    assert_that(result[player2], equal_to(2027))
-    assert_that(result[player4], equal_to(1254))
+    assert_that(result[player2.id], equal_to(2027))
+    assert_that(result[player4.id], equal_to(1254))

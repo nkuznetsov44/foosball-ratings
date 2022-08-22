@@ -13,6 +13,7 @@ from sqlalchemy.orm import relationship
 from core.storage.mapping import mapper_registry
 from common.utils import DatetimeWithTZ
 from core.entities.team import Team
+from core.entities.player import Player
 
 
 @mapper_registry.mapped
@@ -134,6 +135,10 @@ class Match:
         if self.is_first_team_win:
             return self.second_team
         return self.first_team
+
+    @property
+    def players(self) -> list[Player]:
+        return self.first_team.players + self.second_team.players
 
     def is_before(self, other: "Match") -> bool:
         return self.end_datetime < other.start_datetime
