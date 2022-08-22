@@ -36,7 +36,7 @@ class Competition:
 
     __table_args__ = (UniqueConstraint("tournament_id", "external_id"),)
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "matches": relationship(Match),
             "teams": relationship(Team),

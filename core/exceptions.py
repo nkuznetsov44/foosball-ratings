@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Any
 from core.entities.state import RatingsState
 
 
@@ -8,7 +8,7 @@ class CoreProcessingError(Exception):
     def __init__(self, current_state: RatingsState) -> None:
         self.current_state = current_state
         self.reason = self.REASON_CODE or "UNEXPECTED_PROCESSING_ERROR"
-        self.params = dict()
+        self.params: dict[str, Any] = dict()
         super().__init__()
 
 

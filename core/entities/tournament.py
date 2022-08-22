@@ -20,7 +20,7 @@ class Tournament:
         Column("url", String(511), nullable=True),
     )
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "competitions": relationship(Competition),
         }

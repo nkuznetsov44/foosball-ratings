@@ -9,7 +9,6 @@ from core.processing.calculators.abstract_rating_calculator import (
 from core.entities.competition import Competition
 from core.entities.match import Match
 from core.entities.team import Team
-from core.entities.player import Player
 from core.exceptions import PlayerStateNotFound
 
 
@@ -113,7 +112,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
 
     def _calculate_doubles_reliability_coefficients(
         self, match: Match
-    ) -> dict[Player, Decimal]:
+    ) -> dict[_PlayerId, Decimal]:
         res: dict[_PlayerId, Decimal] = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):

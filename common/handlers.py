@@ -1,3 +1,4 @@
+from typing import Callable, Type
 from json import JSONDecodeError
 from typing import Any
 from aiohttp import web
@@ -5,16 +6,16 @@ from marshmallow import Schema, ValidationError
 from common.exceptions import MalformedRequest
 
 
-def response_schema(schema: Schema):
-    def decorator(handler_method):
+def response_schema(schema: Type[Schema]) -> Callable[[Any], Any]:
+    def decorator(handler_method: Any) -> Any:
         handler_method.response_schema = schema
         return handler_method
 
     return decorator
 
 
-def request_schema(schema: Schema):
-    def decorator(handler_method):
+def request_schema(schema: Type[Schema]) -> Callable[[Any], Any]:
+    def decorator(handler_method: Any) -> Any:
         handler_method.request_schema = schema
         return handler_method
 

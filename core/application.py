@@ -42,7 +42,7 @@ async def init_ratings_state(app: web.Application) -> None:
         result = await session.execute(
             select(RatingsState)
             .options(selectinload("*"))
-            .order_by(RatingsState.id.desc())
+            .order_by(RatingsState.id.desc())  # type: ignore
         )
         ratings_state = result.scalars().first()
 
@@ -53,8 +53,8 @@ async def init_ratings_state(app: web.Application) -> None:
 async def make_app() -> web.Application:
     app = web.Application(
         middlewares=[
-            malformed_request_400_middleware,
-            core_processing_error_500_middleware,
+            malformed_request_400_middleware,  # type: ignore
+            core_processing_error_500_middleware,  # type: ignore
         ]
     )
     setup_routes(app)

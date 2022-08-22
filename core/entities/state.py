@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, Any
 from dataclasses import dataclass, field
 from sqlalchemy import types, Table, Column, ForeignKey, Integer, Boolean, JSON
 from sqlalchemy.orm import relationship
@@ -17,12 +17,12 @@ class _RatingsJSON(types.TypeDecorator):
     impl = JSON
 
     def process_bind_param(
-        self, value: dict[RatingType, _RatingValue], _
+        self, value: dict[RatingType, _RatingValue], _: Any
     ) -> dict[str, int]:
         return {key.name: val for key, val in value.items()}
 
     def process_result_value(
-        self, value: dict[int, str], _
+        self, value: dict[str, int], _: Any
     ) -> dict[RatingType, _RatingValue]:
         return {RatingType[key]: val for key, val in value.items()}
 
@@ -47,7 +47,7 @@ class PlayerState:
         Column("is_evks_rating_active", Boolean),
     )
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "player": relationship(Player, uselist=False),
             "last_match": relationship(Match, uselist=False),
@@ -92,12 +92,12 @@ class _EvksPlayerRanksJSON(types.TypeDecorator):
     impl = JSON
 
     def process_bind_param(
-        self, value: dict[_PlayerId, EvksPlayerRank], _
+        self, value: dict[_PlayerId, EvksPlayerRank], _: Any
     ) -> dict[int, str]:
         return {key: val.name for key, val in value.items()}
 
     def process_result_value(
-        self, value: dict[int, str], _
+        self, value: dict[int, str], _: Any
     ) -> dict[_PlayerId, EvksPlayerRank]:
         return {key: EvksPlayerRank[val] for key, val in value.items()}
 
@@ -118,7 +118,7 @@ class RatingsState:
         Column("last_competition_id", Integer, ForeignKey("competitions.id")),
     )
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "player_states": relationship(
                 PlayerState,
@@ -137,7 +137,7 @@ class RatingsState:
 
     @property
     def player_states_list(self) -> list[PlayerState]:
-        return self.player_states.values()
+        return list(self.player_states.values())
 
     def __getitem__(self, item: Union[_PlayerId, Player]) -> Optional[PlayerState]:
         if isinstance(item, Player):

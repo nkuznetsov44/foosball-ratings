@@ -1,6 +1,6 @@
 from common.enums import EvksPlayerRank
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import PlayerState, RatingsState, PlayerStates
+from core.entities.state import RatingsState, PlayerStates
 from core.entities.competition import Competition
 
 
@@ -20,7 +20,7 @@ class CreateRatingsStateAction(AbstractAction):
         self._last_competition = last_competition
 
     def _get_evks_player_ranks(
-        self, new_state: PlayerState
+        self, new_state: RatingsState
     ) -> dict[_PlayerId, EvksPlayerRank]:
         # TODO: реализовать логику перехода между рангами после категории
         return self.ratings_state.evks_player_ranks
@@ -32,7 +32,7 @@ class CreateRatingsStateAction(AbstractAction):
             player_states=self._player_states,
             evks_player_ranks={},
         )
-        new_state.evks_player_ranks = self._get_evks_player_ranks()
+        new_state.evks_player_ranks = self._get_evks_player_ranks(new_state)
 
         async with self.make_db_session()() as session:
             session.add(new_state)
@@ -41,6 +41,8 @@ class CreateRatingsStateAction(AbstractAction):
                 new_state.id is not None
             ), "RatingsState id is null after session commit"
             self._context.ratings_state = new_state
+
+        return new_state
 
 
 class GetCurrentRatingsStateAction(AbstractAction):

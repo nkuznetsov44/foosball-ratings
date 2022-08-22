@@ -11,31 +11,25 @@ from common.enums import EvksPlayerRank
 PlayerStateSchema = class_schema(PlayerState, base_schema=BaseSchemaWithId)
 
 
-class RatingsStateCompetitionSchema(CompetitionSchema):
+class RatingsStateCompetitionSchema(CompetitionSchema):  # type: ignore
     class Meta:
         fields = (
             "id",
             "tournament_id",
             "competition_type",
-            "evks_importance_coefficient",
-            "start_datetime",
-            "end_datetime",
             "external_id",
         )
 
 
-class RatingsStateMatchSchema(MatchSchema):
+class RatingsStateMatchSchema(MatchSchema):  # type: ignore
     class Meta:
         fields = (
             "id",
             "external_id",
-            "force_qualification",
-            "start_datetime",
-            "end_datetime",
         )
 
 
-class RatingsStatePlayerStateSchema(PlayerStateSchema):
+class RatingsStatePlayerStateSchema(PlayerStateSchema):  # type: ignore
     last_match = fields.Nested(RatingsStateMatchSchema)
 
 

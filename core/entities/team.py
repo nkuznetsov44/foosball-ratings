@@ -22,7 +22,7 @@ class Team:
 
     __table_args__ = (UniqueConstraint("competition_id", "external_id"),)
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "first_player": relationship(
                 Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"

@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Type
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
 )
@@ -7,7 +7,7 @@ from common.enums import RatingType
 
 
 class AbstractCalculationStrategy:
-    calculators: ClassVar[dict[RatingType, AbstractRatingCalculator]]
+    calculators: ClassVar[dict[RatingType, Type[AbstractRatingCalculator]]]
 
 
 class Pre2018RatingCalculationStrategy(AbstractCalculationStrategy):

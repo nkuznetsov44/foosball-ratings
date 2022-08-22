@@ -63,7 +63,7 @@ class Match:
         Column("force_qualification", Boolean),
     )
 
-    __mapper_args__ = {  # type: ignore
+    __mapper_args__ = {
         "properties": {
             "first_team": relationship(
                 Team,
