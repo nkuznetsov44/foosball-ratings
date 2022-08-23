@@ -3,8 +3,8 @@ import pathlib
 import yaml
 
 
-BASE_DIR = pathlib.Path(__file__).parent.parent
-config_path = BASE_DIR / "core" / "config.yaml"
+BASE_DIR = pathlib.Path(__file__).parent
+config_path = BASE_DIR / "config.yaml"
 
 
 def get_config(path: pathlib.Path) -> dict[str, Any]:

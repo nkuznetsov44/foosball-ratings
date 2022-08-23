@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from common.middlewares import malformed_request_400_middleware
 from core.api.middlewares import core_processing_error_500_middleware
-from core.settings import config
+from settings import config
 from core.routes import setup_routes
 from core.storage.db import setup_db_engine
 from core.entities.state import RatingsState

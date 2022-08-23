@@ -32,9 +32,17 @@ class AbstractHandler(web.View):
         return getattr(handler_cls, self.request.method.lower())
 
     async def get_request_data(self) -> Any:
+        request_method = self.request.method.lower()
         schema_cls = self._get_handler_method().request_schema
         try:
-            return schema_cls().load(await self.request.json())
+            if request_method == "get":
+                return schema_cls().load(self.request.match_info)
+            elif request_method == "post":
+                return schema_cls().load(await self.request.json())
+            else:
+                raise NotImplementedError(
+                    f"Request method {request_method} not supported"
+                )
         except JSONDecodeError as jde:
             raise MalformedRequest(reason=jde.msg)
         except ValidationError as ve:
