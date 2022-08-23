@@ -2,9 +2,9 @@ from typing import Type
 from aiohttp import web
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, selectinload
 from common.handlers import AbstractHandler, request_schema, response_schema
-from .entities.competition import Competition
+from webapp.entities.competition import Competition
 from webapp.entities.player import Player
 from webapp.schemas import (
     PlayerIdSchema,
@@ -25,7 +25,7 @@ class GetPlayersHandler(AbstractWebappHandler):
         async with self.make_db_session()() as session:
             result = await session.execute(select(Player))
             players = result.scalars().all()
-            return self.make_response({"players": players})
+        return self.make_response({"players": players})
 
 
 class GetPlayerCompetitionsHandler(AbstractWebappHandler):
@@ -34,14 +34,19 @@ class GetPlayerCompetitionsHandler(AbstractWebappHandler):
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         async with self.make_db_session()() as session:
+            # TODO: filter competitions by player
             # result = await session.execute(
             # select match.competition
             # where match.first_team.first_player.id == player_id
             # or ...
             # )
-            result = await session.execute(select(Competition))
+
+            # TODO: figure out how to get rid of selectinload option
+            result = await session.execute(
+                select(Competition).options(selectinload("*"))
+            )
             competitions = result.scalars().all()
-            return self.make_response({"competitions": competitions})
+        return self.make_response({"competitions": competitions})
 
 
 """

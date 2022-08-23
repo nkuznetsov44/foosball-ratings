@@ -1,27 +1,43 @@
-from marshmallow import Schema, fields
+from marshmallow import fields
 from marshmallow_dataclass import class_schema
+from common.schemas import BaseSchema
 from webapp.entities.player import Player
-from webapp.entities.competition import Competition
+from webapp.entities.competition import Competition, Tournament
 
 
-PlayerSchema = class_schema(Player)
+PlayerSchema = class_schema(Player, base_schema=BaseSchema)
 
 
-class PlayerIdSchema(Schema):
+class PlayerIdSchema(BaseSchema):
     player_id = fields.Integer()
 
 
-class PlayerCompetitionIdSchema(Schema):
+class PlayerCompetitionIdSchema(BaseSchema):
     player_id = fields.Integer()
     competition_id = fields.Integer()
 
 
-class GetPlayersResponseSchema(Schema):
+class GetPlayersResponseSchema(BaseSchema):
     players = fields.Nested(PlayerSchema, many=True)
 
 
-CompetitionSchema = class_schema(Competition)
+TournamentSchema = class_schema(Tournament, base_schema=BaseSchema)
+CompetitionSchema = class_schema(Competition, base_schema=BaseSchema)
 
 
-class GetPlayerCompetitionsResponseSchema(Schema):
-    competitions = fields.Nested(CompetitionSchema, many=True)
+class CompetitionTournamentSchema(TournamentSchema):
+    class Meta:
+        fields = (
+            "id",
+            "name",
+            "city",
+            "url",
+        )
+
+
+class PlayerCompetitionSchema(CompetitionSchema):
+    tournament = fields.Nested(CompetitionTournamentSchema)
+
+
+class GetPlayerCompetitionsResponseSchema(BaseSchema):
+    competitions = fields.Nested(PlayerCompetitionSchema, many=True)
