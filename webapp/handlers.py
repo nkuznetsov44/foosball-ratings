@@ -7,10 +7,10 @@ from common.handlers import AbstractHandler, request_schema, response_schema
 from webapp.entities.competition import Competition
 from webapp.entities.player import Player
 from webapp.schemas import (
-    PlayerIdSchema,
-    PlayerCompetitionIdSchema,
-    GetPlayersResponseSchema,
-    GetPlayerCompetitionsResponseSchema,
+    PlayerIDSchema,
+    # PlayerCompetitionIDSchema,
+    PlayersResponseSchema,
+    PlayerCompetitionsResponseSchema,
 )
 
 
@@ -19,8 +19,8 @@ class AbstractWebappHandler(AbstractHandler):
         return sessionmaker(self.app["db"], expire_on_commit=False, class_=AsyncSession)
 
 
-class GetPlayersHandler(AbstractWebappHandler):
-    @response_schema(GetPlayersResponseSchema)
+class PlayersHandler(AbstractWebappHandler):
+    @response_schema(PlayersResponseSchema)
     async def get(self) -> web.Response:
         async with self.make_db_session()() as session:
             result = await session.execute(select(Player))
@@ -28,11 +28,11 @@ class GetPlayersHandler(AbstractWebappHandler):
         return self.make_response({"players": players})
 
 
-class GetPlayerCompetitionsHandler(AbstractWebappHandler):
-    @request_schema(PlayerIdSchema)
-    @response_schema(GetPlayerCompetitionsResponseSchema)
+class PlayerCompetitionsHandler(AbstractWebappHandler):
+    @request_schema(PlayerIDSchema)
+    @response_schema(PlayerCompetitionsResponseSchema)
     async def get(self) -> web.Response:
-        request_data = await self.get_request_data()
+        # request_data = await self.get_request_data()
         async with self.make_db_session()() as session:
             # TODO: filter competitions by player
             # result = await session.execute(
@@ -50,9 +50,9 @@ class GetPlayerCompetitionsHandler(AbstractWebappHandler):
 
 
 """
-class GetPlayerCompetitionMatchesHandler(AbstractWebappHandler):
+class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
     @request_schema(PlayerCompetitionIdSchema)
-    @response_schema(GetPlayerCompetitionMatchesResponseSchema)
+    @response_schema(PlayerCompetitionMatchesResponseSchema)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         pass

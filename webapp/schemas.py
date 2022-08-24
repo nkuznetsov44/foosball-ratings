@@ -8,16 +8,16 @@ from webapp.entities.competition import Competition, Tournament
 PlayerSchema = class_schema(Player, base_schema=BaseSchema)
 
 
-class PlayerIdSchema(BaseSchema):
+class PlayerIDSchema(BaseSchema):
     player_id = fields.Integer()
 
 
-class PlayerCompetitionIdSchema(BaseSchema):
+class PlayerCompetitionIDSchema(BaseSchema):
     player_id = fields.Integer()
     competition_id = fields.Integer()
 
 
-class GetPlayersResponseSchema(BaseSchema):
+class PlayersResponseSchema(BaseSchema):
     players = fields.Nested(PlayerSchema, many=True)
 
 
@@ -39,5 +39,5 @@ class PlayerCompetitionSchema(CompetitionSchema):
     tournament = fields.Nested(CompetitionTournamentSchema)
 
 
-class GetPlayerCompetitionsResponseSchema(BaseSchema):
+class PlayerCompetitionsResponseSchema(BaseSchema):
     competitions = fields.Nested(PlayerCompetitionSchema, many=True)
