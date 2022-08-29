@@ -62,11 +62,3 @@ class RatingsState:
             raise KeyError(f"Incorrect player state key type {type(item)}")
         return self.player_states.get(player_id)
 
-    def dirty_copy(self) -> "RatingsState":
-        """Returns a dirty shallow copy of self"""
-        return RatingsState(
-            previous_state_id=self.previous_state_id,
-            player_states=self.player_states.copy(),
-            evks_player_ranks=self.evks_player_ranks.copy(),
-            last_competition=self.last_competition,
-        )

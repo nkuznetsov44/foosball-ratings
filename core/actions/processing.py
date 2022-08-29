@@ -1,3 +1,4 @@
+from dataclasses import replace
 from collections import defaultdict
 from typing import Sequence
 
@@ -54,7 +55,11 @@ class ProcessCompetitionAction(AbstractAction):
         """
 
         strategy = self._choose_calculation_strategy()
-        intermediate_ratings_state = self.ratings_state.dirty_copy()
+        intermediate_ratings_state = replace(
+            self.ratings_state,
+            player_states=self.ratings_state.player_states.copy(),
+            evks_player_ranks=self.ratings_state.evks_player_ranks.copy(),
+        )
 
         for match in self._prepare_matches():
             for player_id, ratings in self._calculate_ratings_after_match(

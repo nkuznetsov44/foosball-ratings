@@ -1,3 +1,4 @@
+from dataclasses import replace
 from sqlalchemy import select
 
 from common.entities.player import Player
@@ -65,7 +66,12 @@ class CreatePlayersAction(AbstractAction):
                 is_evks_rating_active=player_req.is_evks_rating_active,
             )
 
-        new_state = self.ratings_state.dirty_copy()
+        new_state = replace(
+            self.ratings_state,
+            player_states=self.ratings_state.player_states.copy(),
+            evks_player_ranks=self.ratings_state.evks_player_ranks.copy(),
+        )
+
         new_state.player_states |= player_states
         await self.run_action(
             CreateRatingsStateAction,
