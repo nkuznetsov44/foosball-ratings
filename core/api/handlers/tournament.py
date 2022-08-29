@@ -1,11 +1,9 @@
 from aiohttp import web
+
 from common.handlers import request_schema, response_schema
-from core.api.handlers.abstract_core_handler import AbstractCoreHandler
-from core.api.schemas.tournament import (
-    CreateTournamentRequestSchema,
-    TournamentSchema,
-)
 from core.actions.tournament import CreateTournamentAction
+from core.api.handlers.abstract_core_handler import AbstractCoreHandler
+from core.api.schemas.tournament import CreateTournamentRequestSchema, TournamentSchema
 
 
 class TournamentHandler(AbstractCoreHandler):

@@ -1,10 +1,11 @@
 from logging import getLogger
+
 from aiohttp import web
+
 from common.middlewares import malformed_request_400_middleware
 from settings import config
-from webapp.storage.db import setup_db_engine
+from storage.db import setup_db_engine
 from webapp.routes import setup_routes
-
 
 logger = getLogger(__name__)
 

@@ -1,8 +1,6 @@
 from aiohttp import web
-from webapp.handlers import (
-    GetPlayersHandler,
-    GetPlayerCompetitionsHandler,
-)
+
+from webapp.handlers import GetPlayerCompetitionsHandler, GetPlayersHandler
 
 
 def setup_routes(app: web.Application) -> None:

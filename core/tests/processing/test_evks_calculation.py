@@ -1,13 +1,15 @@
+from decimal import Decimal
+
 import pytest
 from hamcrest import assert_that, equal_to
-from decimal import Decimal
-from common.enums import RatingType, CompetitionType, EvksPlayerRank, City
+
+from common.entities.competition import Competition
+from common.entities.enums import City, CompetitionType, EvksPlayerRank, RatingType
+from common.entities.match import Match, MatchSet
+from common.entities.player import Player
+from common.entities.state import PlayerState, RatingsState
+from common.entities.team import Team
 from core.processing.calculators.evks import EvksRatingCalculator
-from core.entities.player import Player
-from core.entities.match import Match, MatchSet
-from core.entities.team import Team
-from core.entities.competition import Competition
-from core.entities.state import PlayerState, RatingsState
 
 
 @pytest.fixture

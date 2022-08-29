@@ -1,6 +1,6 @@
 from marshmallow_dataclass import class_schema
-from core.api.schemas.base import BaseSchemaWithId
-from core.entities.match import Match
 
+from common.entities.match import Match
+from core.api.schemas.base import BaseSchemaWithId
 
 MatchSchema = class_schema(Match, base_schema=BaseSchemaWithId)

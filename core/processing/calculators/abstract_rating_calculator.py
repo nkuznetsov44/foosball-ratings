@@ -1,10 +1,10 @@
-from typing import ClassVar
 from abc import ABC, abstractmethod
-from common.enums import RatingType
-from core.entities.match import Match
-from core.entities.competition import Competition
-from core.entities.state import RatingsState
+from typing import ClassVar
 
+from common.entities.competition import Competition
+from common.entities.enums import RatingType
+from common.entities.match import Match
+from common.entities.state import RatingsState
 
 _PlayerId = int
 _RatingValue = int

@@ -1,4 +1,5 @@
-from typing import Type, Any
+from typing import Any, Type
+
 from common.handlers import AbstractHandler
 from core.actions.abstract_action import AbstractAction, ActionContext
 

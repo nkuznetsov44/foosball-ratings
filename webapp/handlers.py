@@ -1,16 +1,17 @@
 from typing import Type
+
 from aiohttp import web
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker, selectinload
+from sqlalchemy.orm import selectinload, sessionmaker
+
 from common.handlers import AbstractHandler, request_schema, response_schema
 from webapp.entities.competition import Competition
 from webapp.entities.player import Player
-from webapp.schemas import (
-    PlayerIDSchema,
-    # PlayerCompetitionIDSchema,
-    PlayersResponseSchema,
+from webapp.schemas import (  # PlayerCompetitionIDSchema,
     PlayerCompetitionsResponseSchema,
+    PlayerIDSchema,
+    PlayersResponseSchema,
 )
 
 

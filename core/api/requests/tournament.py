@@ -1,9 +1,11 @@
-from typing import Optional
 from dataclasses import dataclass, field
 from decimal import Decimal
+from typing import Optional
+
 from marshmallow import fields
+
+from common.entities.enums import City, CompetitionType
 from common.utils import DatetimeWithTZ
-from common.enums import CompetitionType, City
 
 
 @dataclass

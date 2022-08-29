@@ -1,6 +1,7 @@
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class City(Enum):
     MOSCOW = "Moscow"
     SAINT_PETERSBURG = "SaintPeresburg"
@@ -12,11 +13,13 @@ class City(Enum):
     TULA = "Tula"
 
 
+@unique
 class RatingType(Enum):
     EVKS = "EVKS"
     CUMULATIVE = "Cumulative"
 
 
+@unique
 class CompetitionType(Enum):
     OS = "Open Singles"
     OD = "Open Dobules"
@@ -35,6 +38,7 @@ class CompetitionType(Enum):
     PROAM = "Pro-Am"
 
 
+@unique
 class EvksPlayerRank(Enum):
     BEGINNER = "Beginner"
     NOVICE = "Novice"

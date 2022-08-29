@@ -1,15 +1,16 @@
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
+from itertools import chain, permutations
 from typing import ClassVar
-from itertools import permutations, chain
-from common.enums import RatingType
+
+from common.entities.competition import Competition
+from common.entities.enums import RatingType
+from common.entities.match import Match
+from common.entities.team import Team
+from core.exceptions import PlayerStateNotFound
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
 )
-from core.entities.competition import Competition
-from core.entities.match import Match
-from core.entities.team import Team
-from core.exceptions import PlayerStateNotFound
 
 
 class EvksGameType(Enum):

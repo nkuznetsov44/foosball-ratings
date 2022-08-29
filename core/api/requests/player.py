@@ -1,6 +1,7 @@
-from typing import Optional
 from dataclasses import dataclass
-from common.enums import City
+from typing import Optional
+
+from common.entities.enums import City
 
 
 @dataclass

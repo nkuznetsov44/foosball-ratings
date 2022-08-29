@@ -3,6 +3,7 @@ from json import JSONDecodeError
 from typing import Any
 from aiohttp import web
 from marshmallow import Schema, ValidationError
+
 from common.exceptions import MalformedRequest
 
 

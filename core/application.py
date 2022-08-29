@@ -1,15 +1,16 @@
 from logging import getLogger
+
 from aiohttp import web
 from sqlalchemy import select
-from sqlalchemy.orm import sessionmaker, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload, sessionmaker
+
+from common.entities.state import RatingsState
 from common.middlewares import malformed_request_400_middleware
 from core.api.middlewares import core_processing_error_500_middleware
-from settings import config
 from core.routes import setup_routes
-from core.storage.db import setup_db_engine
-from core.entities.state import RatingsState
-
+from settings import config
+from storage.db import setup_db_engine
 
 logger = getLogger(__name__)
 

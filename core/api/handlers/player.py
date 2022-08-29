@@ -1,12 +1,13 @@
 from aiohttp import web
+
 from common.handlers import request_schema, response_schema
+from core.actions.player import CreatePlayersAction, GetPlayersAction
 from core.api.handlers.abstract_core_handler import AbstractCoreHandler
 from core.api.schemas.player import (
-    GetPlayersResponseSchema,
     CreatePlayersRequestSchema,
     CreatePlayersResponseSchema,
+    GetPlayersResponseSchema,
 )
-from core.actions.player import GetPlayersAction, CreatePlayersAction
 
 
 class PlayersHandler(AbstractCoreHandler):

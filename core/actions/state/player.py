@@ -1,9 +1,10 @@
 from typing import Optional
+
+from common.entities.enums import RatingType
+from common.entities.match import Match
+from common.entities.player import Player
+from common.entities.state import PlayerState
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import PlayerState
-from core.entities.player import Player
-from core.entities.match import Match
-from common.enums import RatingType
 from core.exceptions import (
     PlayerStateAlreadyExists,
     PlayerStateNotFound,
@@ -107,7 +108,9 @@ class CreatePlayerStateAction(BasePlayerStateAction):
             self._current_player_state.last_match
         ):
             raise PlayerStateSequenceError(
-                match_id=self._last_match.id, current_state=self.ratings_state
+                match_id=self._last_match.id,
+                last_match_id=self._current_player_state.last_match.id,
+                current_state=self.ratings_state,
             )
 
         new_matches_played = self._current_player_state.matches_played + 1

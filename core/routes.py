@@ -1,7 +1,8 @@
 from aiohttp import web
+
 from core.api.handlers.player import PlayersHandler
-from core.api.handlers.tournament import TournamentHandler
 from core.api.handlers.state import RatingsStateHandler
+from core.api.handlers.tournament import TournamentHandler
 
 
 def uri_v1(uri: str) -> str:

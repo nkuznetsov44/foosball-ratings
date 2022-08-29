@@ -1,0 +1,72 @@
+from typing import Optional, Union
+from dataclasses import dataclass, field
+
+from common.entities.enums import RatingType, EvksPlayerRank
+from common.entities.player import Player
+from common.entities.match import Match
+from common.entities.competition import Competition
+
+
+_RatingValue = int
+_PlayerId = int
+
+
+@dataclass
+class PlayerState:
+    """Описывает состояние рейтингов игрока после истории сыгранных матчей."""
+
+    id: int = field(init=False)
+    previous_state_id: Optional[int]
+    player: Player
+    matches_played: int
+    matches_won: int
+    last_match: Optional[Match]
+    ratings: dict[RatingType, _RatingValue]
+    is_evks_rating_active: bool
+
+    @property
+    def evks_rating(self) -> Optional[int]:
+        return self.ratings.get(RatingType.EVKS)
+
+    @property
+    def cumulative_rating(self) -> Optional[int]:
+        return self.ratings.get(RatingType.CUMULATIVE)
+
+    def __hash__(self) -> int:
+        assert self.id is not None, "Can't hash PlayerState with no id"
+        return hash(self.id)
+
+
+@dataclass
+class RatingsState:
+    """Описывает состояние рейтингов после истории сыгранных категорий."""
+
+    id: int = field(init=False)
+    previous_state_id: Optional[int]
+    last_competition: Optional[Competition]
+    player_states: dict[_PlayerId, PlayerState]
+    evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
+
+    @property
+    def player_states_list(self) -> list[PlayerState]:
+        return list(self.player_states.values())
+
+    def __getitem__(self, item: Union[_PlayerId, Player]) -> Optional[PlayerState]:
+        if isinstance(item, Player):
+            player_id = item.id
+            if player_id is None:
+                raise KeyError(f"Can't get player state for player with no id {item}")
+        elif isinstance(item, _PlayerId):
+            player_id = item
+        else:
+            raise KeyError(f"Incorrect player state key type {type(item)}")
+        return self.player_states.get(player_id)
+
+    def dirty_copy(self) -> "RatingsState":
+        """Returns a dirty shallow copy of self"""
+        return RatingsState(
+            previous_state_id=self.previous_state_id,
+            player_states=self.player_states.copy(),
+            evks_player_ranks=self.evks_player_ranks.copy(),
+            last_competition=self.last_competition,
+        )

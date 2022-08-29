@@ -1,10 +1,12 @@
-from aiohttp.web import Application
-from typing import Any, Type
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Type
+
+from aiohttp.web import Application
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from core.entities.state import RatingsState
+
+from common.entities.state import RatingsState
 
 
 @dataclass

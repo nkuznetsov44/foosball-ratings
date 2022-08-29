@@ -1,7 +1,7 @@
-from typing import Any
 import pathlib
-import yaml
+from typing import Any
 
+import yaml
 
 BASE_DIR = pathlib.Path(__file__).parent
 config_path = BASE_DIR / "config.yaml"

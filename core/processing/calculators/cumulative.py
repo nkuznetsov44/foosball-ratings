@@ -1,10 +1,9 @@
-from common.enums import RatingType
+from common.entities.competition import Competition
+from common.entities.enums import RatingType
+from common.entities.match import Match
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
 )
-from core.entities.competition import Competition
-from core.entities.match import Match
-
 
 _PlayerId = int
 _RatingValue = int

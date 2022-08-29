@@ -1,8 +1,7 @@
-from common.enums import EvksPlayerRank
+from common.entities.competition import Competition
+from common.entities.enums import EvksPlayerRank
+from common.entities.state import PlayerState, RatingsState
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.state import RatingsState, PlayerStates
-from core.entities.competition import Competition
-
 
 _PlayerId = int
 
@@ -12,7 +11,7 @@ class CreateRatingsStateAction(AbstractAction):
         self,
         *,
         context: ActionContext,
-        player_states: PlayerStates,
+        player_states: dict[_PlayerId, PlayerState],
         last_competition: Competition,
     ) -> None:
         super().__init__(context)

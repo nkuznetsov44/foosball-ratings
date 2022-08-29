@@ -1,10 +1,14 @@
 from sqlalchemy import select
+
+from common.entities.player import Player
+from common.entities.state import PlayerState
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.api.requests.player import CreatePlayersRequest
-from core.entities.state import PlayerStates
-from core.entities.player import Player
 from core.actions.state.player import CreateInitialPlayerStateAction
 from core.actions.state.rating import CreateRatingsStateAction
+from core.api.requests.player import CreatePlayersRequest
+
+
+_PlayerId = int
 
 
 class GetPlayerAction(AbstractAction):
@@ -35,9 +39,9 @@ class CreatePlayersAction(AbstractAction):
         super().__init__(context)
         self._request = request
 
-    async def run(self) -> PlayerStates:
+    async def run(self) -> dict[_PlayerId, PlayerState]:
         # TODO: transactional
-        player_states: PlayerStates = {}
+        player_states: dict[_PlayerId, PlayerState] = {}
 
         for player_req in self._request.players:
             player = Player(

@@ -1,7 +1,8 @@
-from aiohttp import web
 from logging import getLogger
-from core.exceptions import CoreProcessingError
 
+from aiohttp import web
+
+from core.exceptions import CoreProcessingError
 
 logger = getLogger(__name__)
 

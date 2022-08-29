@@ -1,16 +1,17 @@
-from typing import Sequence
 from collections import defaultdict
+from typing import Sequence
+
 from pytz import UTC
+
+from common.entities.competition import Competition
+from common.entities.enums import RatingType
+from common.entities.match import Match
+from common.entities.state import RatingsState
 from common.utils import DatetimeWithTZ
 from core.actions.abstract_action import AbstractAction, ActionContext
-from core.entities.competition import Competition
-from core.entities.match import Match
-from core.entities.state import RatingsState
-from common.enums import RatingType
-from core.processing import strategies
 from core.actions.state.player import CreatePlayerStateAction
 from core.actions.state.rating import CreateRatingsStateAction
-
+from core.processing import strategies
 
 DATE_2018_01_01 = DatetimeWithTZ(
     year=2018, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC

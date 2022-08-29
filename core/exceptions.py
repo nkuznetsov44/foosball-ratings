@@ -1,5 +1,6 @@
-from typing import ClassVar, Any
-from core.entities.state import RatingsState
+from typing import Any, ClassVar
+
+from common.entities.state import RatingsState
 
 
 class CoreProcessingError(Exception):
@@ -10,6 +11,9 @@ class CoreProcessingError(Exception):
         self.reason = self.REASON_CODE or "UNEXPECTED_PROCESSING_ERROR"
         self.params: dict[str, Any] = dict()
         super().__init__()
+
+    def __str__(self) -> str:
+        return f"{super().__str__()}reason: {self.reason} params: {self.params}"
 
 
 class PlayerStateNotFound(CoreProcessingError):
@@ -31,6 +35,9 @@ class PlayerStateAlreadyExists(CoreProcessingError):
 class PlayerStateSequenceError(CoreProcessingError):
     REASON_CODE = "NEW_MATCH_IS_BEFORE_LAST_PROCESSED_MATCH"
 
-    def __init__(self, match_id: int, current_state: RatingsState) -> None:
+    def __init__(
+        self, match_id: int, last_match_id: int, current_state: RatingsState
+    ) -> None:
         super().__init__(current_state)
         self.params["match_id"] = match_id
+        self.params["last_match_id"] = last_match_id
