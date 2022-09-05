@@ -2,8 +2,10 @@ from marshmallow import fields
 from marshmallow_dataclass import class_schema
 
 from common.schemas import BaseSchema
-from webapp.entities.competition import Competition, Tournament
-from webapp.entities.player import Player
+from common.entities.competition import Competition
+from common.entities.tournament import Tournament
+from common.entities.player import Player
+
 
 PlayerSchema = class_schema(Player, base_schema=BaseSchema)
 

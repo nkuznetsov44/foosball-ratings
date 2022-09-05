@@ -1,49 +1,32 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Any, Type
+from typing import Any, Optional
+from contextlib import asynccontextmanager
 
-from aiohttp.web import Application
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-
-from common.entities.state import RatingsState
-
-
-@dataclass
-class ActionContext:
-    app: Application
-
-    @property
-    def ratings_state(self) -> RatingsState:
-        return self.app["ratings_state"]
-
-    @ratings_state.setter
-    def ratings_state(self, new_state: RatingsState) -> None:
-        self.app["ratings_state"] = new_state
-
-    @property
-    def db_engine(self) -> AsyncEngine:
-        return self.app["db"]
+from storage.storage import StorageContext, Storage
 
 
 class AbstractAction(ABC):
-    def __init__(self, context: ActionContext) -> None:
-        self._context = context
+    storage_context = StorageContext
+
+    def __init__(self) -> None:
+        self.storage: Optional[Storage] = None
 
     @abstractmethod
-    async def run(self) -> Any:
+    async def handle(self) -> Any:
         raise NotImplementedError()
 
-    @property
-    def ratings_state(self) -> RatingsState:
-        return self._context.ratings_state
+    @asynccontextmanager
+    async def _get_storage(self, storage: Optional[Storage] = None) -> Storage:
+        if storage:
+            yield storage
+        else:
+            async with self.storage_context() as storage:
+                yield storage
 
-    def make_db_session(self) -> Type[AsyncSession]:
-        return sessionmaker(
-            self._context.db_engine, expire_on_commit=False, class_=AsyncSession
-        )
+    async def run(self, storage: Optional[Storage] = None) -> Any:
+        async with self._get_storage(storage) as strg:
+            self.storage = strg
+            return await self.handle()
 
-    async def run_action(
-        self, action_cls: Type["AbstractAction"], **kwargs: Any
-    ) -> Any:
-        return await action_cls(context=self._context, **kwargs).run()
+    async def run_subaction(self, action: 'AbstractAction') -> Any:
+        return await action.run(self.storage)

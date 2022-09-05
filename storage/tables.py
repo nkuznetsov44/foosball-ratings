@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 
-from common.entities.enums import City, CompetitionType
+from common.entities.enums import City, CompetitionType, RatingsStateStatus
 from storage.types import EvksPlayerRanksJSON, RatingsJSON
 
 metadata_obj = sa.MetaData()
@@ -9,7 +9,7 @@ metadata_obj = sa.MetaData()
 competitions = sa.Table(
     "competitions",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("tournament_id", sa.Integer, sa.ForeignKey("tournaments.id")),
     sa.Column("competition_type", sa.Enum(CompetitionType)),
@@ -22,7 +22,7 @@ competitions = sa.Table(
 sets = sa.Table(
     "sets",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("match_id", sa.Integer, sa.ForeignKey("matches.id")),
     sa.Column("order", sa.Integer),
@@ -34,7 +34,7 @@ sets = sa.Table(
 matches = sa.Table(
     "matches",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
     sa.Column("first_team_id", sa.Integer, sa.ForeignKey("teams.id")),
@@ -48,7 +48,7 @@ matches = sa.Table(
 players = sa.Table(
     "players",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("first_name", sa.String(255)),
     sa.Column("last_name", sa.String(255)),
     sa.Column("city", sa.Enum(City)),
@@ -57,7 +57,7 @@ players = sa.Table(
 player_states = sa.Table(
     "player_states",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column(
         "previous_state_id",
         sa.Integer,
@@ -82,7 +82,7 @@ ratings_state_player_states = sa.Table(
 ratings_states = sa.Table(
     "ratings_states",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column(
         "previous_state_id",
         sa.Integer,
@@ -91,12 +91,13 @@ ratings_states = sa.Table(
     ),
     sa.Column("evks_player_ranks", EvksPlayerRanksJSON),
     sa.Column("last_competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
+    sa.Column("status", sa.Enum(RatingsStateStatus)),
 )
 
 teams = sa.Table(
     "teams",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("competition_place", sa.Integer),
@@ -110,7 +111,7 @@ teams = sa.Table(
 tournaments = sa.Table(
     "tournaments",
     metadata_obj,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("external_id", sa.Integer, nullable=True, unique=True),
     sa.Column("name", sa.String(255)),
     sa.Column("city", sa.Enum(City)),

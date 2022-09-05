@@ -1,7 +1,7 @@
 from typing import Optional, Union
 from dataclasses import dataclass, field
 
-from common.entities.enums import RatingType, EvksPlayerRank
+from common.entities.enums import RatingType, EvksPlayerRank, RatingsStateStatus
 from common.entities.player import Player
 from common.entities.match import Match
 from common.entities.competition import Competition
@@ -46,6 +46,7 @@ class RatingsState:
     last_competition: Optional[Competition]
     player_states: dict[_PlayerId, PlayerState]
     evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
+    status: RatingsStateStatus
 
     @property
     def player_states_list(self) -> list[PlayerState]:

@@ -46,3 +46,10 @@ class EvksPlayerRank(Enum):
     SEMIPRO = "Semipro"
     PRO = "Pro"
     MASTER = "Master"
+
+
+@unique
+class RatingsStateStatus(Enum):
+    PUBLISHED = 'Published'
+    READY_TO_PUBLISH = 'ReadyToPublish'
+    ROLLED_BACK = 'RolledBack'

@@ -1,26 +1,34 @@
 from aiohttp import web
 
-from common.handlers import request_schema, response_schema
-from core.actions.player import CreatePlayersAction, GetPlayersAction
-from core.api.handlers.abstract_core_handler import AbstractCoreHandler
+from common.handlers import AbstractHandler, request_schema, response_schema
+from core.actions.player import CreatePlayersAction, GetPlayersAction, GetPlayerAction
 from core.api.schemas.player import (
+    PlayerIDSchema,
+    PlayerSchema,
     CreatePlayersRequestSchema,
-    CreatePlayersResponseSchema,
     GetPlayersResponseSchema,
 )
+from core.api.schemas.state import RatingsStateResponseSchema
 
 
-class PlayersHandler(AbstractCoreHandler):
+class PlayerHandler(AbstractHandler):
+    @request_schema(PlayerIDSchema)
+    @response_schema(PlayerSchema)
+    async def get(self) -> web.Response:
+        get_player_request = await self.get_request_data()
+        player = await GetPlayerAction(get_player_request['player_id']).run()
+        return self.make_response(player)
+
+
+class PlayersHandler(AbstractHandler):
     @response_schema(GetPlayersResponseSchema)
     async def get(self) -> web.Response:
-        players = await self.run_action(GetPlayersAction)
+        players = await GetPlayersAction().run()
         return self.make_response({"players": players})
 
     @request_schema(CreatePlayersRequestSchema)
-    @response_schema(CreatePlayersResponseSchema)
+    @response_schema(RatingsStateResponseSchema)
     async def post(self) -> web.Response:
         create_players_request = await self.get_request_data()
-        player_states = await self.run_action(
-            CreatePlayersAction, request=create_players_request
-        )
-        return self.make_response({"player_states": player_states.values()})
+        new_state = await CreatePlayersAction(request=create_players_request).run()
+        return self.make_response(new_state)

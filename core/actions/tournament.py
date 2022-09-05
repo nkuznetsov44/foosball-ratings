@@ -3,7 +3,7 @@ from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.team import Team
 from common.entities.tournament import Tournament
-from core.actions.abstract_action import AbstractAction, ActionContext
+from core.actions.abstract_action import AbstractAction
 from core.actions.processing import ProcessCompetitionAction
 from core.api.requests.tournament import (
     CompetitionReq,
@@ -18,31 +18,27 @@ class CreateTournamentAction(AbstractAction):
     def __init__(
         self,
         *,
-        context: ActionContext,
         request: CreateTournamentRequest,
     ) -> None:
-        super().__init__(context)
+        # TODO: unwrap request in arguments
         self._request = request
 
-    async def run(self) -> Tournament:
-        # TODO: transactional
-        tournament_competitions = self._construct_tournament_competitions(
+    async def handle(self) -> Tournament:
+        tournament_competitions = self._save_tournament_competitions(
             self._request.competitions
-        )
-        tournament = Tournament(
-            external_id=self._request.external_id,
-            name=self._request.name,
-            city=self._request.city,
-            url=self._request.url,
-            competitions=tournament_competitions,
         )
 
         async with self.make_db_session()() as session:
+            tournament = Tournament(
+                external_id=self._request.external_id,
+                name=self._request.name,
+                city=self._request.city,
+                url=self._request.url,
+            )
             session.add(tournament)
+            assert tournament.id is not None
+
             await session.commit()
-            assert (
-                tournament.id is not None
-            ), "Tournament id is null after session commit"
 
         for competition in tournament.competitions:
             await self.run_action(
@@ -95,8 +91,8 @@ class CreateTournamentAction(AbstractAction):
             competition_matches.append(match)
         return competition_matches
 
-    def _construct_tournament_competitions(
-        self, competition_reqs: list[CompetitionReq]
+    def _save_tournament_competitions(
+        self, tournament_id: int, competition_reqs: list[CompetitionReq]
     ) -> list[Competition]:
         tournament_competitions: list[Competition] = []
         for competition_req in competition_reqs:

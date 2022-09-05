@@ -21,12 +21,29 @@ from storage.tables import (
 
 mapper_registry = registry()
 
+mapper_registry.map_imperatively(Tournament, tournaments)
+
+mapper_registry.map_imperatively(Player, players)
+
 mapper_registry.map_imperatively(
     Competition,
     competitions,
     properties={
-        "matches": relationship(Match),
-        "teams": relationship(Team),
+        "tournament": relationship(Tournament, uselist=False),
+    },
+)
+
+mapper_registry.map_imperatively(
+    Team,
+    teams,
+    properties={
+        "competition": relationship(Competition, uselist=False),
+        "first_player": relationship(
+            Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"
+        ),
+        "second_player": relationship(
+            Player, uselist=False, primaryjoin="Team.second_player_id == Player.id"
+        ),
     },
 )
 
@@ -34,6 +51,7 @@ mapper_registry.map_imperatively(
     Match,
     matches,
     properties={
+        "competition": relationship(Competition, uselist=False),
         "first_team": relationship(
             Team,
             uselist=False,
@@ -44,13 +62,16 @@ mapper_registry.map_imperatively(
             uselist=False,
             primaryjoin="Match.second_team_id == Team.id",
         ),
-        "sets": relationship(MatchSet),
     },
 )
 
-mapper_registry.map_imperatively(MatchSet, sets)
-
-mapper_registry.map_imperatively(Player, players)
+mapper_registry.map_imperatively(
+    MatchSet,
+    sets,
+    properties={
+        "match": relationship(Match, uselist=False),
+    },
+)
 
 mapper_registry.map_imperatively(
     PlayerState,
@@ -71,26 +92,5 @@ mapper_registry.map_imperatively(
             collection_class=attribute_mapped_collection("player_id"),
         ),
         "last_competition": relationship(Competition, uselist=False),
-    },
-)
-
-mapper_registry.map_imperatively(
-    Team,
-    teams,
-    properties={
-        "first_player": relationship(
-            Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"
-        ),
-        "second_player": relationship(
-            Player, uselist=False, primaryjoin="Team.second_player_id == Player.id"
-        ),
-    },
-)
-
-mapper_registry.map_imperatively(
-    Tournament,
-    tournaments,
-    properties={
-        "competitions": relationship(Competition),
     },
 )

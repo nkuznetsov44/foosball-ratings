@@ -7,6 +7,11 @@ from common.schemas import BaseSchema
 from core.api.requests.player import CreatePlayersRequest
 from core.api.schemas.base import BaseSchemaWithId
 
+
+class PlayerIDSchema(BaseSchema):
+    player_id = fields.Integer(required=True)
+
+
 PlayerSchema = class_schema(Player, base_schema=BaseSchemaWithId)
 PlayerStateSchema = class_schema(PlayerState, base_schema=BaseSchemaWithId)
 
@@ -16,7 +21,3 @@ class GetPlayersResponseSchema(BaseSchema):
 
 
 CreatePlayersRequestSchema = class_schema(CreatePlayersRequest, base_schema=BaseSchema)
-
-
-class CreatePlayersResponseSchema(BaseSchema):
-    player_states = fields.List(fields.Nested(PlayerStateSchema))

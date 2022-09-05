@@ -2,36 +2,19 @@ from typing import Optional
 from dataclasses import dataclass, field
 
 from common.utils import DatetimeWithTZ
+from common.entities.competition import Competition
 from common.entities.team import Team
 from common.entities.player import Player
 
 
 @dataclass
-class MatchSet:
-    id: int = field(init=False)
-    match_id: int = field(init=False)
-    order: int
-    first_team_score: int
-    second_team_score: int
-    external_id: Optional[int] = None
-
-    def __hash__(self) -> int:
-        return hash(self.id)
-
-    @property
-    def is_first_team_win(self) -> bool:
-        return self.first_team_score > self.second_team_score
-
-
-@dataclass
 class Match:
     id: int = field(init=False)
-    competition_id: int = field(init=False)
+    competition: Competition
     first_team: Team
     second_team: Team
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
-    sets: list[MatchSet]
     force_qualification: Optional[bool] = False
     external_id: Optional[int] = None
 
@@ -86,3 +69,20 @@ class Match:
 
     def is_before(self, other: "Match") -> bool:
         return self.end_datetime < other.start_datetime
+
+
+@dataclass
+class MatchSet:
+    id: int = field(init=False)
+    match: Match
+    order: int
+    first_team_score: int
+    second_team_score: int
+    external_id: Optional[int] = None
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+    @property
+    def is_first_team_win(self) -> bool:
+        return self.first_team_score > self.second_team_score

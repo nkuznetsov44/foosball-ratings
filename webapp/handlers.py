@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, sessionmaker
 
 from common.handlers import AbstractHandler, request_schema, response_schema
-from webapp.entities.competition import Competition
-from webapp.entities.player import Player
+from common.entities.competition import Competition
+from common.entities.player import Player
 from webapp.schemas import (  # PlayerCompetitionIDSchema,
     PlayerCompetitionsResponseSchema,
     PlayerIDSchema,
