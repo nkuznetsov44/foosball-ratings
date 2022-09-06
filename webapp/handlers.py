@@ -10,13 +10,19 @@ from common.schemas.entity_schemas import (
     CompetitionSchema,
     MatchSchema,
 )
-from webapp.interactions.core_client import CoreClient
+from webapp.interactions.core.client import CoreClient
+from webapp.interactions.referees.client import RefereesClient
+from webapp.interactions.referees.schemas import RefereeSchema
 
 
 class AbstractWebappHandler(AbstractHandler):
     @property
     def core_client(self):
         return CoreClient()
+
+    @property
+    def referees_client(self):
+        return RefereesClient()
 
 
 class PlayersHandler(AbstractWebappHandler):
@@ -42,3 +48,10 @@ class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
         request_data = await self.get_request_data()
         matches = await self.core_client.get_player_competition_matches(**request_data)
         return self.make_response(matches)
+
+
+class RefereesHandler(AbstractWebappHandler):
+    @response_schema(RefereeSchema, many=True)
+    async def get(self) -> web.Response:
+        referees = await self.referees_client.get_referees()
+        return self.make_response(referees)
