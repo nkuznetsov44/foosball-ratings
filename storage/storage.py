@@ -1,32 +1,41 @@
-from lib2to3.pytree import Base
 from types import TracebackType
 from typing import ClassVar, Type
-from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, AsyncSessionTransaction
 from sqlalchemy.orm import sessionmaker
 
 from common.entities.player import Player
 from common.entities.state import PlayerState
+from common.entities.tournament import Tournament
+from common.entities.competition import Competition
+from common.entities.match import Team
 from storage.entity_storage.base import BaseEntityStorage
+from storage.entity_storage.match import MatchStorage
+from storage.entity_storage.sets import MatchSetStorage
 from storage.entity_storage.state import RatingsStateStorage
-
-
-# TODO:
-# с сохранением нескольких сейчас вроде все ок, можно делать через context manager.
-# а вот с получением одного или с сохранением одного хотелось бы так:
-# ratings_state = await self.storage.ratings_states.get(id=1)
-# Видимо, нужно как-то разделять transactional использование, тогда открывать
-# сессию через context manager, и one-off использование, и спрятать логику с 
-# открытием и закрытием сессии.
 
 
 class Storage:
     def __init__(self, session: AsyncSessionTransaction) -> None:
         self._session = session
 
-        self.players: BaseEntityStorage[Player] = BaseEntityStorage.for_entity(Player, session)
+        self.players: BaseEntityStorage[Player] = BaseEntityStorage.for_entity(
+            Player, session
+        )
+        self.player_states: BaseEntityStorage[
+            PlayerState
+        ] = BaseEntityStorage.for_entity(PlayerState, session)
+        self.tournaments: BaseEntityStorage[Tournament] = BaseEntityStorage.for_entity(
+            Tournament, session
+        )
+        self.competitions: BaseEntityStorage[
+            Competition
+        ] = BaseEntityStorage.for_entity(Competition, session)
+        self.teams: BaseEntityStorage[Team] = BaseEntityStorage.for_entity(
+            Team, session
+        )
+        self.matches = MatchStorage(session)
+        self.sets = MatchSetStorage(session)
         self.ratings_states = RatingsStateStorage(session)
-        self.player_states: BaseEntityStorage[PlayerState] = BaseEntityStorage.for_entity(PlayerState, session)
 
     @property
     def session(self) -> AsyncSessionTransaction:
@@ -44,7 +53,9 @@ class StorageContext:
     def get_sessionmaker(cls) -> Type[AsyncSession]:
         assert cls.db_engine is not None, "DB Engine is not set up"
         return sessionmaker(
-            cls.db_engine, expire_on_commit=False, class_=AsyncSession,
+            cls.db_engine,
+            expire_on_commit=False,
+            class_=AsyncSession,
         )
 
     def __init__(self) -> None:
@@ -55,5 +66,7 @@ class StorageContext:
         session = await self._session_context.__aenter__()
         return Storage(session)
 
-    async def __aexit__(self, exc_type: Type[Exception], exc: Exception, tb: TracebackType) -> None:
+    async def __aexit__(
+        self, exc_type: Type[Exception], exc: Exception, tb: TracebackType
+    ) -> None:
         await self._session_context.__aexit__(exc_type, exc, tb)

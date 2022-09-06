@@ -6,7 +6,7 @@ from pytz import UTC
 
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
-from common.entities.match import Match
+from common.entities.match import Match, MatchSet
 from common.entities.state import RatingsState
 from common.utils import DatetimeWithTZ
 from core.actions.abstract_action import AbstractAction
@@ -58,11 +58,16 @@ class ProcessCompetitionAction(AbstractAction):
             evks_player_ranks=ratings_state.evks_player_ranks.copy(),
         )
 
-        matches = await self.storage.matches.get_by_competition(self.competition.id)
+        matches = await self.storage.matches.find_by_competition(self.competition.id)
 
         for match in self._prepare_matches(matches):
+            match_sets = await self.storage.sets.find_by_match(match.id)
+
             for player_id, ratings in self._calculate_ratings_after_match(
-                ratings_state, match, strategy
+                strategy=strategy,
+                ratings_state=ratings_state,
+                match=match,
+                match_sets=match_sets,
             ).items():
                 player = intermediate_ratings_state.player_states[player_id].player
                 player_state = await self.run_subaction(
@@ -93,12 +98,21 @@ class ProcessCompetitionAction(AbstractAction):
         return sorted(matches, key=lambda match: match.end_datetime)
 
     def _calculate_ratings_after_match(
-        self, ratings_state: RatingsState, match: Match, strategy: strategies.AbstractCalculationStrategy
+        self,
+        *,
+        strategy: strategies.AbstractCalculationStrategy,
+        ratings_state: RatingsState,
+        match: Match,
+        match_sets: Sequence[MatchSet],
     ) -> dict[_PlayerId, dict[RatingType, _RatingValue]]:
         result: dict[_PlayerId, dict[RatingType, _RatingValue]] = defaultdict(dict)
         for rating_type, calculator_cls in strategy.calculators.items():
             calculator = calculator_cls(ratings_state=ratings_state)
-            calc_result_by_player = calculator.calculate(match, self.competition)
+            calc_result_by_player = calculator.calculate(
+                competition=self.competition,
+                match=match,
+                match_sets=match_sets,
+            )
             for player, rating_value in calc_result_by_player.items():
                 result[player][rating_type] = rating_value
         return result

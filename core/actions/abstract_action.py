@@ -28,5 +28,5 @@ class AbstractAction(ABC):
             self.storage = strg
             return await self.handle()
 
-    async def run_subaction(self, action: 'AbstractAction') -> Any:
+    async def run_subaction(self, action: "AbstractAction") -> Any:
         return await action.run(self.storage)

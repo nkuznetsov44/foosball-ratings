@@ -1,7 +1,6 @@
 from typing import Optional
 from decimal import Decimal
 from dataclasses import dataclass, field
-from .tournament import Tournament
 
 from common.utils import DatetimeWithTZ
 from common.entities.enums import CompetitionType

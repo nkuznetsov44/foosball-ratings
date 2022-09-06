@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 
-Entity = TypeVar('Entity')
+Entity = TypeVar("Entity")
 
 
 class BaseEntityStorage(Generic[Entity]):
@@ -17,6 +17,7 @@ class BaseEntityStorage(Generic[Entity]):
         result = await self._session.execute(
             select(self.entity_cls)
             .where(self.entity_cls.id == id)
+            .options(selectinload("*"))
         )
         # TODO: raise EntityNotFoundError if not found
         return result.scalars().first()
@@ -25,7 +26,7 @@ class BaseEntityStorage(Generic[Entity]):
         query = select(self.entity_cls)
         if limit:
             query = query.limit(limit)
-
+        query = query.options(selectinload("*"))
         result = await self._session.execute(query)
         return result.scalars().all()
 
@@ -36,7 +37,9 @@ class BaseEntityStorage(Generic[Entity]):
         return entity
 
     @staticmethod
-    def for_entity(entity_cls: Type[Entity], session: AsyncSession) -> 'BaseEntityStorage':
+    def for_entity(
+        entity_cls: Type[Entity], session: AsyncSession
+    ) -> "BaseEntityStorage":
         storage = BaseEntityStorage(session)
         storage.entity_cls = entity_cls
         return storage

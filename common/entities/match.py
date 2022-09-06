@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Sequence
 from dataclasses import dataclass, field
 
 from common.utils import DatetimeWithTZ
@@ -19,53 +19,12 @@ class Match:
     external_id: Optional[int] = None
 
     @property
-    def is_qualification(self) -> bool:
-        return (
-            self.force_qualification
-            or len(self.sets) == 1
-            and (
-                (
-                    self.sets[0].first_team_score == 7
-                    and self.sets[0].second_team_score < 7
-                )
-                or (
-                    self.sets[0].first_team_score < 7
-                    and self.sets[0].second_team_score == 7
-                )
-            )
-        )
+    def players(self) -> list[Player]:
+        return self.first_team.players + self.second_team.players
 
     @property
     def is_singles(self) -> bool:
         return self.first_team.is_single_player
-
-    @property
-    def first_team_sets_score(self) -> int:
-        return len([s for s in self.sets if s.is_first_team_win])
-
-    @property
-    def second_team_sets_score(self) -> int:
-        return len(self.sets) - self.first_team_sets_score
-
-    @property
-    def is_first_team_win(self) -> bool:
-        return self.first_team_sets_score > self.second_team_sets_score
-
-    @property
-    def winner_team(self) -> Team:
-        if self.is_first_team_win:
-            return self.first_team
-        return self.second_team
-
-    @property
-    def looser_team(self) -> Team:
-        if self.is_first_team_win:
-            return self.second_team
-        return self.first_team
-
-    @property
-    def players(self) -> list[Player]:
-        return self.first_team.players + self.second_team.players
 
     def is_before(self, other: "Match") -> bool:
         return self.end_datetime < other.start_datetime
@@ -86,3 +45,54 @@ class MatchSet:
     @property
     def is_first_team_win(self) -> bool:
         return self.first_team_score > self.second_team_score
+
+
+class MatchUtils:
+    @classmethod
+    def is_qualification(cls, match: Match, match_sets: Sequence[MatchSet]) -> bool:
+        return (
+            match.force_qualification
+            or len(match_sets) == 1
+            and (
+                (
+                    match_sets[0].first_team_score == 7
+                    and match_sets[0].second_team_score < 7
+                )
+                or (
+                    match_sets[0].first_team_score < 7
+                    and match_sets[0].second_team_score == 7
+                )
+            )
+        )
+
+    @classmethod
+    def get_winner_team_and_score(
+        cls,
+        match: Match,
+        match_sets: Sequence[MatchSet],
+    ) -> tuple[Team, int]:
+        first_team_score, second_team_score = cls.get_teams_scores(match_sets)
+
+        # TODO: get max_sets from cls.match implement grand final and other formats
+        if first_team_score > second_team_score:
+            return match.first_team, first_team_score
+        return match.second_team, second_team_score
+
+    @classmethod
+    def get_looser_team_and_score(
+        cls,
+        match: Match,
+        match_sets: Sequence[MatchSet],
+    ) -> tuple[Team, int]:
+        first_team_score, second_team_score = cls.get_teams_scores(match_sets)
+
+        # TODO: get max_sets from cls.match implement grand final and other formats
+        if first_team_score > second_team_score:
+            return match.second_team, second_team_score
+        return match.first_team, first_team_score
+
+    @classmethod
+    def get_teams_scores(cls, match_sets: Sequence[MatchSet]) -> tuple[int, int]:
+        first_team_score = len([mset for mset in match_sets if mset.is_first_team_win])
+        second_team_score = len(match_sets) - first_team_score
+        return first_team_score, second_team_score

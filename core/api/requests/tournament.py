@@ -7,6 +7,8 @@ from marshmallow import fields
 from common.entities.enums import City, CompetitionType
 from common.utils import DatetimeWithTZ
 
+# from core.api.requests.base import BaseRequest
+
 
 @dataclass
 class TeamReq:
@@ -54,10 +56,11 @@ class CompetitionReq:
 
 
 @dataclass
+# FIXME: class CreateTournamentRequest(BaseRequest):
 class CreateTournamentRequest:
     external_id: Optional[int]
     city: City
     name: str
-    evks_importance_coefficient: Decimal
+    evks_importance: Decimal
     url: Optional[str]
     competitions: list[CompetitionReq]

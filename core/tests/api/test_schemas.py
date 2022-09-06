@@ -9,7 +9,7 @@ def create_tournament_request():
         "external_id": 1,
         "name": "Тестовый турнир",
         "city": "MOSCOW",
-        "evks_importance_coefficient": "0.75",
+        "evks_importance": "0.75",
         "url": "https://vk.invalid/tournament",
         "competitions": [
             {

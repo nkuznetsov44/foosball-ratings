@@ -1,5 +1,10 @@
 `export PYTHONPATH=/local/path/to/this/repo`
 
+```
+cd this/repo
+export PYTHONPATH=$(pwd)
+```
+
 pre-commit:
 - `black .`
 - `flake8 .`

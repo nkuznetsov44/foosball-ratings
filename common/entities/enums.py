@@ -50,6 +50,6 @@ class EvksPlayerRank(Enum):
 
 @unique
 class RatingsStateStatus(Enum):
-    PUBLISHED = 'Published'
-    READY_TO_PUBLISH = 'ReadyToPublish'
-    ROLLED_BACK = 'RolledBack'
+    PUBLISHED = "Published"
+    READY_TO_PUBLISH = "ReadyToPublish"
+    ROLLED_BACK = "RolledBack"

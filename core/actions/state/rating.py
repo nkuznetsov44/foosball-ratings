@@ -33,13 +33,12 @@ class CreateRatingsStateAction(AbstractAction):
             evks_player_ranks={},
         )
         new_state.evks_player_ranks = self._get_evks_player_ranks(
-            current_state=ratings_state,
-            new_state=new_state
+            current_state=ratings_state, new_state=new_state
         )
 
         return await self.storage.ratings_states.create(new_state)
 
 
 class GetCurrentRatingsStateAction(AbstractAction):
-    async def run(self) -> RatingsState:
+    async def handle(self) -> RatingsState:
         return await self.storage.ratings_states.get_actual()

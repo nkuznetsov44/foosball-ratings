@@ -1,9 +1,10 @@
+from typing import Sequence
 from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
-from common.entities.match import Match
+from common.entities.match import Match, MatchSet
 from common.entities.state import RatingsState
 
 _PlayerId = int
@@ -18,6 +19,10 @@ class AbstractRatingCalculator(ABC):
 
     @abstractmethod
     def calculate(
-        self, match: Match, competition: Competition
+        self,
+        *,
+        competition: Competition,
+        match: Match,
+        match_sets: Sequence[MatchSet],
     ) -> dict[_PlayerId, _RatingValue]:
         raise NotImplementedError()

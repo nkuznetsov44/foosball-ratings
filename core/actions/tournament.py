@@ -1,121 +1,134 @@
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
+from common.entities.state import RatingsState
 from common.entities.team import Team
 from common.entities.tournament import Tournament
 from core.actions.abstract_action import AbstractAction
 from core.actions.processing import ProcessCompetitionAction
 from core.api.requests.tournament import (
-    CompetitionReq,
     CreateTournamentRequest,
+    CompetitionReq,
     MatchReq,
+    MatchSetReq,
     TeamReq,
 )
 from core.exceptions import PlayerStateNotFound
 
 
+_TeamExternalId = int
+
+
 class CreateTournamentAction(AbstractAction):
-    def __init__(
-        self,
-        *,
-        request: CreateTournamentRequest,
-    ) -> None:
-        # TODO: unwrap request in arguments
-        self._request = request
+    def __init__(self, request: CreateTournamentRequest) -> None:
+        self.request = request
 
     async def handle(self) -> Tournament:
-        tournament_competitions = self._save_tournament_competitions(
-            self._request.competitions
+        ratings_state = await self.storage.ratings_states.get_actual()
+        tournament = await self.storage.tournaments.create(
+            Tournament(
+                external_id=self.request.external_id,
+                name=self.request.name,
+                city=self.request.city,
+                url=self.request.url,
+            )
         )
-
-        async with self.make_db_session()() as session:
-            tournament = Tournament(
-                external_id=self._request.external_id,
-                name=self._request.name,
-                city=self._request.city,
-                url=self._request.url,
-            )
-            session.add(tournament)
-            assert tournament.id is not None
-
-            await session.commit()
-
-        for competition in tournament.competitions:
-            await self.run_action(
-                ProcessCompetitionAction,
-                competition=competition,
-            )
-
+        await self._save_and_process_tournament_competitions(
+            self.request.competitions, tournament, ratings_state
+        )
         return tournament
 
-    def _construct_competition_teams(self, team_reqs: list[TeamReq]) -> dict[int, Team]:
-        """Returns a map of team_external_id -> Team"""
-        teams_map: dict[int, Team] = {}
+    async def _save_and_process_tournament_competitions(
+        self,
+        competition_reqs: list[CompetitionReq],
+        tournament: Tournament,
+        ratings_state: RatingsState,
+    ) -> None:
+        for competition_req in competition_reqs:
+            competition = await self.storage.competitions.create(
+                Competition(
+                    tournament=tournament,
+                    competition_type=competition_req.competition_type,
+                    evks_importance_coefficient=self.request.evks_importance,
+                    start_datetime=competition_req.start_datetime,
+                    end_datetime=competition_req.end_datetime,
+                    external_id=competition_req.external_id,
+                )
+            )
+            competition_teams_map = await self._save_competition_teams(
+                competition_req.teams,
+                competition,
+                ratings_state,
+            )
+            await self._save_competition_matches(
+                competition_req.matches,
+                competition,
+                competition_teams_map,
+            )
+            await self.run_subaction(ProcessCompetitionAction(competition))
+
+    async def _save_competition_teams(
+        self,
+        team_reqs: list[TeamReq],
+        competition: Competition,
+        ratings_state: RatingsState,
+    ) -> dict[_TeamExternalId, Team]:
+        teams_map: dict[_TeamExternalId, Team] = {}
         for team_req in team_reqs:
-            first_player = self._get_player(team_req.first_player_id)
+            first_player = self._get_player(ratings_state, team_req.first_player_id)
             second_player = None
             if team_req.second_player_id:
-                second_player = self._get_player(team_req.second_player_id)
+                second_player = self._get_player(
+                    ratings_state, team_req.second_player_id
+                )
 
-            teams_map[team_req.external_id] = Team(
-                external_id=team_req.external_id,
-                first_player=first_player,
-                second_player=second_player,
-                competition_place=team_req.competition_place,
+            teams_map[team_req.external_id] = await self.storage.teams.create(
+                Team(
+                    competition=competition,
+                    first_player=first_player,
+                    second_player=second_player,
+                    competition_place=team_req.competition_place,
+                    external_id=team_req.external_id,
+                )
             )
         return teams_map
 
-    def _construct_competition_matches(
-        self, match_reqs: list[MatchReq], competition_teams: dict[int, Team]
-    ) -> list[Match]:
-        competition_matches: list[Match] = []
+    async def _save_competition_matches(
+        self,
+        match_reqs: list[MatchReq],
+        competition: Competition,
+        competition_teams_map: dict[int, Team],
+    ) -> None:
         for match_req in match_reqs:
-            sets = [
-                MatchSet(
-                    external_id=req.external_id,
-                    order=req.order,
-                    first_team_score=req.first_team_score,
-                    second_team_score=req.second_team_score,
+            match = await self.storage.matches.create(
+                Match(
+                    competition=competition,
+                    first_team=competition_teams_map[match_req.first_team_external_id],
+                    second_team=competition_teams_map[
+                        match_req.second_team_external_id
+                    ],
+                    start_datetime=match_req.start_datetime,
+                    end_datetime=match_req.end_datetime,
+                    force_qualification=match_req.force_qualification,
+                    external_id=match_req.external_id,
                 )
-                for req in match_req.sets
-            ]
-            match = Match(
-                external_id=match_req.external_id,
-                first_team=competition_teams[match_req.first_team_external_id],
-                second_team=competition_teams[match_req.second_team_external_id],
-                start_datetime=match_req.start_datetime,
-                end_datetime=match_req.end_datetime,
-                force_qualification=match_req.force_qualification,
-                sets=sets,
             )
-            competition_matches.append(match)
-        return competition_matches
+            await self._save_match_sets(match_req.sets, match)
 
-    def _save_tournament_competitions(
-        self, tournament_id: int, competition_reqs: list[CompetitionReq]
-    ) -> list[Competition]:
-        tournament_competitions: list[Competition] = []
-        for competition_req in competition_reqs:
-            competition_teams = self._construct_competition_teams(competition_req.teams)
-            competition_matches = self._construct_competition_matches(
-                competition_req.matches, competition_teams
+    async def _save_match_sets(self, set_reqs: list[MatchSetReq], match: Match) -> None:
+        for set_req in set_reqs:
+            await self.storage.sets.create(
+                MatchSet(
+                    match=match,
+                    order=set_req.order,
+                    first_team_score=set_req.first_team_score,
+                    second_team_score=set_req.second_team_score,
+                    external_id=set_req.external_id,
+                )
             )
-            competition = Competition(
-                external_id=competition_req.external_id,
-                competition_type=competition_req.competition_type,
-                evks_importance_coefficient=self._request.evks_importance_coefficient,
-                start_datetime=competition_req.start_datetime,
-                end_datetime=competition_req.end_datetime,
-                matches=competition_matches,
-                teams=list(competition_teams.values()),
-            )
-            tournament_competitions.append(competition)
-        return tournament_competitions
 
-    def _get_player(self, player_id: int) -> Player:
-        player_state = self.ratings_state[player_id]
+    def _get_player(self, ratings_state: RatingsState, player_id: int) -> Player:
+        player_state = ratings_state[player_id]
         if player_state is None:
-            raise PlayerStateNotFound(
-                player_id=player_id, current_state=self.ratings_state
-            )
+            raise PlayerStateNotFound(player_id=player_id, current_state=ratings_state)
         return player_state.player

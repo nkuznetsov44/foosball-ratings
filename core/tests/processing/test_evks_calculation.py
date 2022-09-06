@@ -4,11 +4,18 @@ import pytest
 from hamcrest import assert_that, equal_to
 
 from common.entities.competition import Competition
-from common.entities.enums import City, CompetitionType, EvksPlayerRank, RatingType
+from common.entities.enums import (
+    City,
+    CompetitionType,
+    EvksPlayerRank,
+    RatingType,
+    RatingsStateStatus,
+)
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.state import PlayerState, RatingsState
 from common.entities.team import Team
+from common.entities.tournament import Tournament
 from core.processing.calculators.evks import EvksRatingCalculator
 
 
@@ -111,68 +118,117 @@ def ratings_state(player_states):
             4: EvksPlayerRank.NOVICE,
         },
         last_competition=None,
+        status=RatingsStateStatus.PUBLISHED,
     )
 
 
 @pytest.fixture
-def match1_teams(player1, player2, player3, player4):
-    first_team = Team(first_player=player1, second_player=player2, competition_place=1)
-    second_team = Team(first_player=player3, second_player=player4, competition_place=2)
-    return first_team, second_team
-
-
-@pytest.fixture
-def match1(match1_teams):
-    first_team, second_team = match1_teams
-    return Match(
-        first_team=first_team,
-        second_team=second_team,
-        sets=[
-            MatchSet(order=1, first_team_score=5, second_team_score=2),
-            MatchSet(order=2, first_team_score=5, second_team_score=2),
-            MatchSet(order=3, first_team_score=2, second_team_score=5),
-            MatchSet(order=4, first_team_score=5, second_team_score=2),
-        ],
-        start_datetime="2022-08-13T03:12:58.019077+00:00",
-        end_datetime="2022-08-13T03:12:58.019077+00:00",
+def tournament():
+    return Tournament(
+        name="Test tournament",
+        city=City.MOSCOW,
+        url=None,
     )
 
 
 @pytest.fixture
-def match2_teams(player2, player4):
-    first_team = Team(first_player=player2, second_player=None, competition_place=1)
-    second_team = Team(first_player=player4, second_player=None, competition_place=2)
-    return first_team, second_team
-
-
-@pytest.fixture
-def match2(match2_teams):
-    first_team, second_team = match2_teams
-    return Match(
-        first_team=first_team,
-        second_team=second_team,
-        sets=[
-            MatchSet(order=1, first_team_score=1, second_team_score=5),
-            MatchSet(order=2, first_team_score=2, second_team_score=5),
-            MatchSet(order=3, first_team_score=5, second_team_score=3),
-            MatchSet(order=4, first_team_score=4, second_team_score=5),
-        ],
-        start_datetime="2022-08-13T03:12:58.019077+00:00",
-        end_datetime="2022-08-13T03:12:58.019077+00:00",
-    )
-
-
-@pytest.fixture
-def competition(match1, match2, match1_teams, match2_teams):
-    teams = list(match1_teams) + list(match2_teams)
+def doubles_competition(tournament):
     return Competition(
-        competition_type=CompetitionType.COD,
+        tournament=tournament,
+        competition_type=CompetitionType.OD,
         evks_importance_coefficient=Decimal("0.75"),
         start_datetime="2022-08-13T03:12:58.019077+00:00",
         end_datetime="2022-08-13T03:12:58.019077+00:00",
-        matches=[match1, match2],
-        teams=teams,
     )
+
+
+@pytest.fixture
+def singles_competition(tournament):
+    return Competition(
+        tournament=tournament,
+        competition_type=CompetitionType.OS,
+        evks_importance_coefficient=Decimal("0.75"),
+        start_datetime="2022-08-13T03:12:58.019077+00:00",
+        end_datetime="2022-08-13T03:12:58.019077+00:00",
+    )
+
+
+@pytest.fixture
+def doubles_match_teams(doubles_competition, player1, player2, player3, player4):
+    first_team = Team(
+        competition=doubles_competition,
+        first_player=player1,
+        second_player=player2,
+        competition_place=1,
+    )
+    second_team = Team(
+        competition=doubles_competition,
+        first_player=player3,
+        second_player=player4,
+        competition_place=2,
+    )
+    return first_team, second_team
+
+
+@pytest.fixture
+def doubles_match(doubles_competition, doubles_match_teams):
+    first_team, second_team = doubles_match_teams
+    return Match(
+        competition=doubles_competition,
+        first_team=first_team,
+        second_team=second_team,
+        start_datetime="2022-08-13T03:12:58.019077+00:00",
+        end_datetime="2022-08-13T03:12:58.019077+00:00",
+    )
+
+
+@pytest.fixture
+def doubles_match_sets(doubles_match):
+    return [
+        MatchSet(match=doubles_match, order=1, first_team_score=5, second_team_score=2),
+        MatchSet(match=doubles_match, order=2, first_team_score=5, second_team_score=2),
+        MatchSet(match=doubles_match, order=3, first_team_score=2, second_team_score=5),
+        MatchSet(match=doubles_match, order=4, first_team_score=5, second_team_score=2),
+    ]
+
+
+@pytest.fixture
+def singles_match_teams(singles_competition, player2, player4):
+    first_team = Team(
+        competition=singles_competition,
+        first_player=player2,
+        second_player=None,
+        competition_place=1,
+    )
+    second_team = Team(
+        competition=singles_competition,
+        first_player=player4,
+        second_player=None,
+        competition_place=2,
+    )
+    return first_team, second_team
+
+
+@pytest.fixture
+def singles_match(singles_competition, singles_match_teams):
+    first_team, second_team = singles_match_teams
+    return Match(
+        competition=singles_competition,
+        first_team=first_team,
+        second_team=second_team,
+        start_datetime="2022-08-13T03:12:58.019077+00:00",
+        end_datetime="2022-08-13T03:12:58.019077+00:00",
+    )
+
+
+@pytest.fixture
+def singles_match_sets(singles_match):
+    return [
+        MatchSet(match=singles_match, order=1, first_team_score=1, second_team_score=5),
+        MatchSet(match=singles_match, order=2, first_team_score=2, second_team_score=5),
+        MatchSet(match=singles_match, order=3, first_team_score=5, second_team_score=3),
+        MatchSet(match=singles_match, order=4, first_team_score=4, second_team_score=5),
+    ]
 
 
 @pytest.fixture
@@ -181,9 +237,20 @@ def calculator(ratings_state):
 
 
 def test_evks_calculation_doubles(
-    calculator, competition, match1, player1, player2, player3, player4
+    calculator,
+    doubles_competition,
+    doubles_match,
+    doubles_match_sets,
+    player1,
+    player2,
+    player3,
+    player4,
 ):
-    result = calculator.calculate(match=match1, competition=competition)
+    result = calculator.calculate(
+        competition=doubles_competition,
+        match=doubles_match,
+        match_sets=doubles_match_sets,
+    )
     # r = 2.547396728611409795104721012
     assert_that(result[player1.id], equal_to(1713))
     assert_that(result[player2.id], equal_to(2066))
@@ -191,8 +258,14 @@ def test_evks_calculation_doubles(
     assert_that(result[player4.id], equal_to(1215))
 
 
-def test_evks_calculation_singles(calculator, competition, match2, player2, player4):
-    result = calculator.calculate(match=match2, competition=competition)
+def test_evks_calculation_singles(
+    calculator, singles_competition, singles_match, singles_match_sets, player2, player4
+):
+    result = calculator.calculate(
+        competition=singles_competition,
+        match=singles_match,
+        match_sets=singles_match_sets,
+    )
     # r = 35.72428301468905220089739857
     assert_that(result[player2.id], equal_to(2027))
     assert_that(result[player4.id], equal_to(1254))

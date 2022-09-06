@@ -1,11 +1,11 @@
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from itertools import chain, permutations
-from typing import ClassVar
+from typing import ClassVar, Sequence
 
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
-from common.entities.match import Match
+from common.entities.match import Match, MatchSet, MatchUtils
 from common.entities.team import Team
 from core.exceptions import PlayerStateNotFound
 from core.processing.calculators.abstract_rating_calculator import (
@@ -28,7 +28,11 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     game_coefficients = ClassVar[dict[EvksGameType, int]]
 
     def calculate(
-        self, match: Match, competition: Competition
+        self,
+        *,
+        competition: Competition,
+        match: Match,
+        match_sets: Sequence[MatchSet],
     ) -> dict[_PlayerId, _RatingValue]:
         for player in match.players:
             if not self.ratings_state[player]:
@@ -36,26 +40,38 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
                     player_id=player.id, current_state=self.ratings_state
                 )
 
-        rw = self._get_team_rating(match.winner_team)
-        rl = self._get_team_rating(match.looser_team)
+        winner_team, winner_team_score = MatchUtils.get_winner_team_and_score(
+            match, match_sets
+        )
+        looser_team, looser_team_score = MatchUtils.get_looser_team_and_score(
+            match, match_sets
+        )
+
+        rw = self._get_team_rating(winner_team)
+        rl = self._get_team_rating(looser_team)
 
         t = competition.evks_importance_coefficient
         d = self._calculate_reliability_coefficients(match)
-        k = self._calculate_base_coefficient(match)
+        k = self._calculate_base_coefficient(
+            match=match,
+            match_sets=match_sets,
+            winner_team_score=winner_team_score,
+            looser_team_score=looser_team_score,
+        )
 
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
 
         res: dict[_PlayerId, _RatingValue] = {}
 
-        for winner_player in match.winner_team.players:
+        for winner_player in winner_team.players:
             r = d[winner_player.id] * base_rating
             r_rounded = self._round_decimal(r)
             res[winner_player.id] = (
                 self.ratings_state[winner_player].evks_rating + r_rounded
             )
 
-        for looser_player in match.looser_team.players:
+        for looser_player in looser_team.players:
             r = d[looser_player.id] * base_rating
             r_rounded = self._round_decimal(r)
             res[looser_player.id] = (
@@ -144,21 +160,33 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
                         res[player_state.player.id] = Decimal(1)
         return res
 
-    def _get_game_type(self, match: Match) -> EvksGameType:
-        if match.is_qualification:
+    def _get_game_type(
+        self, match: Match, match_sets: Sequence[MatchSet]
+    ) -> EvksGameType:
+        if MatchUtils.is_qualification(match, match_sets):
             return EvksGameType.QUALIFICATION
         if (
-            match.sets[0].first_team_score == 5
-            and match.sets[0].second_team_score < 5
-            or match.sets[0].first_team_score < 5
-            and match.sets[0].second_team_score == 5
+            match_sets[0].first_team_score == 5
+            and match_sets[0].second_team_score < 5
+            or match_sets[0].first_team_score < 5
+            and match_sets[0].second_team_score == 5
         ):
             return EvksGameType.SET_TO_5
         return EvksGameType.OTHER
 
-    def _calculate_base_coefficient(self, match: Match) -> int:
-        score_diff = abs(match.first_team_sets_score - match.second_team_sets_score)
-        return score_diff * self.game_coefficients[self._get_game_type(match)]
+    def _calculate_base_coefficient(
+        self,
+        *,
+        match: Match,
+        match_sets: Sequence[MatchSet],
+        winner_team_score: int,
+        looser_team_score: int,
+    ) -> int:
+        # TODO: implement grandfinals and other formats
+        score_diff = winner_team_score - looser_team_score
+        return (
+            score_diff * self.game_coefficients[self._get_game_type(match, match_sets)]
+        )
 
 
 class Pre2018EvksRatingCalculator(BaseEvksRatingCalculator):

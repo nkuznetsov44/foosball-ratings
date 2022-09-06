@@ -16,7 +16,7 @@ class PlayerHandler(AbstractHandler):
     @response_schema(PlayerSchema)
     async def get(self) -> web.Response:
         get_player_request = await self.get_request_data()
-        player = await GetPlayerAction(get_player_request['player_id']).run()
+        player = await GetPlayerAction(get_player_request["player_id"]).run()
         return self.make_response(player)
 
 

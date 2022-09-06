@@ -24,6 +24,11 @@ class PlayerState:
     ratings: dict[RatingType, _RatingValue]
     is_evks_rating_active: bool
 
+    # TODO:
+    # created: Timestamp
+    # updated: Timestamp
+    # created_with: jsonb  # save request id
+
     @property
     def evks_rating(self) -> Optional[int]:
         return self.ratings.get(RatingType.EVKS)
@@ -48,6 +53,11 @@ class RatingsState:
     evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
     status: RatingsStateStatus
 
+    # TODO:
+    # created: Timestamp
+    # updated: Timestamp
+    # created_with: jsonb  # save request id
+
     @property
     def player_states_list(self) -> list[PlayerState]:
         return list(self.player_states.values())
@@ -62,4 +72,3 @@ class RatingsState:
         else:
             raise KeyError(f"Incorrect player state key type {type(item)}")
         return self.player_states.get(player_id)
-

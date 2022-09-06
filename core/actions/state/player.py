@@ -1,7 +1,7 @@
 from typing import Optional
 
 from common.entities.enums import RatingType
-from common.entities.match import Match
+from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.state import PlayerState
 from core.actions.abstract_action import AbstractAction
@@ -107,8 +107,13 @@ class CreatePlayerStateAction(AbstractAction):
 
         new_matches_played = current_player_state.matches_played + 1
 
+        last_match_sets = await self.storage.sets.find_by_match(self.last_match.id)
+        last_match_winner_team, _ = MatchUtils.get_winner_team_and_score(
+            self.last_match, last_match_sets
+        )
+
         new_matches_won = current_player_state.matches_won
-        if self.player in self.last_match.winner_team.players:
+        if self.player in last_match_winner_team.players:
             new_matches_won = new_matches_won + 1
 
         # TODO: implement logic of player become inactive
