@@ -1,11 +1,11 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.entities.enums import City
 
 
 @dataclass
 class Player:
-    id: int = field(init=False)
+    id: int
     first_name: str
     last_name: str
     city: City

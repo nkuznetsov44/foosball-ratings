@@ -1,5 +1,5 @@
 from typing import Optional, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.utils import DatetimeWithTZ
 from common.entities.competition import Competition
@@ -9,7 +9,7 @@ from common.entities.player import Player
 
 @dataclass
 class Match:
-    id: int = field(init=False)
+    id: int
     competition: Competition
     first_team: Team
     second_team: Team
@@ -32,7 +32,7 @@ class Match:
 
 @dataclass
 class MatchSet:
-    id: int = field(init=False)
+    id: int
     match: Match
     order: int
     first_team_score: int

@@ -56,6 +56,7 @@ class CreateInitialPlayerStateAction(AbstractAction):
 
         return await self.storage.player_states.create(
             PlayerState(
+                id=None,
                 previous_state_id=None,
                 player=self.player,
                 matches_played=matches_played,
@@ -123,6 +124,7 @@ class CreatePlayerStateAction(AbstractAction):
 
         return await self.storage.player_states.create(
             PlayerState(
+                id=None,
                 previous_state_id=current_player_state.id,
                 player=self.player,
                 matches_played=new_matches_played,

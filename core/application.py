@@ -24,4 +24,4 @@ async def make_app() -> web.Application:
 
 
 if __name__ == "__main__":
-    web.run_app(make_app())
+    web.run_app(make_app(), port=8080)  # TODO: to settings

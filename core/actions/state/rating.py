@@ -26,6 +26,7 @@ class CreateRatingsStateAction(AbstractAction):
         ratings_state = await self.storage.ratings_states.get_actual()
 
         new_state = RatingsState(
+            id=None,
             previous_state_id=ratings_state.id,
             last_competition=self.last_competition,
             player_states=self.player_states,

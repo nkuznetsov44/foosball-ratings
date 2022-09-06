@@ -28,13 +28,14 @@ class CreatePlayersAction(AbstractAction):
     def __init__(self, request: CreatePlayersRequest) -> None:
         self.players = request.players
 
-    async def handle(self) -> dict[_PlayerId, PlayerState]:
+    async def handle(self) -> list[PlayerState]:
         ratings_state = await self.storage.ratings_states.get_actual()
 
         player_states: dict[_PlayerId, PlayerState] = {}
 
         for player_req in self.players:
             player = Player(
+                id=None,
                 first_name=player_req.first_name,
                 last_name=player_req.last_name,
                 city=player_req.city,
@@ -61,9 +62,11 @@ class CreatePlayersAction(AbstractAction):
 
         new_state.player_states |= player_states
 
-        return await self.run_subaction(
+        await self.run_subaction(
             CreateRatingsStateAction(
                 player_states=new_state.player_states,
                 last_competition=ratings_state.last_competition,
             )
         )
+
+        return player_states.values()

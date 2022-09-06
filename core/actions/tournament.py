@@ -27,6 +27,7 @@ class CreateTournamentAction(AbstractAction):
         ratings_state = await self.storage.ratings_states.get_actual()
         tournament = await self.storage.tournaments.create(
             Tournament(
+                id=None,
                 external_id=self.request.external_id,
                 name=self.request.name,
                 city=self.request.city,
@@ -47,6 +48,7 @@ class CreateTournamentAction(AbstractAction):
         for competition_req in competition_reqs:
             competition = await self.storage.competitions.create(
                 Competition(
+                    id=None,
                     tournament=tournament,
                     competition_type=competition_req.competition_type,
                     evks_importance_coefficient=self.request.evks_importance,
@@ -84,6 +86,7 @@ class CreateTournamentAction(AbstractAction):
 
             teams_map[team_req.external_id] = await self.storage.teams.create(
                 Team(
+                    id=None,
                     competition=competition,
                     first_player=first_player,
                     second_player=second_player,
@@ -102,6 +105,7 @@ class CreateTournamentAction(AbstractAction):
         for match_req in match_reqs:
             match = await self.storage.matches.create(
                 Match(
+                    id=None,
                     competition=competition,
                     first_team=competition_teams_map[match_req.first_team_external_id],
                     second_team=competition_teams_map[
@@ -119,6 +123,7 @@ class CreateTournamentAction(AbstractAction):
         for set_req in set_reqs:
             await self.storage.sets.create(
                 MatchSet(
+                    id=None,
                     match=match,
                     order=set_req.order,
                     first_team_score=set_req.first_team_score,

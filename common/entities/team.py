@@ -1,5 +1,5 @@
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.entities.player import Player
 from common.entities.competition import Competition
@@ -7,7 +7,7 @@ from common.entities.competition import Competition
 
 @dataclass
 class Team:
-    id: int = field(init=False)
+    id: int
     competition: Competition
     competition_place: int
     first_player: Player

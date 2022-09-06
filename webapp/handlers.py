@@ -6,21 +6,21 @@ from common.schemas.request import (
     PlayerCompetitionIDSchema,
 )
 from common.schemas.entity_schemas import (
-    PlayerWithIDSchema,
-    CompetitionWithIDSchema,
-    MatchWithIDSchema,
+    PlayerSchema,
+    CompetitionSchema,
+    MatchSchema,
 )
 from webapp.interactions.core_client import CoreClient
 
 
 class AbstractWebappHandler(AbstractHandler):
     @property
-    def core_client():
+    def core_client(self):
         return CoreClient()
 
 
 class PlayersHandler(AbstractWebappHandler):
-    @response_schema(PlayerWithIDSchema, many=True)
+    @response_schema(PlayerSchema, many=True)
     async def get(self) -> web.Response:
         players = await self.core_client.get_players()
         return self.make_response(players)
@@ -28,7 +28,7 @@ class PlayersHandler(AbstractWebappHandler):
 
 class PlayerCompetitionsHandler(AbstractWebappHandler):
     @request_schema(PlayerIDSchema)
-    @response_schema(CompetitionWithIDSchema, many=True)
+    @response_schema(CompetitionSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         competitions = await self.core_client.get_player_competitions(**request_data)
@@ -37,7 +37,7 @@ class PlayerCompetitionsHandler(AbstractWebappHandler):
 
 class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
     @request_schema(PlayerCompetitionIDSchema)
-    @response_schema(MatchWithIDSchema, many=True)
+    @response_schema(MatchSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         matches = await self.core_client.get_player_competition_matches(**request_data)

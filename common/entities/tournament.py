@@ -1,12 +1,12 @@
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.entities.enums import City
 
 
 @dataclass
 class Tournament:
-    id: int = field(init=False)
+    id: int
     name: str
     city: City
     url: Optional[str]

@@ -1,6 +1,6 @@
 from typing import Optional
 from decimal import Decimal
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.utils import DatetimeWithTZ
 from common.entities.enums import CompetitionType
@@ -9,7 +9,7 @@ from common.entities.tournament import Tournament
 
 @dataclass
 class Competition:
-    id: int = field(init=False)
+    id: int
     tournament: Tournament
     competition_type: CompetitionType
     evks_importance_coefficient: Decimal

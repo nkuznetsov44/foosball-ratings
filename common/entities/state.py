@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from common.entities.enums import RatingType, EvksPlayerRank, RatingsStateStatus
 from common.entities.player import Player
@@ -15,7 +15,7 @@ _PlayerId = int
 class PlayerState:
     """Описывает состояние рейтингов игрока после истории сыгранных матчей."""
 
-    id: int = field(init=False)
+    id: int
     previous_state_id: Optional[int]
     player: Player
     matches_played: int
@@ -46,7 +46,7 @@ class PlayerState:
 class RatingsState:
     """Описывает состояние рейтингов после истории сыгранных категорий."""
 
-    id: int = field(init=False)
+    id: int
     previous_state_id: Optional[int]
     last_competition: Optional[Competition]
     player_states: dict[_PlayerId, PlayerState]
