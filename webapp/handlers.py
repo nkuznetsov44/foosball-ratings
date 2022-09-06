@@ -1,60 +1,44 @@
-from typing import Type
-
 from aiohttp import web
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload, sessionmaker
 
 from common.handlers import AbstractHandler, request_schema, response_schema
-from common.entities.competition import Competition
-from common.entities.player import Player
-from webapp.schemas import (  # PlayerCompetitionIDSchema,
-    PlayerCompetitionsResponseSchema,
+from common.schemas.request import (
     PlayerIDSchema,
-    PlayersResponseSchema,
+    PlayerCompetitionIDSchema,
 )
+from common.schemas.entity_schemas import (
+    PlayerWithIDSchema,
+    CompetitionWithIDSchema,
+    MatchWithIDSchema,
+)
+from webapp.interactions.core_client import CoreClient
 
 
 class AbstractWebappHandler(AbstractHandler):
-    def make_db_session(self) -> Type[AsyncSession]:
-        return sessionmaker(self.app["db"], expire_on_commit=False, class_=AsyncSession)
+    @property
+    def core_client():
+        return CoreClient()
 
 
 class PlayersHandler(AbstractWebappHandler):
-    @response_schema(PlayersResponseSchema)
+    @response_schema(PlayerWithIDSchema, many=True)
     async def get(self) -> web.Response:
-        async with self.make_db_session()() as session:
-            result = await session.execute(select(Player))
-            players = result.scalars().all()
-        return self.make_response({"players": players})
+        players = await self.core_client.get_players()
+        return self.make_response(players)
 
 
 class PlayerCompetitionsHandler(AbstractWebappHandler):
     @request_schema(PlayerIDSchema)
-    @response_schema(PlayerCompetitionsResponseSchema)
-    async def get(self) -> web.Response:
-        # request_data = await self.get_request_data()
-        async with self.make_db_session()() as session:
-            # TODO: filter competitions by player
-            # result = await session.execute(
-            # select match.competition
-            # where match.first_team.first_player.id == player_id
-            # or ...
-            # )
-
-            # TODO: figure out how to get rid of selectinload option
-            result = await session.execute(
-                select(Competition).options(selectinload("*"))
-            )
-            competitions = result.scalars().all()
-        return self.make_response({"competitions": competitions})
-
-
-"""
-class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
-    @request_schema(PlayerCompetitionIdSchema)
-    @response_schema(PlayerCompetitionMatchesResponseSchema)
+    @response_schema(CompetitionWithIDSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
-        pass
-"""
+        competitions = await self.core_client.get_player_competitions(**request_data)
+        return self.make_response(competitions)
+
+
+class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
+    @request_schema(PlayerCompetitionIDSchema)
+    @response_schema(MatchWithIDSchema, many=True)
+    async def get(self) -> web.Response:
+        request_data = await self.get_request_data()
+        matches = await self.core_client.get_player_competition_matches(**request_data)
+        return self.make_response(matches)

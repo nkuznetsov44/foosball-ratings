@@ -7,9 +7,10 @@ from marshmallow import Schema, ValidationError
 from common.exceptions import MalformedRequest
 
 
-def response_schema(schema: Type[Schema]) -> Callable[[Any], Any]:
+def response_schema(schema: Type[Schema], many: bool = False) -> Callable[[Any], Any]:
     def decorator(handler_method: Any) -> Any:
         handler_method.response_schema = schema
+        handler_method.response_schema_options = {"many": many}
         return handler_method
 
     return decorator
@@ -51,5 +52,6 @@ class AbstractHandler(web.View):
 
     def make_response(self, response_data: Any) -> web.Response:
         schema_cls = self._get_handler_method().response_schema
-        response = schema_cls().dump(response_data)
+        schema_options = self._get_handler_method().response_schema_options
+        response = schema_cls(**schema_options).dump(response_data)
         return web.json_response(response)

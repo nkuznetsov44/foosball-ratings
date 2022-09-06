@@ -1,0 +1,2 @@
+class BaseInteractionClient:
+    pass

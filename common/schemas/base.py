@@ -19,3 +19,7 @@ class BaseSchema(Schema):
 
     class Meta:
         strict = True
+
+
+class BaseSchemaWithID(BaseSchema):
+    id = fields.Integer(required=True)
