@@ -6,7 +6,7 @@ from core.api.handlers.player import (
     PlayerCompetitionsHandler,
     PlayerCompetitionMatchesHandler,
 )
-from core.api.handlers.state import RatingsStateHandler
+from core.api.handlers.ratings_state import RatingsStateHandler
 from core.api.handlers.tournament import TournamentHandler
 
 

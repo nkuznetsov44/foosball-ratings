@@ -3,8 +3,6 @@ from typing import Optional
 
 from common.entities.enums import City
 
-# from core.api.requests.base import BaseRequest
-
 
 @dataclass
 class PlayerReq:
@@ -20,6 +18,5 @@ class PlayerReq:
 
 
 @dataclass
-# FIXME: class CreatePlayersRequest(BaseRequest):
 class CreatePlayersRequest:
     players: list[PlayerReq]

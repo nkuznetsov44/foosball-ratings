@@ -4,7 +4,8 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
-from common.entities.state import PlayerState, RatingsState
+from common.entities.player_state import PlayerState
+from common.entities.ratings_state import RatingsState
 from common.entities.team import Team
 from common.entities.tournament import Tournament
 from storage.tables import (

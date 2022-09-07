@@ -1,4 +1,5 @@
 from typing import ClassVar, Type, TypeVar, Generic, Any, Optional
+from sqlalchemy.sql.selectable import Select
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -13,11 +14,13 @@ class BaseEntityStorage(Generic[Entity]):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
+    def _select_entity_query(self) -> Select:
+        """Override if need to select with related"""
+        return select(self.entity_cls)
+
     async def get(self, id: Any) -> Entity:
         result = await self._session.execute(
-            select(self.entity_cls)
-            .where(self.entity_cls.id == id)
-            .options(selectinload("*"))
+            self._select_entity_query().where(self.entity_cls.id == id)
         )
         # TODO: raise EntityNotFoundError if not found
         return result.scalars().first()

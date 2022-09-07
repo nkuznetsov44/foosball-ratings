@@ -15,7 +15,7 @@ class Match:
     second_team: Team
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
-    force_qualification: Optional[bool] = False
+    force_qualification: Optional[bool] = None
     external_id: Optional[int] = None
 
     @property

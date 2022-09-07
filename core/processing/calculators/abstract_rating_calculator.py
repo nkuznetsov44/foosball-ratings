@@ -5,7 +5,7 @@ from typing import ClassVar
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet
-from common.entities.state import RatingsState
+from common.entities.ratings_state import RatingsState
 
 _PlayerId = int
 _RatingValue = int

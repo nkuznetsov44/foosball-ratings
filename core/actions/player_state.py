@@ -3,7 +3,7 @@ from typing import Optional
 from common.entities.enums import RatingType
 from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
-from common.entities.state import PlayerState
+from common.entities.player_state import PlayerState
 from core.actions.abstract_action import AbstractAction
 from core.exceptions import (
     PlayerStateAlreadyExists,
@@ -12,7 +12,7 @@ from core.exceptions import (
 )
 
 
-class CreateInitialPlayerStateAction(AbstractAction):
+class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
     INITIAL_RATING_VALUES = {
         RatingType.EVKS: 1100,
         RatingType.CUMULATIVE: 0,
@@ -68,7 +68,7 @@ class CreateInitialPlayerStateAction(AbstractAction):
         )
 
 
-class CreatePlayerStateAction(AbstractAction):
+class CreatePlayerStateAction(AbstractAction[PlayerState]):
     def __init__(
         self,
         *,

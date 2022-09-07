@@ -1,19 +1,25 @@
 from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
-from common.schemas.request import PlayerIDSchema, PlayerCompetitionIDSchema
-from common.schemas.entity_schemas import (
+from common.entities.schemas import (
     PlayerSchema,
     CompetitionSchema,
-    MatchSchema,
     PlayerStateSchema,
+)
+from common.interactions.core.requests.player_competition_matches import (
+    TeamResp,
+    MatchResp,
+    PlayerCompetitionMatchesResponse,
+)
+from common.interactions.core.requests.schemas import (
+    PlayerIDSchema,
+    PlayerCompetitionIDSchema,
+    PlayerCompetitionMatchesResponseSchema,
+    CreatePlayersRequestSchema,
 )
 from core.actions.player import CreatePlayersAction, GetPlayersAction, GetPlayerAction
 from core.actions.match import GetPlayerCompetitionMatchesAction
 from core.actions.competition import GetPlayerCompetitionsAction
-from core.api.schemas.player import (
-    CreatePlayersRequestSchema,
-)
 
 
 class PlayerHandler(AbstractHandler):
@@ -50,8 +56,32 @@ class PlayerCompetitionsHandler(AbstractHandler):
 
 class PlayerCompetitionMatchesHandler(AbstractHandler):
     @request_schema(PlayerCompetitionIDSchema)
-    @response_schema(MatchSchema, many=True)
+    @response_schema(PlayerCompetitionMatchesResponseSchema)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         matches = await GetPlayerCompetitionMatchesAction(**request_data).run()
-        return self.make_response(matches)
+
+        # TODO: join Sets and PlayerState
+        match_resps: list[MatchResp] = []
+        for match in matches:
+            match_resps.append(
+                MatchResp(
+                    id=match.id,
+                    first_team=TeamResp(
+                        competition_place=match.first_team.competition_place,
+                        first_player=match.first_team.first_player,
+                        second_player=match.first_team.second_player,
+                    ),
+                    second_team=TeamResp(
+                        competition_place=match.second_team.competition_place,
+                        first_player=match.second_team.first_player,
+                        second_player=match.second_team.second_player,
+                    ),
+                    start_datetime=match.start_datetime,
+                    end_datetime=match.end_datetime,
+                    force_qualification=match.force_qualification,
+                )
+            )
+
+        response = PlayerCompetitionMatchesResponse(matches=match_resps)
+        return self.make_response(response)

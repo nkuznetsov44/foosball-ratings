@@ -1,18 +1,23 @@
 from dataclasses import replace
 from collections import defaultdict
-from typing import Sequence
+from typing import Sequence, Type
 
 from pytz import UTC
 
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet
-from common.entities.state import RatingsState
+from common.entities.ratings_state import RatingsState
 from common.utils import DatetimeWithTZ
 from core.actions.abstract_action import AbstractAction
-from core.actions.state.player import CreatePlayerStateAction
-from core.actions.state.rating import CreateRatingsStateAction
-from core.processing import strategies
+from core.actions.player_state import CreatePlayerStateAction
+from core.actions.ratings_state import CreateRatingsStateAction
+from core.processing.strategies import (
+    AbstractCalculationStrategy,
+    Pre2018RatingCalculationStrategy,
+    EvksOnlyRatingCalculationStrategy,
+    EvksAndCumulativeRatingCalculationStrategy,
+)
 
 
 DATE_2018_01_01 = DatetimeWithTZ(
@@ -27,7 +32,7 @@ _PlayerId = int
 _RatingValue = int
 
 
-class ProcessCompetitionAction(AbstractAction):
+class ProcessCompetitionAction(AbstractAction[RatingsState]):
     def __init__(self, competition: Competition) -> None:
         self.competition = competition
 
@@ -86,13 +91,13 @@ class ProcessCompetitionAction(AbstractAction):
             )
         )
 
-    def _choose_calculation_strategy(self):
+    def _choose_calculation_strategy(self) -> Type[AbstractCalculationStrategy]:
         if self.competition.end_datetime < DATE_2018_01_01:
-            return strategies.Pre2018RatingCalculationStrategy
+            return Pre2018RatingCalculationStrategy
         elif self.competition.end_datetime < DATE_2022_01_01:
-            return strategies.EvksOnlyRatingCalculationStrategy
+            return EvksOnlyRatingCalculationStrategy
         else:
-            return strategies.EvksAndCumulativeRatingCalculationStrategy
+            return EvksAndCumulativeRatingCalculationStrategy
 
     def _prepare_matches(self, matches: Sequence[Match]) -> Sequence[Match]:
         return sorted(matches, key=lambda match: match.end_datetime)
@@ -100,7 +105,7 @@ class ProcessCompetitionAction(AbstractAction):
     def _calculate_ratings_after_match(
         self,
         *,
-        strategy: strategies.AbstractCalculationStrategy,
+        strategy: AbstractCalculationStrategy,
         ratings_state: RatingsState,
         match: Match,
         match_sets: Sequence[MatchSet],

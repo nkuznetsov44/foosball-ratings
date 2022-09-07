@@ -1,17 +1,17 @@
 from dataclasses import replace
 
 from common.entities.player import Player
-from common.entities.state import PlayerState
+from common.entities.player_state import PlayerState
 from core.actions.abstract_action import AbstractAction
-from core.actions.state.player import CreateInitialPlayerStateAction
-from core.actions.state.rating import CreateRatingsStateAction
-from core.api.requests.player import CreatePlayersRequest
+from core.actions.player_state import CreateInitialPlayerStateAction
+from core.actions.ratings_state import CreateRatingsStateAction
+from common.interactions.core.requests.player import CreatePlayersRequest
 
 
 _PlayerId = int
 
 
-class GetPlayerAction(AbstractAction):
+class GetPlayerAction(AbstractAction[Player]):
     def __init__(self, player_id: int) -> None:
         self.player_id = player_id
 
@@ -19,12 +19,17 @@ class GetPlayerAction(AbstractAction):
         return await self.storage.players.get(self.player_id)
 
 
-class GetPlayersAction(AbstractAction):
+class GetPlayersAction(AbstractAction[list[Player]]):
     async def handle(self) -> list[Player]:
         return await self.storage.players.lst()
 
 
-class CreatePlayersAction(AbstractAction):
+# TODO: Refactor? Мне не нравится, что в Actions передается Request,
+# который должен разбираться на уровне handler'a. Но тогда там нужно
+# будет создавать все entities. Может, это и неплохо.
+
+
+class CreatePlayersAction(AbstractAction[list[PlayerState]]):
     def __init__(self, request: CreatePlayersRequest) -> None:
         self.players = request.players
 

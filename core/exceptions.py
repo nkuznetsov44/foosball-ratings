@@ -1,6 +1,6 @@
 from typing import Any, ClassVar
 
-from common.entities.state import RatingsState
+from common.entities.ratings_state import RatingsState
 
 
 class CoreProcessingError(Exception):

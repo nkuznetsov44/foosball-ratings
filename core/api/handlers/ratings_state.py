@@ -1,8 +1,8 @@
 from aiohttp import web
 
 from common.handlers import AbstractHandler, response_schema
-from core.actions.state.rating import GetCurrentRatingsStateAction
-from core.api.schemas.state import RatingsStateResponseSchema
+from core.actions.ratings_state import GetCurrentRatingsStateAction
+from core.api.schemas.ratings_state import RatingsStateResponseSchema
 
 
 class RatingsStateHandler(AbstractHandler):

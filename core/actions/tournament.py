@@ -1,12 +1,12 @@
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
-from common.entities.state import RatingsState
+from common.entities.ratings_state import RatingsState
 from common.entities.team import Team
 from common.entities.tournament import Tournament
 from core.actions.abstract_action import AbstractAction
 from core.actions.processing import ProcessCompetitionAction
-from core.api.requests.tournament import (
+from common.interactions.core.requests.tournament import (
     CreateTournamentRequest,
     CompetitionReq,
     MatchReq,
@@ -19,7 +19,13 @@ from core.exceptions import PlayerStateNotFound
 _TeamExternalId = int
 
 
-class CreateTournamentAction(AbstractAction):
+# TODO: Refactor? Мне не нравится, что в Actions передается Request,
+# который должен разбираться на уровне handler'a. Но тогда там нужно
+# будет создавать все entities. Может, это и неплохо.
+
+
+# TODO: return ratings state after processing instead of tournament
+class CreateTournamentAction(AbstractAction[Tournament]):
     def __init__(self, request: CreateTournamentRequest) -> None:
         self.request = request
 

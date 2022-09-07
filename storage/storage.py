@@ -1,17 +1,17 @@
 from types import TracebackType
-from typing import ClassVar, Type
+from typing import Optional, Type
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, AsyncSessionTransaction
 from sqlalchemy.orm import sessionmaker
 
 from common.entities.player import Player
-from common.entities.state import PlayerState
+from common.entities.player_state import PlayerState
 from common.entities.tournament import Tournament
 from common.entities.competition import Competition
 from common.entities.match import Team
 from storage.entity_storage.base import BaseEntityStorage
 from storage.entity_storage.match import MatchStorage
 from storage.entity_storage.sets import MatchSetStorage
-from storage.entity_storage.state import RatingsStateStorage
+from storage.entity_storage.ratings_state import RatingsStateStorage
 
 
 class Storage:
@@ -43,7 +43,7 @@ class Storage:
 
 
 class StorageContext:
-    db_engine: ClassVar[AsyncEngine]
+    db_engine: Optional[AsyncEngine] = None
 
     @classmethod
     def setup_db_engine(cls, db_engine: AsyncEngine):

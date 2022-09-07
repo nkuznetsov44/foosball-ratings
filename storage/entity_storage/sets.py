@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 
 from common.entities.match import MatchSet, Match
 from storage.entity_storage.base import BaseEntityStorage
@@ -12,6 +12,6 @@ class MatchSetStorage(BaseEntityStorage):
         result = await self._session.execute(
             select(MatchSet)
             .filter(MatchSet.match.has(Match.id == match_id))
-            .options(selectinload(MatchSet.match))
+            .options(joinedload(MatchSet.match))
         )
         return result.scalars().all()

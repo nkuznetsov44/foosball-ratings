@@ -1,12 +1,13 @@
 from common.entities.competition import Competition
 from common.entities.enums import EvksPlayerRank, RatingsStateStatus
-from common.entities.state import PlayerState, RatingsState
+from common.entities.player_state import PlayerState
+from common.entities.ratings_state import RatingsState
 from core.actions.abstract_action import AbstractAction
 
 _PlayerId = int
 
 
-class CreateRatingsStateAction(AbstractAction):
+class CreateRatingsStateAction(AbstractAction[RatingsState]):
     def __init__(
         self,
         *,

@@ -1,0 +1,2 @@
+class InteractionResponseError(Exception):
+    pass
