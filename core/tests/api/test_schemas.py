@@ -1,6 +1,6 @@
 import pytest
 
-from core.api.schemas.tournament import CreateTournamentRequestSchema
+from common.interactions.core.requests.schemas import CreateTournamentRequestSchema
 
 
 @pytest.fixture
