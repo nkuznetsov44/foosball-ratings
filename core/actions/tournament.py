@@ -24,7 +24,6 @@ _TeamExternalId = int
 # будет создавать все entities. Может, это и неплохо.
 
 
-# TODO: return ratings state after processing instead of tournament
 class CreateTournamentAction(AbstractAction[Tournament]):
     def __init__(self, request: CreateTournamentRequest) -> None:
         self.request = request
@@ -40,10 +39,9 @@ class CreateTournamentAction(AbstractAction[Tournament]):
                 url=self.request.url,
             )
         )
-        await self._save_and_process_tournament_competitions(
+        return await self._save_and_process_tournament_competitions(
             self.request.competitions, tournament, ratings_state
         )
-        return tournament
 
     async def _save_and_process_tournament_competitions(
         self,
@@ -73,7 +71,7 @@ class CreateTournamentAction(AbstractAction[Tournament]):
                 competition,
                 competition_teams_map,
             )
-            await self.run_subaction(ProcessCompetitionAction(competition))
+            return await self.run_subaction(ProcessCompetitionAction(competition))
 
     async def _save_competition_teams(
         self,

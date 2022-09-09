@@ -7,8 +7,6 @@ from common.entities.schemas import (
     PlayerStateSchema,
 )
 from common.interactions.core.requests.player_competition_matches import (
-    TeamResp,
-    MatchResp,
     PlayerCompetitionMatchesResponse,
 )
 from common.interactions.core.requests.schemas import (
@@ -60,28 +58,5 @@ class PlayerCompetitionMatchesHandler(AbstractHandler):
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         matches = await GetPlayerCompetitionMatchesAction(**request_data).run()
-
-        # TODO: join Sets and PlayerState
-        match_resps: list[MatchResp] = []
-        for match in matches:
-            match_resps.append(
-                MatchResp(
-                    id=match.id,
-                    first_team=TeamResp(
-                        competition_place=match.first_team.competition_place,
-                        first_player=match.first_team.first_player,
-                        second_player=match.first_team.second_player,
-                    ),
-                    second_team=TeamResp(
-                        competition_place=match.second_team.competition_place,
-                        first_player=match.second_team.first_player,
-                        second_player=match.second_team.second_player,
-                    ),
-                    start_datetime=match.start_datetime,
-                    end_datetime=match.end_datetime,
-                    force_qualification=match.force_qualification,
-                )
-            )
-
-        response = PlayerCompetitionMatchesResponse(matches=match_resps)
+        response = PlayerCompetitionMatchesResponse.from_matches(matches)
         return self.make_response(response)

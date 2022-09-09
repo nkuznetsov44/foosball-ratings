@@ -1,5 +1,6 @@
 from marshmallow import fields
 from marshmallow_dataclass import class_schema
+from common.interactions.core.requests.ratings_state import RatingsStateResponse
 
 from common.schemas.base import BaseSchema
 from common.interactions.core.requests.player_competition_matches import (
@@ -27,3 +28,5 @@ CreatePlayersRequestSchema = class_schema(CreatePlayersRequest, base_schema=Base
 CreateTournamentRequestSchema = class_schema(
     CreateTournamentRequest, base_schema=BaseSchema
 )
+
+RatingsStateResponseSchema = class_schema(RatingsStateResponse, base_schema=BaseSchema)

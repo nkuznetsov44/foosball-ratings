@@ -21,7 +21,10 @@ class CreateRatingsStateAction(AbstractAction[RatingsState]):
         self, current_state: RatingsState, new_state: RatingsState
     ) -> dict[_PlayerId, EvksPlayerRank]:
         # TODO: реализовать логику перехода между рангами после категории
-        return current_state.evks_player_ranks
+        return {
+            player_state.player.id: EvksPlayerRank.NOVICE
+            for player_state in new_state.player_states.values()
+        }
 
     async def handle(self) -> RatingsState:
         ratings_state = await self.storage.ratings_states.get_actual()
@@ -41,6 +44,6 @@ class CreateRatingsStateAction(AbstractAction[RatingsState]):
         return await self.storage.ratings_states.create(new_state)
 
 
-class GetCurrentRatingsStateAction(AbstractAction):
+class GetCurrentRatingsStateAction(AbstractAction[RatingsState]):
     async def handle(self) -> RatingsState:
         return await self.storage.ratings_states.get_actual()

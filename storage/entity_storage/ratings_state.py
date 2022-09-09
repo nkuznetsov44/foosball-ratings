@@ -4,6 +4,7 @@ from sqlalchemy.sql.selectable import Select
 
 from common.entities.player_state import PlayerState
 from common.entities.ratings_state import RatingsState
+from common.entities.competition import Competition
 from storage.entity_storage.base import BaseEntityStorage
 
 
@@ -34,10 +35,9 @@ class RatingsStateStorage(BaseEntityStorage):
                 ),
                 joinedload(PlayerState.player),
             ),
-            joinedload(RatingsState.last_competition),
-            # joinedload(RatingsState.last_competition).options(
-            #    joinedload(Competition.tournament),
-            # ),
+            joinedload(RatingsState.last_competition).options(
+                joinedload(Competition.tournament),
+            ),
         )
 
     async def get_actual(self) -> RatingsState:

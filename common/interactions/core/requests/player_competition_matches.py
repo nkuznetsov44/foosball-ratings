@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Sequence
 from dataclasses import dataclass
 
 from common.entities.enums import RatingType
 from common.entities.player import Player
+from common.entities.match import Match
 from common.utils import DatetimeWithTZ
 
 
@@ -43,3 +44,30 @@ class MatchResp:
 @dataclass
 class PlayerCompetitionMatchesResponse:
     matches: list[MatchResp]
+
+    @classmethod
+    def from_matches(
+        cls, matches: Sequence[Match]
+    ) -> "PlayerCompetitionMatchesResponse":
+        # TODO: join Sets and PlayerState
+        match_resps: list[MatchResp] = []
+        for match in matches:
+            match_resps.append(
+                MatchResp(
+                    id=match.id,
+                    first_team=TeamResp(
+                        competition_place=match.first_team.competition_place,
+                        first_player=match.first_team.first_player,
+                        second_player=match.first_team.second_player,
+                    ),
+                    second_team=TeamResp(
+                        competition_place=match.second_team.competition_place,
+                        first_player=match.second_team.first_player,
+                        second_player=match.second_team.second_player,
+                    ),
+                    start_datetime=match.start_datetime,
+                    end_datetime=match.end_datetime,
+                    force_qualification=match.force_qualification,
+                )
+            )
+        return PlayerCompetitionMatchesResponse(match_resps)
