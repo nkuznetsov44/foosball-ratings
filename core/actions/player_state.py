@@ -52,7 +52,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
         if self.cumulative_rating:
             ratings[RatingType.CUMULATIVE] = self.cumulative_rating
 
-        ratings = ratings | self.INITIAL_RATING_VALUES
+        ratings = self.INITIAL_RATING_VALUES | ratings
 
         return await self.storage.player_states.create(
             PlayerState(

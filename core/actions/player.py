@@ -41,6 +41,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
         for player_req in self.players:
             player = Player(
                 id=None,
+                external_id=player_req.external_id,
                 first_name=player_req.first_name,
                 last_name=player_req.last_name,
                 city=player_req.city,

@@ -49,9 +49,9 @@ class RatingsStateResponse:
 
     @classmethod
     def from_ratings_state(cls, ratings_state: RatingsState):
-        return RatingsStateResponse(
-            id=ratings_state.id,
-            last_competition=CompetitionResp(
+        last_competition = None
+        if ratings_state.last_competition:
+            last_competition = CompetitionResp(
                 id=ratings_state.last_competition.id,
                 external_id=ratings_state.last_competition.external_id,
                 tournament=TournamentResp(
@@ -62,16 +62,20 @@ class RatingsStateResponse:
                     url=ratings_state.last_competition.tournament.url,
                 ),
                 competition_type=ratings_state.last_competition.competition_type,
-            ),
+            )
+        return RatingsStateResponse(
+            id=ratings_state.id,
+            last_competition=last_competition,
             player_states=[
                 PlayerStateResp(
                     player=player_state.player,
                     matches_played=player_state.matches_played,
                     matches_won=player_state.matches_won,
                     ratings=player_state.ratings,
-                    evks_player_rank=ratings_state.evks_player_ranks[
-                        player_state.player.id
-                    ],
+                    #evks_player_rank=ratings_state.evks_player_ranks[
+                    #    player_state.player.id
+                    #],
+                    evks_player_rank=EvksPlayerRank.NOVICE,  # FIXME
                     is_evks_rating_active=player_state.is_evks_rating_active,
                 )
                 for player_state in ratings_state.player_states.values()

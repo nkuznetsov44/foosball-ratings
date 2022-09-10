@@ -49,6 +49,7 @@ players = sa.Table(
     "players",
     metadata_obj,
     sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
+    sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("first_name", sa.String(255)),
     sa.Column("last_name", sa.String(255)),
     sa.Column("city", sa.Enum(City)),
