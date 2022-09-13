@@ -30,9 +30,7 @@ class CalculateEvksPlayerRanksAction(AbstractAction[dict[_PlayerId, PlayerState]
             return EvksPlayerRank.SEMIPRO
         elif 1600 < player_state.evks_rating <= 1900:
             return EvksPlayerRank.PRO
-        elif 1900 < player_state.evks_rating <= 2000:
-            return EvksPlayerRank.PRO
-        elif 2000 < player_state.evks_rating:
+        elif 1900 < player_state.evks_rating:
             return EvksPlayerRank.MASTER
         else:
             raise ValueError()

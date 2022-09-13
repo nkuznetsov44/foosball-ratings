@@ -80,9 +80,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
             return EvksPlayerRank.SEMIPRO
         elif 1600 < evks_rating <= 1900:
             return EvksPlayerRank.PRO
-        elif 1900 < evks_rating <= 2000:
-            return EvksPlayerRank.PRO
-        elif 2000 < evks_rating:
+        elif 1900 < evks_rating:
             return EvksPlayerRank.MASTER
         else:
             raise ValueError()
