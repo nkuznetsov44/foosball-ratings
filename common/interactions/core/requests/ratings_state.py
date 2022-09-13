@@ -36,7 +36,7 @@ class PlayerStateResp:
     matches_played: int
     matches_won: int
     ratings: dict[RatingType, int]
-    evks_player_rank: EvksPlayerRank  # FIXME
+    evks_rank: EvksPlayerRank
     is_evks_rating_active: bool
 
 
@@ -72,10 +72,7 @@ class RatingsStateResponse:
                     matches_played=player_state.matches_played,
                     matches_won=player_state.matches_won,
                     ratings=player_state.ratings,
-                    #evks_player_rank=ratings_state.evks_player_ranks[
-                    #    player_state.player.id
-                    #],
-                    evks_player_rank=EvksPlayerRank.NOVICE,  # FIXME
+                    evks_rank=player_state.evks_rank,
                     is_evks_rating_active=player_state.is_evks_rating_active,
                 )
                 for player_state in ratings_state.player_states.values()

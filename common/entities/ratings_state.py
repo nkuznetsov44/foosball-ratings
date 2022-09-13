@@ -18,7 +18,6 @@ class RatingsState:
     previous_state_id: Optional[int]
     last_competition: Optional[Competition]
     player_states: dict[_PlayerId, PlayerState]
-    evks_player_ranks: dict[_PlayerId, EvksPlayerRank]
     status: RatingsStateStatus
 
     # TODO:

@@ -60,7 +60,6 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         intermediate_ratings_state = replace(
             ratings_state,
             player_states=ratings_state.player_states.copy(),
-            evks_player_ranks=ratings_state.evks_player_ranks.copy(),
         )
 
         matches = await self.storage.matches.find_by_competition(self.competition.id)

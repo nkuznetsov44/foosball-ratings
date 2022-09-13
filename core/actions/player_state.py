@@ -1,6 +1,6 @@
 from typing import Optional
 
-from common.entities.enums import RatingType
+from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
@@ -63,9 +63,29 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
                 matches_won=self.matches_won or 0,
                 last_match=None,
                 ratings=ratings,
+                evks_rank=self._get_initial_evks_rank(ratings[RatingType.EVKS]),
                 is_evks_rating_active=is_evks_rating_active,
             )
         )
+
+    def _get_initial_evks_rank(self, evks_rating) -> EvksPlayerRank:
+        # TODO: уточнить границы рангов
+        if evks_rating <= 1100:
+            return EvksPlayerRank.BEGINNER
+        elif 1100 < evks_rating <= 1200:
+            return EvksPlayerRank.NOVICE
+        elif 1200 < evks_rating <= 1400:
+            return EvksPlayerRank.AMATEUR
+        elif 1400 < evks_rating <= 1600:
+            return EvksPlayerRank.SEMIPRO
+        elif 1600 < evks_rating <= 1900:
+            return EvksPlayerRank.PRO
+        elif 1900 < evks_rating <= 2000:
+            return EvksPlayerRank.PRO
+        elif 2000 < evks_rating:
+            return EvksPlayerRank.MASTER
+        else:
+            raise ValueError()
 
 
 class CreatePlayerStateAction(AbstractAction[PlayerState]):
@@ -131,6 +151,8 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
                 matches_won=new_matches_won,
                 last_match=self.last_match,
                 ratings=self.ratings,
+                # NOTE: ранг вычисляется в отдельном Action после процессинга
+                evks_rank=current_player_state.evks_rank,
                 is_evks_rating_active=is_evks_rating_active,
             )
         )

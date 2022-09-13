@@ -1,7 +1,7 @@
 from typing import Optional
 from dataclasses import dataclass
 
-from common.entities.enums import RatingType
+from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.player import Player
 from common.entities.match import Match
 
@@ -20,6 +20,7 @@ class PlayerState:
     matches_won: int
     last_match: Optional[Match]
     ratings: dict[RatingType, _RatingValue]
+    evks_rank: EvksPlayerRank
     is_evks_rating_active: bool
 
     # TODO:
@@ -31,9 +32,17 @@ class PlayerState:
     def evks_rating(self) -> Optional[int]:
         return self.ratings.get(RatingType.EVKS)
 
+    @evks_rating.setter
+    def evks_rating(self, evks_rating: int) -> Optional[int]:
+        self.ratings[RatingType.EVKS] = evks_rating
+
     @property
     def cumulative_rating(self) -> Optional[int]:
         return self.ratings.get(RatingType.CUMULATIVE)
+
+    @cumulative_rating.setter
+    def cumulative_rating(self, cumulative_rating: int) -> Optional[int]:
+        self.ratings[RatingType.CUMULATIVE] = cumulative_rating
 
     def __hash__(self) -> int:
         assert self.id is not None, "Can't hash PlayerState with no id"

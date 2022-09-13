@@ -52,6 +52,7 @@ def player_states(player1, player2, player3, player4):
         matches_won=50,
         last_match=None,
         ratings={RatingType.EVKS: 1710},
+        evks_rank=EvksPlayerRank.SEMIPRO,
         is_evks_rating_active=True,
     )
 
@@ -63,6 +64,7 @@ def player_states(player1, player2, player3, player4):
         matches_won=50,
         last_match=None,
         ratings={RatingType.EVKS: 2063},
+        evks_rank=EvksPlayerRank.MASTER,
         is_evks_rating_active=True,
     )
 
@@ -74,6 +76,7 @@ def player_states(player1, player2, player3, player4):
         matches_won=50,
         last_match=None,
         ratings={RatingType.EVKS: 1638},
+        evks_rank=EvksPlayerRank.SEMIPRO,
         is_evks_rating_active=True,
     )
 
@@ -85,6 +88,7 @@ def player_states(player1, player2, player3, player4):
         matches_won=50,
         last_match=None,
         ratings={RatingType.EVKS: 1218},
+        evks_rank=EvksPlayerRank.NOVICE,
         is_evks_rating_active=True,
     )
 
@@ -97,12 +101,6 @@ def ratings_state(player_states):
         id=1,
         previous_state_id=None,
         player_states=player_states,
-        evks_player_ranks={
-            1: EvksPlayerRank.SEMIPRO,
-            2: EvksPlayerRank.MASTER,
-            3: EvksPlayerRank.SEMIPRO,
-            4: EvksPlayerRank.NOVICE,
-        },
         last_competition=None,
         status=RatingsStateStatus.PUBLISHED,
     )

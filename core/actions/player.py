@@ -63,7 +63,6 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
         new_state = replace(
             ratings_state,
             player_states=ratings_state.player_states.copy(),
-            evks_player_ranks=ratings_state.evks_player_ranks.copy(),
         )
 
         new_state.player_states |= player_states

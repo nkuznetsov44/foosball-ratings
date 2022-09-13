@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 
-from common.entities.enums import City, CompetitionType, RatingsStateStatus
-from storage.types import EvksPlayerRanksJSON, RatingsJSON
+from common.entities.enums import City, CompetitionType, EvksPlayerRank, RatingsStateStatus
+from storage.types import RatingsJSON
 
 metadata_obj = sa.MetaData()
 
@@ -70,6 +70,7 @@ player_states = sa.Table(
     sa.Column("matches_won", sa.Integer),
     sa.Column("last_match_id", sa.Integer, sa.ForeignKey("matches.id")),
     sa.Column("ratings", RatingsJSON),
+    sa.Column("evks_rank", sa.Enum(EvksPlayerRank)),
     sa.Column("is_evks_rating_active", sa.Boolean),
 )
 
@@ -90,7 +91,6 @@ ratings_states = sa.Table(
         sa.ForeignKey("ratings_states.id"),
         nullable=True,
     ),
-    sa.Column("evks_player_ranks", EvksPlayerRanksJSON),
     sa.Column("last_competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
     sa.Column("status", sa.Enum(RatingsStateStatus)),
 )
