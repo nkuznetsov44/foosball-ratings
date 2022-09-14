@@ -1,6 +1,7 @@
 from typing import Any
 from decimal import Decimal
 from marshmallow import Schema, fields
+from common.entities.ratings_state import PlayerStateSet
 
 from common.utils import DatetimeWithTZ
 

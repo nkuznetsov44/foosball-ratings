@@ -1,11 +1,10 @@
 from sqlalchemy.orm import registry, relationship
-from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
-from common.entities.ratings_state import RatingsState
+from common.entities.ratings_state import PlayerStateSet, RatingsState
 from common.entities.team import Team
 from common.entities.tournament import Tournament
 from storage.tables import (
@@ -90,7 +89,7 @@ mapper_registry.map_imperatively(
         "player_states": relationship(
             PlayerState,
             secondary=ratings_state_player_states,
-            collection_class=attribute_mapped_collection("player_id"),
+            collection_class=PlayerStateSet,
         ),
         "last_competition": relationship(Competition, uselist=False),
     },

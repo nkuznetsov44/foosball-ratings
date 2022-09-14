@@ -35,7 +35,9 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         match_sets: Sequence[MatchSet],
     ) -> dict[_PlayerId, _RatingValue]:
         for player in match.players:
-            if not self.ratings_state[player]:
+            try:
+                self.ratings_state.player_states[player]
+            except KeyError:
                 raise PlayerStateNotFound(
                     player_id=player.id, current_state=self.ratings_state
                 )
@@ -68,14 +70,14 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
             r = d[winner_player.id] * base_rating
             r_rounded = self._round_decimal(r)
             res[winner_player.id] = (
-                self.ratings_state[winner_player].evks_rating + r_rounded
+                self.ratings_state.player_states[winner_player].evks_rating + r_rounded
             )
 
         for looser_player in looser_team.players:
             r = d[looser_player.id] * base_rating
             r_rounded = self._round_decimal(r)
             res[looser_player.id] = (
-                self.ratings_state[looser_player].evks_rating - r_rounded
+                self.ratings_state.player_states[looser_player].evks_rating - r_rounded
             )
 
         return res
@@ -84,11 +86,11 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         return int(value.quantize(Decimal("1"), ROUND_HALF_UP))
 
     def _get_team_rating(self, team: Team) -> Decimal:
-        first_player_state = self.ratings_state[team.first_player]
+        first_player_state = self.ratings_state.player_states[team.first_player]
         if team.is_single_player:
             return Decimal(first_player_state.evks_rating)
 
-        second_player_state = self.ratings_state[team.second_player]
+        second_player_state = self.ratings_state.player_states[team.second_player]
         r1, r2 = sorted(
             [first_player_state.evks_rating, second_player_state.evks_rating]
         )
@@ -104,7 +106,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     def _calculate_singles_reliability_coefficients(
         self, match: Match
     ) -> dict[_PlayerId, Decimal]:
-        match_players_states = [self.ratings_state[player] for player in match.players]
+        match_players_states = [self.ratings_state.player_states[player] for player in match.players]
         assert (
             len(match_players_states) == 2
         ), "Match player states must be of len 2 for a singles match"
@@ -133,8 +135,8 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         res: dict[_PlayerId, Decimal] = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):
-            team_states = [self.ratings_state[player] for player in team.players]
-            opp_states = [self.ratings_state[opp] for opp in opp_team.players]
+            team_states = [self.ratings_state.player_states[player] for player in team.players]
+            opp_states = [self.ratings_state.player_states[opp] for opp in opp_team.players]
 
             for player_state, partner_state in permutations(team_states):
                 if player_state.is_evks_rating_active:

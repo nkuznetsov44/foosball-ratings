@@ -81,7 +81,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                         ratings=ratings,
                     )
                 )
-                intermediate_ratings_state.player_states[player.id] = player_state
+                intermediate_ratings_state.player_states.add(player_state)
 
         return await self.run_subaction(
             CreateRatingsStateAction(

@@ -5,6 +5,7 @@ from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
 from core.actions.abstract_action import AbstractAction
+from core.actions.evks_player_rank import CalculateEvksPlayerRanksAction
 from core.exceptions import (
     PlayerStateAlreadyExists,
     PlayerStateNotFound,
@@ -38,7 +39,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
     async def handle(self) -> PlayerState:
         ratings_state = await self.storage.ratings_states.get_actual()
 
-        if ratings_state[self.player]:
+        if ratings_state.player_states.get(self.player):
             raise PlayerStateAlreadyExists(
                 player_id=self.player.id, current_state=ratings_state
             )
@@ -54,36 +55,25 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
 
         ratings = self.INITIAL_RATING_VALUES | ratings
 
-        return await self.storage.player_states.create(
-            PlayerState(
-                id=None,
-                previous_state_id=None,
-                player=self.player,
-                matches_played=matches_played,
-                matches_won=self.matches_won or 0,
-                last_match=None,
-                ratings=ratings,
-                evks_rank=self._get_initial_evks_rank(ratings[RatingType.EVKS]),
-                is_evks_rating_active=is_evks_rating_active,
-            )
+        player_state = PlayerState(
+            id=None,
+            previous_state_id=None,
+            player=self.player,
+            matches_played=matches_played,
+            matches_won=self.matches_won or 0,
+            last_match=None,
+            ratings=ratings,
+            evks_rank=EvksPlayerRank.BEGINNER,
+            is_evks_rating_active=is_evks_rating_active,
         )
 
-    def _get_initial_evks_rank(self, evks_rating) -> EvksPlayerRank:
-        # TODO: уточнить границы рангов
-        if evks_rating <= 1100:
-            return EvksPlayerRank.BEGINNER
-        elif 1100 < evks_rating <= 1200:
-            return EvksPlayerRank.NOVICE
-        elif 1200 < evks_rating <= 1400:
-            return EvksPlayerRank.AMATEUR
-        elif 1400 < evks_rating <= 1600:
-            return EvksPlayerRank.SEMIPRO
-        elif 1600 < evks_rating <= 1900:
-            return EvksPlayerRank.PRO
-        elif 1900 < evks_rating:
-            return EvksPlayerRank.MASTER
-        else:
-            raise ValueError()
+        player_states = await self.run_subaction(
+            CalculateEvksPlayerRanksAction(player_states=[player_state])
+        )
+
+        assert len(player_states) == 1
+
+        return await self.storage.player_states.create(player_states[0])
 
 
 class CreatePlayerStateAction(AbstractAction[PlayerState]):
@@ -108,7 +98,7 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
 
         ratings_state = await self.storage.ratings_states.get_actual()
 
-        current_player_state = ratings_state[self.player]
+        current_player_state = ratings_state.player_states[self.player]
 
         if not current_player_state:
             raise PlayerStateNotFound(

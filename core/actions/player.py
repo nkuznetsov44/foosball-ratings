@@ -36,7 +36,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
     async def handle(self) -> list[PlayerState]:
         ratings_state = await self.storage.ratings_states.get_actual()
 
-        player_states: dict[_PlayerId, PlayerState] = {}
+        player_states: list[PlayerState] = []
 
         for player_req in self.players:
             player = Player(
@@ -49,14 +49,16 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
 
             player = await self.storage.players.create(player)
 
-            player_states[player.id] = await self.run_subaction(
-                CreateInitialPlayerStateAction(
-                    player=player,
-                    evks_rating=player_req.initial_evks_rating,
-                    cumulative_rating=player_req.initial_cumulative_rating,
-                    matches_played=player_req.initial_matches_played,
-                    matches_won=player_req.initial_matches_won,
-                    is_evks_rating_active=player_req.is_evks_rating_active,
+            player_states.append(
+                await self.run_subaction(
+                    CreateInitialPlayerStateAction(
+                        player=player,
+                        evks_rating=player_req.initial_evks_rating,
+                        cumulative_rating=player_req.initial_cumulative_rating,
+                        matches_played=player_req.initial_matches_played,
+                        matches_won=player_req.initial_matches_won,
+                        is_evks_rating_active=player_req.is_evks_rating_active,
+                    )
                 )
             )
 
@@ -65,7 +67,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
             player_states=ratings_state.player_states.copy(),
         )
 
-        new_state.player_states |= player_states
+        new_state.player_states.update(player_states)
 
         await self.run_subaction(
             CreateRatingsStateAction(
@@ -74,4 +76,4 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
             )
         )
 
-        return player_states.values()
+        return player_states

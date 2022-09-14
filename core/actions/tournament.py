@@ -137,7 +137,7 @@ class CreateTournamentAction(AbstractAction[Tournament]):
             )
 
     def _get_player(self, ratings_state: RatingsState, player_id: int) -> Player:
-        player_state = ratings_state[player_id]
+        player_state = ratings_state.player_states[player_id]
         if player_state is None:
             raise PlayerStateNotFound(player_id=player_id, current_state=ratings_state)
         return player_state.player

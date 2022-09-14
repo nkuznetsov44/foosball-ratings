@@ -75,7 +75,7 @@ class RatingsStateResponse:
                     evks_rank=player_state.evks_rank,
                     is_evks_rating_active=player_state.is_evks_rating_active,
                 )
-                for player_state in ratings_state.player_states.values()
+                for player_state in ratings_state.player_states
             ],
             status=ratings_state.status,
         )
