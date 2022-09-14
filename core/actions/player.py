@@ -2,6 +2,7 @@ from dataclasses import replace
 
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
+from common.entities.ratings_state import PlayerStateSet
 from core.actions.abstract_action import AbstractAction
 from core.actions.player_state import CreateInitialPlayerStateAction
 from core.actions.ratings_state import CreateRatingsStateAction
@@ -29,14 +30,14 @@ class GetPlayersAction(AbstractAction[list[Player]]):
 # будет создавать все entities. Может, это и неплохо.
 
 
-class CreatePlayersAction(AbstractAction[list[PlayerState]]):
+class CreatePlayersAction(AbstractAction[PlayerStateSet]):
     def __init__(self, request: CreatePlayersRequest) -> None:
         self.players = request.players
 
-    async def handle(self) -> list[PlayerState]:
+    async def handle(self) -> PlayerStateSet:
         ratings_state = await self.storage.ratings_states.get_actual()
 
-        player_states: list[PlayerState] = []
+        player_states: PlayerStateSet = PlayerStateSet()
 
         for player_req in self.players:
             player = Player(
@@ -49,7 +50,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
 
             player = await self.storage.players.create(player)
 
-            player_states.append(
+            player_states.add(
                 await self.run_subaction(
                     CreateInitialPlayerStateAction(
                         player=player,
@@ -64,7 +65,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
 
         new_state = replace(
             ratings_state,
-            player_states=ratings_state.player_states.copy(),
+            player_states=ratings_state.player_states,
         )
 
         new_state.player_states.update(player_states)

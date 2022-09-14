@@ -57,11 +57,8 @@ class PlayerStateSet:
     def clear(self) -> None:
         self._data = {}
 
-    def copy(self) -> 'PlayerStateSet':
-        return PlayerStateSet([
-            replace(player_state, id=None)
-            for player_state in self._data.values()
-        ])
+    def to_list(self) -> list[PlayerState]:
+        return list(self._data.values())
 
 
 @dataclass

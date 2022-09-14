@@ -1,18 +1,17 @@
 from typing import Sequence
+
 from common.entities.player_state import PlayerState
 from common.entities.enums import EvksPlayerRank as Rank
 from common.entities.player_state import PlayerState
+from common.entities.ratings_state import PlayerStateSet
 from core.actions.abstract_action import AbstractAction
 
 
-_PlayerId = int
-
-
-class CalculateEvksPlayerRanksAction(AbstractAction[list[PlayerState]]):
-    def __init__(self, player_states: Sequence[PlayerState]) -> None:
+class CalculateEvksPlayerRanksAction(AbstractAction[PlayerStateSet]):
+    def __init__(self, player_states: PlayerStateSet) -> None:
         self.player_states = player_states
 
-    async def handle(self) -> list[PlayerState]:
+    async def handle(self) -> PlayerStateSet:
         for player_state in self.player_states:
             player_state.evks_rank = self._calc_rank(player_state)
         return self.player_states
