@@ -9,9 +9,6 @@ from core.actions.ratings_state import CreateRatingsStateAction
 from common.interactions.core.requests.player import CreatePlayersRequest
 
 
-_PlayerId = int
-
-
 class GetPlayerAction(AbstractAction[Player]):
     def __init__(self, player_id: int) -> None:
         self.player_id = player_id
@@ -30,11 +27,11 @@ class GetPlayersAction(AbstractAction[list[Player]]):
 # будет создавать все entities. Может, это и неплохо.
 
 
-class CreatePlayersAction(AbstractAction[PlayerStateSet]):
+class CreatePlayersAction(AbstractAction[list[PlayerState]]):
     def __init__(self, request: CreatePlayersRequest) -> None:
         self.players = request.players
 
-    async def handle(self) -> PlayerStateSet:
+    async def handle(self) -> list[PlayerState]:
         ratings_state = await self.storage.ratings_states.get_actual()
 
         player_states: PlayerStateSet = PlayerStateSet()
@@ -77,4 +74,4 @@ class CreatePlayersAction(AbstractAction[PlayerStateSet]):
             )
         )
 
-        return player_states
+        return player_states.to_list()

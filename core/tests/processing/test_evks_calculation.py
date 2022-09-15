@@ -14,7 +14,7 @@ from common.entities.enums import (
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
-from common.entities.ratings_state import RatingsState
+from common.entities.ratings_state import PlayerStateSet, RatingsState
 from common.entities.team import Team
 from common.entities.tournament import Tournament
 from core.processing.calculators.evks import EvksRatingCalculator
@@ -41,10 +41,8 @@ def player4():
 
 
 @pytest.fixture
-def player_states(player1, player2, player3, player4):
-    player_states = {}
-
-    player_states[player1.id] = PlayerState(
+def player1_state(player1):
+    return PlayerState(
         id=1,
         previous_state_id=None,
         player=player1,
@@ -56,7 +54,10 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
 
-    player_states[player2.id] = PlayerState(
+
+@pytest.fixture
+def player2_state(player2):
+    return PlayerState(
         id=2,
         previous_state_id=None,
         player=player2,
@@ -68,7 +69,10 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
 
-    player_states[player3.id] = PlayerState(
+
+@pytest.fixture
+def player3_state(player3):
+    return PlayerState(
         id=3,
         previous_state_id=None,
         player=player3,
@@ -80,7 +84,10 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
 
-    player_states[player4.id] = PlayerState(
+
+@pytest.fixture
+def player4_state(player4):
+    return PlayerState(
         id=4,
         previous_state_id=None,
         player=player4,
@@ -92,15 +99,18 @@ def player_states(player1, player2, player3, player4):
         is_evks_rating_active=True,
     )
 
-    return player_states
+
+@pytest.fixture
+def player_states_set(player1_state, player2_state, player3_state, player4_state):
+    return PlayerStateSet([player1_state, player2_state, player3_state, player4_state])
 
 
 @pytest.fixture
-def ratings_state(player_states):
+def ratings_state(player_states_set):
     return RatingsState(
         id=1,
         previous_state_id=None,
-        player_states=player_states,
+        player_states=player_states_set,
         last_competition=None,
         status=RatingsStateStatus.PUBLISHED,
     )

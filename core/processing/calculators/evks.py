@@ -106,7 +106,9 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
     def _calculate_singles_reliability_coefficients(
         self, match: Match
     ) -> dict[_PlayerId, Decimal]:
-        match_players_states = [self.ratings_state.player_states[player] for player in match.players]
+        match_players_states = [
+            self.ratings_state.player_states[player] for player in match.players
+        ]
         assert (
             len(match_players_states) == 2
         ), "Match player states must be of len 2 for a singles match"
@@ -135,8 +137,12 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         res: dict[_PlayerId, Decimal] = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):
-            team_states = [self.ratings_state.player_states[player] for player in team.players]
-            opp_states = [self.ratings_state.player_states[opp] for opp in opp_team.players]
+            team_states = [
+                self.ratings_state.player_states[player] for player in team.players
+            ]
+            opp_states = [
+                self.ratings_state.player_states[opp] for opp in opp_team.players
+            ]
 
             for player_state, partner_state in permutations(team_states):
                 if player_state.is_evks_rating_active:

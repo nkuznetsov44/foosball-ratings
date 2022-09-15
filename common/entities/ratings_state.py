@@ -1,5 +1,5 @@
 from typing import Collection, Iterable, Optional, Union, Iterator
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 from common.entities.enums import RatingsStateStatus
 from common.entities.player import Player
@@ -7,7 +7,7 @@ from common.entities.competition import Competition
 from common.entities.player_state import PlayerState
 
 
-class PlayerStateSet:
+class PlayerStateSet(Collection):
     def __init__(self, collection: Optional[Collection[PlayerState]] = None) -> None:
         self._data: dict[int, PlayerState] = {}
         if collection:

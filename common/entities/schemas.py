@@ -24,6 +24,7 @@ TournamentSchema = class_schema(Tournament, base_schema=BaseSchema)
 
 TeamSchema = class_schema(Team, base_schema=BaseSchema)
 
+
 class RatingsStateSchema(BaseSchema):
     id = fields.Integer()
     previous_state_id = fields.Integer(allow_none=True)

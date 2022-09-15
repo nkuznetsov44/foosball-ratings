@@ -46,7 +46,7 @@ class StorageContext:
     db_engine: Optional[AsyncEngine] = None
 
     @classmethod
-    def setup_db_engine(cls, db_engine: AsyncEngine):
+    def setup_db_engine(cls, db_engine: AsyncEngine) -> None:
         cls.db_engine = db_engine
 
     @classmethod

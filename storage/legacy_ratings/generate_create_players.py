@@ -14,16 +14,18 @@ def create_ratings_engine(username, password):
 def main():
     engine = create_ratings_engine(DB_USER, DB_PASSWORD)
     with engine.connect() as connection:
-        result = connection.execute(text(
-            "select"
-            "   id,"
-            "   first_name,"
-            "   last_name,"
-            "   evks_initial_rating,"
-            "   evks_initial_matches_count,"
-            "   evks_initial_matches_win "
-            "from players"
-        ))
+        result = connection.execute(
+            text(
+                "select"
+                "   id,"
+                "   first_name,"
+                "   last_name,"
+                "   evks_initial_rating,"
+                "   evks_initial_matches_count,"
+                "   evks_initial_matches_win "
+                "from players"
+            )
+        )
         player_reqs = []
         for player in result:
             player_reqs.append(

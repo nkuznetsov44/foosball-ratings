@@ -24,11 +24,11 @@ _TeamExternalId = int
 # будет создавать все entities. Может, это и неплохо.
 
 
-class CreateTournamentAction(AbstractAction[Tournament]):
+class CreateTournamentAction(AbstractAction[RatingsState]):
     def __init__(self, request: CreateTournamentRequest) -> None:
         self.request = request
 
-    async def handle(self) -> Tournament:
+    async def handle(self) -> RatingsState:
         ratings_state = await self.storage.ratings_states.get_actual()
         tournament = await self.storage.tournaments.create(
             Tournament(
@@ -48,7 +48,7 @@ class CreateTournamentAction(AbstractAction[Tournament]):
         competition_reqs: list[CompetitionReq],
         tournament: Tournament,
         ratings_state: RatingsState,
-    ) -> None:
+    ) -> RatingsState:
         for competition_req in competition_reqs:
             competition = await self.storage.competitions.create(
                 Competition(

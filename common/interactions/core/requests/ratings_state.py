@@ -10,23 +10,22 @@ from common.entities.enums import (
 )
 from common.entities.player import Player
 from common.entities.ratings_state import RatingsState
-from common.entities.tournament import Tournament
 
 
 @dataclass
 class TournamentResp:
     id: int
-    external_id: int
+    external_id: Optional[int]
     name: str
     city: City
-    url: str
+    url: Optional[str]
 
 
 @dataclass
 class CompetitionResp:
     id: int
     external_id: Optional[int]
-    tournament: Tournament
+    tournament: TournamentResp
     competition_type: CompetitionType
 
 
@@ -47,8 +46,8 @@ class RatingsStateResponse:
     player_states: list[PlayerStateResp]
     status: RatingsStateStatus
 
-    @classmethod
-    def from_ratings_state(cls, ratings_state: RatingsState):
+    @staticmethod
+    def from_ratings_state(ratings_state: RatingsState) -> "RatingsStateResponse":
         last_competition = None
         if ratings_state.last_competition:
             last_competition = CompetitionResp(

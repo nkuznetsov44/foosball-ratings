@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Optional, Any, ClassVar, Type, TypeVar, Generic
+from typing import Optional, Any, Type, TypeVar, Generic
 from aiohttp import ClientSession, ClientResponse
 
 from common.interactions.exceptions import InteractionResponseError
@@ -41,7 +41,7 @@ InteractionClient = TypeVar("InteractionClient", bound=BaseInteractionClient)
 
 
 class InteractionClientContext(Generic[InteractionClient]):
-    client_cls: ClassVar[Type[InteractionClient]]
+    client_cls: Type[InteractionClient]
 
     def __init__(self) -> None:
         self._client = self.client_cls()

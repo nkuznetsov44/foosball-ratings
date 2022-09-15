@@ -1,7 +1,6 @@
 from dataclasses import replace
 from collections import defaultdict
 from typing import Sequence, Type
-
 from pytz import UTC
 
 from common.entities.competition import Competition
@@ -104,7 +103,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
     def _calculate_ratings_after_match(
         self,
         *,
-        strategy: AbstractCalculationStrategy,
+        strategy: Type[AbstractCalculationStrategy],
         ratings_state: RatingsState,
         match: Match,
         match_sets: Sequence[MatchSet],

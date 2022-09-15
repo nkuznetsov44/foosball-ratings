@@ -1,6 +1,11 @@
 import sqlalchemy as sa
 
-from common.entities.enums import City, CompetitionType, EvksPlayerRank, RatingsStateStatus
+from common.entities.enums import (
+    City,
+    CompetitionType,
+    EvksPlayerRank,
+    RatingsStateStatus,
+)
 from storage.types import RatingsJSON
 
 metadata_obj = sa.MetaData()

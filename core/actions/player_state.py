@@ -4,7 +4,6 @@ from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
-from common.entities.ratings_state import PlayerStateSet
 from core.actions.abstract_action import AbstractAction
 from core.actions.evks_player_rank import CalculateEvksPlayerRanksAction
 from core.exceptions import (
@@ -68,13 +67,11 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
             is_evks_rating_active=is_evks_rating_active,
         )
 
-        player_states = await self.run_subaction(
-            CalculateEvksPlayerRanksAction(player_states=PlayerStateSet([player_state]))
+        player_state.evks_rank = await self.run_subaction(
+            CalculateEvksPlayerRanksAction(player_state)
         )
 
-        assert len(player_states) == 1
-
-        return await self.storage.player_states.create(player_states.to_list()[0])
+        return await self.storage.player_states.create(player_state)
 
 
 class CreatePlayerStateAction(AbstractAction[PlayerState]):
