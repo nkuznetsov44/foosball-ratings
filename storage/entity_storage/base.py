@@ -22,8 +22,7 @@ class BaseEntityStorage(Generic[Entity]):
         result = await self._session.execute(
             self._select_entity_query().where(self.entity_cls.id == id)
         )
-        # TODO: raise EntityNotFoundError if not found
-        return result.scalars().first()
+        return result.one()
 
     async def lst(self, limit: Optional[int] = None) -> list[Entity]:
         query = select(self.entity_cls)
