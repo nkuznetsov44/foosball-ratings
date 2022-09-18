@@ -9,7 +9,7 @@ from common.entities.player_state import PlayerState
 from core.actions.player import GetPlayerAction, CreatePlayersAction
 
 
-class TestCreateGetPlayerAction:
+class TestGetPlayerAction:
     @pytest.mark.asyncio
     async def test_get_player(self, player):
         result = await GetPlayerAction(player_id=player.id).run()
