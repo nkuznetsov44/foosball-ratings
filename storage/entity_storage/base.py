@@ -22,7 +22,7 @@ class BaseEntityStorage(Generic[Entity]):
         result = await self._session.execute(
             self._select_entity_query().where(self.entity_cls.id == id)
         )
-        return result.one()
+        return result.one()[0]
 
     async def lst(self, limit: Optional[int] = None) -> list[Entity]:
         query = select(self.entity_cls)

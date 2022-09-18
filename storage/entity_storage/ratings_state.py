@@ -47,4 +47,4 @@ class RatingsStateStorage(BaseEntityStorage):
             # .filter(RatingsState.status==RatingsStateStatus.PUBLISHED)  # FIXME
             .order_by(RatingsState.id.desc())  # TODO: fixme
         )
-        return result.one()
+        return result.scalars().first()

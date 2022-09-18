@@ -1,51 +1,64 @@
-import pytest
+import pytest_asyncio
 from hamcrest import assert_that, equal_to
 
 from core.processing.calculators.evks import EvksRatingCalculator
 
 
-@pytest.fixture
-def calculator(ratings_state):
-    return EvksRatingCalculator(ratings_state)
+class TestEvksCalculation:
+    def test_evks_calculation_doubles(
+        self,
+        calculator,
+        stored_doubles_competition,
+        stored_doubles_match,
+        stored_doubles_match_sets,
+        stored_player1,
+        stored_player2,
+        stored_player3,
+        stored_player4,
+    ):
+        result = calculator.calculate(
+            competition=stored_doubles_competition,
+            match=stored_doubles_match,
+            match_sets=stored_doubles_match_sets,
+        )
+        # r = 2.547396728611409795104721012
+        assert_that(
+            result,
+            equal_to(
+                {
+                    stored_player1.id: 1713,
+                    stored_player2.id: 2066,
+                    stored_player3.id: 1635,
+                    stored_player4.id: 1215,
+                }
+            ),
+        )
 
+    def test_evks_calculation_singles(
+        self,
+        calculator,
+        stored_singles_competition,
+        stored_singles_match,
+        stored_singles_match_sets,
+        stored_player2,
+        stored_player4,
+    ):
+        result = calculator.calculate(
+            competition=stored_singles_competition,
+            match=stored_singles_match,
+            match_sets=stored_singles_match_sets,
+        )
+        # r = 35.72428301468905220089739857
+        assert_that(
+            result,
+            equal_to(
+                {
+                    stored_player2.id: 2027,
+                    stored_player4.id: 1254,
+                }
+            ),
+        )
 
-def test_evks_calculation_doubles(
-    calculator, doubles_competition, doubles_match, doubles_match_sets
-):
-    result = calculator.calculate(
-        competition=doubles_competition,
-        match=doubles_match,
-        match_sets=doubles_match_sets,
-    )
-    # r = 2.547396728611409795104721012
-    assert_that(
-        result,
-        equal_to(
-            {
-                1: 1713,
-                2: 2066,
-                3: 1635,
-                4: 1215,
-            }
-        ),
-    )
-
-
-def test_evks_calculation_singles(
-    calculator, singles_competition, singles_match, singles_match_sets
-):
-    result = calculator.calculate(
-        competition=singles_competition,
-        match=singles_match,
-        match_sets=singles_match_sets,
-    )
-    # r = 35.72428301468905220089739857
-    assert_that(
-        result,
-        equal_to(
-            {
-                2: 2027,
-                4: 1254,
-            }
-        ),
-    )
+    @pytest_asyncio.fixture
+    async def calculator(self, stored_ratings_state):
+        return EvksRatingCalculator(stored_ratings_state)

@@ -6,11 +6,11 @@ import pytest
 import pytest_asyncio
 from sqlalchemy_utils.functions import create_database, drop_database
 
-from storage.storage import Storage, StorageContext
+from storage.storage import StorageContext
 from storage.db import setup_storage
 from storage.schema.create_schema import create_schema
 
-from core.tests.entities import *  # noqa
+from core.tests.stored_entities import *  # noqa
 
 
 @pytest.fixture
@@ -27,8 +27,8 @@ def tempdb() -> str:
         drop_database(url)
 
 
-@pytest_asyncio.fixture
-async def storage(tempdb) -> Storage:
+@pytest.fixture
+def storage_context(tempdb) -> StorageContext:
     config = {
         "postgres": {
             "user": "ratings",
@@ -39,6 +39,10 @@ async def storage(tempdb) -> Storage:
         }
     }
     setup_storage(config)
+    return StorageContext
 
-    async with StorageContext() as storage:
+
+@pytest_asyncio.fixture
+async def storage(storage_context):
+    async with storage_context() as storage:
         yield storage

@@ -41,6 +41,9 @@ class Storage:
     def session(self) -> AsyncSessionTransaction:
         return self._session
 
+    async def commit(self) -> None:
+        await self._session.commit()
+
 
 class StorageContext:
     db_engine: Optional[AsyncEngine] = None

@@ -60,6 +60,9 @@ class PlayerStateSet(Collection):
     def to_list(self) -> list[PlayerState]:
         return list(self._data.values())
 
+    def __repr__(self) -> str:
+        return repr(list(self._data.values()))
+
 
 @dataclass
 class RatingsState:

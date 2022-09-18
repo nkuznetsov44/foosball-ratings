@@ -17,7 +17,7 @@ class CalculateEvksPlayerRanksAction(AbstractAction[Rank]):
         elif 1250 < self.player_state.evks_rating <= 1500:
             return Rank.AMATEUR
         elif 1500 < self.player_state.evks_rating <= 1750:
-            return self.Rank.SEMIPRO
+            return Rank.SEMIPRO
         elif 1750 < self.player_state.evks_rating <= 2000:
             return Rank.PRO
         elif 2000 < self.player_state.evks_rating:
