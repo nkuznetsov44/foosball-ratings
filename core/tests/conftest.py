@@ -10,6 +10,8 @@ from storage.storage import StorageContext
 from storage.db import setup_storage
 from storage.schema.create_schema import create_schema
 
+from core.application import make_app
+
 from core.tests.stored_entities import *  # noqa
 
 
@@ -46,3 +48,20 @@ def storage_context(tempdb) -> StorageContext:
 async def storage(storage_context):
     async with storage_context() as storage:
         yield storage
+
+
+@pytest_asyncio.fixture
+async def core_client(aiohttp_client, storage_context):
+    return await aiohttp_client(await make_app())
+
+
+@pytest.fixture
+def mock_action(mocker, storage_context):
+    def _mocker(action, action_result):
+        init_mock = mocker.Mock(return_value=None)
+        mocker.patch.object(action, "__init__", init_mock)
+        handle_mock = mocker.AsyncMock(return_value=action_result)
+        mocker.patch.object(action, "handle", handle_mock)
+        return init_mock
+
+    return _mocker
