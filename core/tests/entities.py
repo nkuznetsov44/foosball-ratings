@@ -116,12 +116,16 @@ async def player4_state(storage, player4):
 
 
 @pytest_asyncio.fixture
-async def ratings_state(storage, player1_state, player2_state, player3_state, player4_state):
+async def ratings_state(
+    storage, player1_state, player2_state, player3_state, player4_state
+):
     return await storage.ratings_states.create(
         RatingsState(
             id=1,
             previous_state_id=None,
-            player_states=PlayerStateSet([player1_state, player2_state, player3_state, player4_state]),
+            player_states=PlayerStateSet(
+                [player1_state, player2_state, player3_state, player4_state]
+            ),
             last_competition=None,
             status=RatingsStateStatus.PUBLISHED,
         )
@@ -148,8 +152,12 @@ async def doubles_competition(storage, tournament):
             tournament=tournament,
             competition_type=CompetitionType.OD,
             evks_importance_coefficient=Decimal("0.75"),
-            start_datetime=datetime(year=2022, month=8, day=13, hour=3, minute=12, second=58),
-            end_datetime=datetime(year=2022, month=8, day=13, hour=4, minute=12, second=58),
+            start_datetime=datetime(
+                year=2022, month=8, day=13, hour=3, minute=12, second=58
+            ),
+            end_datetime=datetime(
+                year=2022, month=8, day=13, hour=4, minute=12, second=58
+            ),
         )
     )
 
@@ -162,14 +170,20 @@ async def singles_competition(storage, tournament):
             tournament=tournament,
             competition_type=CompetitionType.OS,
             evks_importance_coefficient=Decimal("0.75"),
-            start_datetime=datetime(year=2022, month=8, day=14, hour=3, minute=12, second=58),
-            end_datetime=datetime(year=2022, month=8, day=14, hour=4, minute=12, second=58),
+            start_datetime=datetime(
+                year=2022, month=8, day=14, hour=3, minute=12, second=58
+            ),
+            end_datetime=datetime(
+                year=2022, month=8, day=14, hour=4, minute=12, second=58
+            ),
         )
     )
 
 
 @pytest_asyncio.fixture
-async def doubles_match_teams(storage, doubles_competition, player1, player2, player3, player4):
+async def doubles_match_teams(
+    storage, doubles_competition, player1, player2, player3, player4
+):
     first_team = await storage.teams.create(
         Team(
             id=1,
@@ -211,22 +225,38 @@ async def doubles_match_sets(storage, doubles_match):
     return [
         await storage.sets.create(
             MatchSet(
-                id=1, match=doubles_match, order=1, first_team_score=5, second_team_score=2
+                id=1,
+                match=doubles_match,
+                order=1,
+                first_team_score=5,
+                second_team_score=2,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=2, match=doubles_match, order=2, first_team_score=5, second_team_score=2
+                id=2,
+                match=doubles_match,
+                order=2,
+                first_team_score=5,
+                second_team_score=2,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=3, match=doubles_match, order=3, first_team_score=2, second_team_score=5
+                id=3,
+                match=doubles_match,
+                order=3,
+                first_team_score=2,
+                second_team_score=5,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=4, match=doubles_match, order=4, first_team_score=5, second_team_score=2
+                id=4,
+                match=doubles_match,
+                order=4,
+                first_team_score=5,
+                second_team_score=2,
             ),
         ),
     ]
@@ -275,22 +305,38 @@ async def singles_match_sets(storage, singles_match):
     return [
         await storage.sets.create(
             MatchSet(
-                id=5, match=singles_match, order=1, first_team_score=1, second_team_score=5
+                id=5,
+                match=singles_match,
+                order=1,
+                first_team_score=1,
+                second_team_score=5,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=6, match=singles_match, order=2, first_team_score=2, second_team_score=5
+                id=6,
+                match=singles_match,
+                order=2,
+                first_team_score=2,
+                second_team_score=5,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=7, match=singles_match, order=3, first_team_score=5, second_team_score=3
+                id=7,
+                match=singles_match,
+                order=3,
+                first_team_score=5,
+                second_team_score=3,
             ),
         ),
         await storage.sets.create(
             MatchSet(
-                id=8, match=singles_match, order=4, first_team_score=4, second_team_score=5
+                id=8,
+                match=singles_match,
+                order=4,
+                first_team_score=4,
+                second_team_score=5,
             ),
         ),
     ]

@@ -15,7 +15,7 @@ from core.tests.entities import *  # noqa
 
 @pytest.fixture
 def tempdb() -> str:
-    name = '.'.join([uuid.uuid4().hex, 'pytest'])
+    name = ".".join([uuid.uuid4().hex, "pytest"])
     url = f"postgresql://ratings:ratings@localhost:5432/{name}"
 
     create_database(url)
@@ -30,12 +30,12 @@ def tempdb() -> str:
 @pytest_asyncio.fixture
 async def storage(tempdb) -> Storage:
     config = {
-        'postgres': {
-            'user': 'ratings',
-            'password': 'ratings',
-            'host': 'localhost',
-            'port': 5432,
-            'database': tempdb
+        "postgres": {
+            "user": "ratings",
+            "password": "ratings",
+            "host": "localhost",
+            "port": 5432,
+            "database": tempdb,
         }
     }
     setup_storage(config)

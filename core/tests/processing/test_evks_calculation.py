@@ -18,12 +18,17 @@ def test_evks_calculation_doubles(
         match_sets=doubles_match_sets,
     )
     # r = 2.547396728611409795104721012
-    assert_that(result, equal_to({
-        1: 1713,
-        2: 2066,
-        3: 1635,
-        4: 1215,
-    }))
+    assert_that(
+        result,
+        equal_to(
+            {
+                1: 1713,
+                2: 2066,
+                3: 1635,
+                4: 1215,
+            }
+        ),
+    )
 
 
 def test_evks_calculation_singles(
@@ -35,7 +40,12 @@ def test_evks_calculation_singles(
         match_sets=singles_match_sets,
     )
     # r = 35.72428301468905220089739857
-    assert_that(result, equal_to({
-        2: 2027,
-        4: 1254,
-    }))
+    assert_that(
+        result,
+        equal_to(
+            {
+                2: 2027,
+                4: 1254,
+            }
+        ),
+    )
