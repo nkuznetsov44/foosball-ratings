@@ -37,7 +37,6 @@ class TestPlayersHandler:
     @pytest.mark.asyncio
     async def test_response(self, core_client, request_data):
         response = await core_client.post("/api/v1/players", json=request_data)
-        print(await response.json())
         assert_that(response.status, equal_to(200))
 
         response_json = await response.json()
@@ -48,18 +47,18 @@ class TestPlayersHandler:
                     "id": match_equality(not_none()),
                     "player": {
                         "id": match_equality(not_none()),
-                        "external_id": 666,
+                        "external_id": 42,
                         "first_name": "John",
                         "last_name": "Doe",
-                        "city": "MOSCOW",
+                        "city": "EKATERINBURG",
                     },
                     "previous_state_id": None,
                     "last_match": None,
-                    "matches_played": 0,
-                    "matches_won": 0,
-                    "ratings": {"EVKS": 1100, "CUMULATIVE": 0},
-                    "is_evks_rating_active": False,
-                    "evks_rank": "NOVICE",
+                    "matches_played": 666,
+                    "matches_won": 66,
+                    "ratings": {"EVKS": 1666, "CUMULATIVE": 0},
+                    "is_evks_rating_active": True,
+                    "evks_rank": "SEMIPRO",
                 }
             ),
         )
@@ -81,8 +80,13 @@ class TestPlayersHandler:
                 {
                     "first_name": "John",
                     "last_name": "Doe",
-                    "city": "MOSCOW",
-                    "external_id": 666,
+                    "city": "EKATERINBURG",
+                    "external_id": 42,
+                    "initial_evks_rating": 1666,
+                    "initial_cumulative_rating": 0,
+                    "initial_matches_played": 666,
+                    "initial_matches_won": 66,
+                    "is_evks_rating_active": True,
                 },
             ]
         }
@@ -94,13 +98,13 @@ class TestPlayersHandler:
                 PlayerReq(
                     first_name="John",
                     last_name="Doe",
-                    city=City.MOSCOW,
-                    external_id=666,
-                    initial_evks_rating=None,
-                    initial_cumulative_rating=None,
-                    initial_matches_played=None,
-                    initial_matches_won=None,
-                    is_evks_rating_active=None,
+                    city=City.EKATERINBURG,
+                    external_id=42,
+                    initial_evks_rating=1666,
+                    initial_cumulative_rating=0,
+                    initial_matches_played=666,
+                    initial_matches_won=66,
+                    is_evks_rating_active=True,
                 )
             ]
         )
