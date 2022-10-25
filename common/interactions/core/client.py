@@ -6,8 +6,10 @@ from common.entities.schemas import (
 from common.interactions.core.requests.player_competition_matches import (
     PlayerCompetitionMatchesResponse,
 )
+from common.interactions.core.requests.ratings_state import RatingsStateResponse
 from common.interactions.core.requests.schemas import (
     PlayerCompetitionMatchesResponseSchema,
+    RatingsStateResponseSchema,
 )
 from common.interactions.base import BaseInteractionClient, InteractionClientContext
 
@@ -32,6 +34,10 @@ class CoreClient(BaseInteractionClient):
             f"{self.base_url}/players/{player_id}/competitions/{competition_id}/matches"
         )
         return PlayerCompetitionMatchesResponseSchema().load(resp_json)
+
+    async def get_ratings_state(self) -> RatingsStateResponse:
+        resp_json = await self.get("f{self.base_url}/ratings_state")
+        return RatingsStateResponseSchema().load(resp_json)
 
 
 class CoreClientContext(InteractionClientContext[CoreClient]):

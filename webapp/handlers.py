@@ -9,6 +9,7 @@ from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
     PlayerCompetitionMatchesResponseSchema,
+    RatingsStateResponseSchema,
 )
 from common.interactions.core.client import CoreClientContext
 from common.interactions.referees.client import RefereesClientContext
@@ -52,6 +53,14 @@ class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
         request_data = await self.get_request_data()
         async with self.core_client() as client:
             response = await client.get_player_competition_matches(**request_data)
+        return self.make_response(response)
+
+
+class RatingsStateHandler(AbstractWebappHandler):
+    @response_schema(RatingsStateResponseSchema)
+    async def get(self) -> web.Response:
+        async with self.core_client() as client:
+            response = await client.get_ratings_state()
         return self.make_response(response)
 
 

@@ -4,6 +4,7 @@ from webapp.handlers import (
     PlayersHandler,
     PlayerCompetitionsHandler,
     PlayerCompetitionMatchesHandler,
+    RatingsStateHandler,
     RefereesHandler,
 )
 
@@ -15,4 +16,5 @@ def setup_routes(app: web.Application) -> None:
         "/players/{player_id}/competitions/{competition_id}/matches",
         PlayerCompetitionMatchesHandler,
     )
+    app.router.add_view("/ratings_state", RatingsStateHandler)
     app.router.add_view("/referees", RefereesHandler)
