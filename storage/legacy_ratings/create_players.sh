@@ -1,1 +1,1 @@
-curl -X POST -H "Content-Type: application/json" --data "$(python generate_create_players.py)" http://localhost:8080/api/v1/players | jq '.'
+curl -X POST -H "Content-Type: application/json" --data @create_players.json http://localhost:9080/api/v1/players | jq '.'
