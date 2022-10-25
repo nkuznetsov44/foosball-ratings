@@ -19,7 +19,7 @@ services:
       - postgres
     restart: on-failure
     ports:
-      - 8080:8080
+      - 9080:8080
   ratings_webapp:
     build:
       dockerfile: Dockerfile-webapp
@@ -28,6 +28,6 @@ services:
       - ratings_core
     restart: on-failure
     ports:
-      - 8081:8081
+      - 9081:8081
 volumes:
   postgresdata:
