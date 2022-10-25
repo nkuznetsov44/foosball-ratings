@@ -1,1 +1,11 @@
-pymysql
+greenlet==1.1.3.post0
+marshmallow==3.18.0
+marshmallow-dataclass==8.5.9
+marshmallow-enum==1.5.1
+mypy-extensions==0.4.3
+packaging==21.3
+PyMySQL==1.0.2
+pyparsing==3.0.9
+SQLAlchemy==1.4.42
+typing-extensions==4.4.0
+typing-inspect==0.8.0
