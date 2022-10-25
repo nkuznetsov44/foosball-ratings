@@ -36,7 +36,7 @@ class CoreClient(BaseInteractionClient):
         return PlayerCompetitionMatchesResponseSchema().load(resp_json)
 
     async def get_ratings_state(self) -> RatingsStateResponse:
-        resp_json = await self.get("f{self.base_url}/ratings_state")
+        resp_json = await self.get(f"{self.base_url}/ratings_state")
         return RatingsStateResponseSchema().load(resp_json)
 
 
