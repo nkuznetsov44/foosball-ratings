@@ -13,11 +13,15 @@ from common.interactions.core.requests.schemas import (
 from common.interactions.core.client import CoreClientContext
 from common.interactions.referees.client import RefereesClientContext
 from common.interactions.referees.schemas import RefereeSchema
+from webapp.settings import config
 
 
 class AbstractWebappHandler(AbstractHandler):
     def core_client(self):
-        return CoreClientContext()
+        return CoreClientContext(
+            host=config['core_client']['host'],
+            port=int(config['core_client']['port']),
+        )
 
     def referees_client(self):
         return RefereesClientContext()

@@ -43,8 +43,8 @@ InteractionClient = TypeVar("InteractionClient", bound=BaseInteractionClient)
 class InteractionClientContext(Generic[InteractionClient]):
     client_cls: Type[InteractionClient]
 
-    def __init__(self) -> None:
-        self._client = self.client_cls()
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._client = self.client_cls(*args, **kwargs)
 
     async def __aenter__(self) -> InteractionClient:
         return self._client

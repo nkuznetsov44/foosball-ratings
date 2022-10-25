@@ -13,7 +13,8 @@ from common.interactions.base import BaseInteractionClient, InteractionClientCon
 
 
 class CoreClient(BaseInteractionClient):
-    base_url = "http://localhost:8080/api/v1"  # TODO: to settings
+    def __init__(self, host: str, port: int) -> None:
+        self.base_url = f"http://{host}:{port}/api/v1"
 
     async def get_players(self) -> list[Player]:
         resp_json = await self.get(f"{self.base_url}/players")

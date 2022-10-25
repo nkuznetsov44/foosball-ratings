@@ -19,7 +19,7 @@ async def make_app() -> web.Application:
         ]
     )
     setup_routes(app)
-    setup_storage(config, echo=True)
+    setup_storage(config, echo=False)
     return app
 
 
