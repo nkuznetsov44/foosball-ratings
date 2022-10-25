@@ -1,0 +1,8 @@
+common:
+  port: 8080
+postgres:
+  database: ratings_core
+  user: ratings
+  password: ratings
+  host: postgres
+  port: 5432
