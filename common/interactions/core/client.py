@@ -2,6 +2,7 @@ from common.entities.competition import Competition
 from common.entities.player import Player
 from common.entities.schemas import (
     PlayerSchema,
+    CompetitionSchema,
 )
 from common.interactions.core.requests.player_competition_matches import (
     PlayerCompetitionMatchesResponse,
@@ -22,10 +23,9 @@ class CoreClient(BaseInteractionClient):
         resp_json = await self.get(f"{self.base_url}/players")
         return PlayerSchema(many=True).load(resp_json)
 
-    async def get_player_competitions(
-        self, player_id: int, competition_id: int
-    ) -> list[Competition]:
-        pass
+    async def get_player_competitions(self, player_id: int) -> list[Competition]:
+        resp_json = await self.get(f"{self.base_url}/player/{player_id}/competitions")
+        return CompetitionSchema(many=True).load(resp_json)
 
     async def get_player_competition_matches(
         self, player_id: int, competition_id: int
