@@ -74,19 +74,23 @@ class RatingsStateHandler(AbstractWebappHandler):
         if active_only:
             player_states = filter(lambda ps: ps.is_evks_rating_active, player_states)
 
+        ps_data = [
+            PlayerStateResp(
+                player_name=f"{player_state.player.first_name} {player_state.player.last_name}",
+                evks_rank=player_state.evks_rank,
+                rating=player_state.ratings[rating_type],
+                is_evks_player_active=player_state.is_evks_rating_active,
+            )
+            for player_state in player_states
+        ]
+
+        ps_data.sort(lambda ps: ps.rating, reverse=True)
+
         return self.make_response(
             RatingsStateResponse(
                 id=core_response.id,
                 rating_type=rating_type,
-                player_states=[
-                    PlayerStateResp(
-                        player_name=f"{player_state.player.first_name} {player_state.player.last_name}",
-                        evks_rank=player_state.evks_rank,
-                        rating=player_state.ratings[rating_type],
-                        is_evks_player_active=player_state.is_evks_rating_active,
-                    )
-                    for player_state in player_states
-                ]
+                player_states=ps_data,
             )
         )
 
