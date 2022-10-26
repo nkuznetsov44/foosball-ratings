@@ -84,7 +84,7 @@ class RatingsStateHandler(AbstractWebappHandler):
             for player_state in player_states
         ]
 
-        ps_data.sort(lambda ps: ps.rating, reverse=True)
+        ps_data = sorted(ps_data, key=lambda ps: ps.rating, reverse=True)
 
         return self.make_response(
             RatingsStateResponse(
