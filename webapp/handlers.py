@@ -1,6 +1,7 @@
 from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
+from common.entities.enums import RatingType
 from common.entities.schemas import (
     PlayerSchema,
     CompetitionSchema,
@@ -9,12 +10,14 @@ from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
     PlayerCompetitionMatchesResponseSchema,
-    RatingsStateResponseSchema,
 )
 from common.interactions.core.client import CoreClientContext
 from common.interactions.referees.client import RefereesClientContext
 from common.interactions.referees.schemas import RefereeSchema
+
 from webapp.settings import config
+from webapp.requests.ratings_state import PlayerStateResp, RatingsStateResponse
+from webapp.requests.schemas import RatingsStateRequestSchema, RatingsStateResponseSchema
 
 
 class AbstractWebappHandler(AbstractHandler):
@@ -57,11 +60,35 @@ class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
 
 
 class RatingsStateHandler(AbstractWebappHandler):
+    @request_schema(RatingsStateRequestSchema)
     @response_schema(RatingsStateResponseSchema)
     async def get(self) -> web.Response:
+        request_data = await self.get_request_data()
+        active_only = request_data['active_only']
+        rating_type = RatingType(request_data['rating_type'])
+
         async with self.core_client() as client:
-            response = await client.get_ratings_state()
-        return self.make_response(response)
+            core_response = await client.get_ratings_state()
+
+        player_states = core_response.player_states
+        if active_only:
+            player_states = filter(lambda ps: ps.is_evks_rating_active, player_states)
+
+        return self.make_response(
+            RatingsStateResponse(
+                id=core_response.id,
+                rating_type=rating_type,
+                player_states=[
+                    PlayerStateResp(
+                        player_name=f"{player_state.player.first_name} {player_state.player.last_name}",
+                        evks_rank=player_state.evks_rank,
+                        rating=player_state.ratings[rating_type],
+                        is_evks_player_active=player_state.is_evks_rating_active,
+                    )
+                    for player_state in player_states
+                ]
+            )
+        )
 
 
 class RefereesHandler(AbstractWebappHandler):

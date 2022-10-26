@@ -16,8 +16,7 @@ RUN pip install -r requirements.txt
 COPY ./common /opt/ratings/common
 COPY ./storage /opt/ratings/storage
 COPY ./core /opt/ratings/core
-COPY ./settings.py /opt/ratings
-COPY ./config.docker.yaml /opt/ratings/config.yaml
+COPY ./core/config.docker.yaml /opt/ratings/core/config.yaml
 
 WORKDIR /opt/ratings
 ENV PYTHONPATH /opt/ratings

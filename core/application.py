@@ -4,7 +4,7 @@ from aiohttp import web
 from common.middlewares import malformed_request_400_middleware
 from core.api.middlewares import core_processing_error_500_middleware
 from core.routes import setup_routes
-from settings import config
+from core.settings import config
 from storage.db import setup_storage
 
 

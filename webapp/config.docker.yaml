@@ -1,0 +1,3 @@
+core_client:
+  host: ratings_core
+  port: 9080

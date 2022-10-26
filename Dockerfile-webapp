@@ -15,6 +15,7 @@ RUN pip install -r requirements.txt
 # copy project
 COPY ./common /opt/ratings/common
 COPY ./webapp /opt/ratings/webapp
+COPY ./webapp/config.docker.yaml /opt/ratings/webapp/config.yaml
 
 WORKDIR /opt/ratings
 ENV PYTHONPATH /opt/ratings
