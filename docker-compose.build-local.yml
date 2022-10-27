@@ -12,14 +12,18 @@ services:
       - ./storage/schema/dumps/60cd355b24689707134c98fe44ac3be6a06f26a6.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./storage/init_db/init_db.sql:/docker-entrypoint-initdb.d/2-init_db.sql
   ratings_core:
-    image: nkuznetsov44/ratings_core
+    build:
+      dockerfile: Dockerfile-core
+      context: .
     depends_on:
       - postgres
     restart: on-failure
     ports:
       - 9080:8080
   ratings_webapp:
-    image: nkuznetsov44/ratings_webapp
+    build:
+      dockerfile: Dockerfile-webapp
+      context: .
     depends_on:
       - ratings_core
     restart: on-failure
