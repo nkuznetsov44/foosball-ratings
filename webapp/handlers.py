@@ -88,7 +88,7 @@ class RatingsStateHandler(AbstractWebappHandler):
         ps_data = sorted(ps_data, key=lambda ps: ps.rating, reverse=True)
 
         # FIXME
-        ps_data = list(filter(lambda: bool(random.getrandbits(1)), ps_data))
+        ps_data = list(filter(lambda _: bool(random.getrandbits(1)), ps_data))
 
         return self.make_response(
             RatingsStateResponse(
