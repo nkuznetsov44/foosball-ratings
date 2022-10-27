@@ -1,7 +1,6 @@
 services:
   postgres:
     image: nkuznetsov44/ratings_storage:latest
-    pull_policy: always
     environment:
       POSTGRES_PASSWORD: ratings
       POSTGRES_USER: ratings
@@ -22,5 +21,23 @@ services:
     depends_on:
       - ratings_core
     restart: on-failure
+  nextjs:
+    image: artbocha/foosball-fsk-nextjs:latest
+    pull_policy: always
+    depends_on:
+      - ratings_webapp
+    environment:
+      - WEBAPP_BACKEND_URL=${WEBAPP_BACKEND_URL}
+  nginx:
+    image: artbocha/foosball-fsk-nginx:latest
+    pull_policy: always
+    restart: on-failure
+    depends_on:
+      - ratings_webapp
+      - nextjs
+    ports:
+      - 3000:80
+    environment:
+      - WEBAPP_BACKEND_URL=${WEBAPP_BACKEND_URL}
 volumes:
   postgresdata:
