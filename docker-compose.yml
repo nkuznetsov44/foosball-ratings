@@ -13,6 +13,7 @@ services:
       - ./storage/init_db/init_db.sql:/docker-entrypoint-initdb.d/2-init_db.sql
   ratings_core:
     image: nkuznetsov44/ratings_core
+    pull_policy: always
     depends_on:
       - postgres
     restart: on-failure
@@ -20,6 +21,7 @@ services:
       - 9080:8080
   ratings_webapp:
     image: nkuznetsov44/ratings_webapp
+    pull_policy: always
     depends_on:
       - ratings_core
     restart: on-failure
