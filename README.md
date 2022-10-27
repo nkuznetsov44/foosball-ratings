@@ -15,3 +15,5 @@ db:
 - `python core/storage/schema/create_schema.py`
 
 console: `psql -U ratings ratings_core`
+
+Docker build and run locally: `docker-compose -f docker-compose.build-local.yml up --build`

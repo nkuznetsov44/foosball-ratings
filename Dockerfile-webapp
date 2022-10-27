@@ -20,4 +20,6 @@ COPY ./webapp/config.docker.yaml /opt/ratings/webapp/config.yaml
 WORKDIR /opt/ratings
 ENV PYTHONPATH /opt/ratings
 
+EXPOSE 8081
+
 CMD ["python3", "webapp/application.py"]

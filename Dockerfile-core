@@ -21,4 +21,6 @@ COPY ./core/config.docker.yaml /opt/ratings/core/config.yaml
 WORKDIR /opt/ratings
 ENV PYTHONPATH /opt/ratings
 
+EXPOSE 8080
+
 CMD ["python3", "core/application.py"]

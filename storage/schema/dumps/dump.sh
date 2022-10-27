@@ -1,0 +1,1 @@
+pg_dump -U ratings -s ratings_core > storage/schema/dumps/60cd355b24689707134c98fe44ac3be6a06f26a6.sql

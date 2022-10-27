@@ -1,5 +1,4 @@
 from aiohttp import web
-import random  # FIXME
 
 from common.handlers import AbstractHandler, request_schema, response_schema
 from common.entities.enums import RatingType
@@ -86,9 +85,6 @@ class RatingsStateHandler(AbstractWebappHandler):
         ]
 
         ps_data = sorted(ps_data, key=lambda ps: ps.rating, reverse=True)
-
-        # FIXME
-        ps_data = list(filter(lambda _: bool(random.getrandbits(1)), ps_data))
 
         return self.make_response(
             RatingsStateResponse(

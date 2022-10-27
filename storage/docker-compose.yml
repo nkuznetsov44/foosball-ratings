@@ -9,4 +9,4 @@ services:
       POSTGRES_USER: ratings
       POSTGRES_PASSWORD: ratings
     ports:
-      - "5432:5432"
+      - 5432:5432
