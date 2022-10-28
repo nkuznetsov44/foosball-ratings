@@ -116,7 +116,9 @@ class Competition:
 
     id: int = field(metadata={"sa": sa.Column(sa.Integer, primary_key=True)})
     tournament_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("tournaments.id"))})
-    type: CompetitionType = field(metadata={"sa": sa.Enum(CompetitionType)})
+    type: CompetitionType = field(
+        metadata={"sa": sa.Column(sa.Enum(CompetitionType, values_callable=lambda x: [e.value for e in x]))}
+    )
     name: Optional[str] = field(metadata={"sa": sa.Column(sa.String(255), nullable=True)})
     date: datetime = field(metadata={"sa": sa.Column(sa.Date)})
     order: int = field(metadata={"sa": sa.Column(sa.Integer)})
