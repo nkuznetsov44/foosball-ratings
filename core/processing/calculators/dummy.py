@@ -5,10 +5,8 @@ from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
+    RatingCalculationResult,
 )
-
-_PlayerId = int
-_RatingValue = int
 
 
 class DummyCumulativeRatingCalculator(AbstractRatingCalculator):
@@ -20,5 +18,5 @@ class DummyCumulativeRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> dict[_PlayerId, _RatingValue]:
+    ) -> RatingCalculationResult:
         return {player.id: 0 for player in match.players}

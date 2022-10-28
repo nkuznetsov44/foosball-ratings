@@ -10,6 +10,7 @@ from common.entities.team import Team
 from core.exceptions import PlayerStateNotFound
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
+    RatingCalculationResult,
 )
 
 
@@ -19,8 +20,7 @@ class EvksGameType(Enum):
     OTHER = "Other"
 
 
-_PlayerId = int
-_RatingValue = int
+PlayerValueMap = dict[int, Decimal]
 
 
 class BaseEvksRatingCalculator(AbstractRatingCalculator):
@@ -33,7 +33,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> dict[_PlayerId, _RatingValue]:
+    ) -> RatingCalculationResult:
         for player in match.players:
             try:
                 self.ratings_state.player_states[player]
@@ -64,21 +64,17 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
 
-        res: dict[_PlayerId, _RatingValue] = {}
+        res: RatingCalculationResult = RatingCalculationResult()
 
         for winner_player in winner_team.players:
             r = d[winner_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[winner_player.id] = (
-                self.ratings_state.player_states[winner_player].evks_rating + r_rounded
-            )
+            res[winner_player.id] = r_rounded
 
         for looser_player in looser_team.players:
             r = d[looser_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[looser_player.id] = (
-                self.ratings_state.player_states[looser_player].evks_rating - r_rounded
-            )
+            res[looser_player.id] = -r_rounded
 
         return res
 
@@ -96,16 +92,12 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         )
         return Decimal(2 * r2 + r1) / 3
 
-    def _calculate_reliability_coefficients(
-        self, match: Match
-    ) -> dict[_PlayerId, Decimal]:
+    def _calculate_reliability_coefficients(self, match: Match) -> PlayerValueMap:
         if match.is_singles:
             return self._calculate_singles_reliability_coefficients(match)
         return self._calculate_doubles_reliability_coefficients(match)
 
-    def _calculate_singles_reliability_coefficients(
-        self, match: Match
-    ) -> dict[_PlayerId, Decimal]:
+    def _calculate_singles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
         match_players_states = [
             self.ratings_state.player_states[player] for player in match.players
         ]
@@ -113,7 +105,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
             len(match_players_states) == 2
         ), "Match player states must be of len 2 for a singles match"
 
-        res: dict[_PlayerId, Decimal] = {}
+        res: PlayerValueMap = {}
         for player_state, opp_state in permutations(match_players_states):
             if player_state.is_evks_rating_active == opp_state.is_evks_rating_active:
                 res[player_state.player.id] = Decimal(1)
@@ -131,10 +123,8 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
                 raise ValueError()
         return res
 
-    def _calculate_doubles_reliability_coefficients(
-        self, match: Match
-    ) -> dict[_PlayerId, Decimal]:
-        res: dict[_PlayerId, Decimal] = {}
+    def _calculate_doubles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
+        res: PlayerValueMap = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):
             team_states = [

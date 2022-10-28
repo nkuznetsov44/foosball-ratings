@@ -1,3 +1,4 @@
+from typing import Optional
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
@@ -49,6 +50,7 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
         tournament: Tournament,
         ratings_state: RatingsState,
     ) -> RatingsState:
+        rs: Optional[RatingsState] = None
         for competition_req in competition_reqs:
             competition = await self.storage.competitions.create(
                 Competition(
@@ -71,7 +73,9 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
                 competition,
                 competition_teams_map,
             )
-            return await self.run_subaction(ProcessCompetitionAction(competition))
+            rs = await self.run_subaction(ProcessCompetitionAction(competition))
+        assert rs is not None, 'Did not return ratings state'
+        return rs
 
     async def _save_competition_teams(
         self,

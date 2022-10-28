@@ -7,8 +7,9 @@ from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet
 from common.entities.ratings_state import RatingsState
 
-_PlayerId = int
-_RatingValue = int
+
+class RatingCalculationResult(dict[int, int]):
+    pass
 
 
 class AbstractRatingCalculator(ABC):
@@ -24,5 +25,5 @@ class AbstractRatingCalculator(ABC):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> dict[_PlayerId, _RatingValue]:
+    ) -> RatingCalculationResult:
         raise NotImplementedError()

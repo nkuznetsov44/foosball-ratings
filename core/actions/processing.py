@@ -28,7 +28,6 @@ DATE_2022_01_01 = DatetimeWithTZ(
 
 
 _PlayerId = int
-_RatingValue = int
 
 
 class ProcessCompetitionAction(AbstractAction[RatingsState]):
@@ -66,21 +65,24 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         for match in self._prepare_matches(matches):
             match_sets = await self.storage.sets.find_by_match(match.id)
 
-            for player_id, ratings in self._calculate_ratings_after_match(
+            for player_id, ratings_delta in self._calculate_ratings_after_match(
                 strategy=strategy,
                 ratings_state=ratings_state,
                 match=match,
                 match_sets=match_sets,
             ).items():
-                player = intermediate_ratings_state.player_states[player_id].player
-                player_state = await self.run_subaction(
+                current_player_state = intermediate_ratings_state.player_states[player_id]
+                ratings = {**current_player_state.ratings}
+                for rating_type in ratings:
+                    ratings[rating_type] += ratings_delta[rating_type]
+                new_player_state = await self.run_subaction(
                     CreatePlayerStateAction(
-                        player=player,
+                        player=current_player_state.player,
                         last_match=match,
                         ratings=ratings,
                     )
                 )
-                intermediate_ratings_state.player_states.add(player_state)
+                intermediate_ratings_state.player_states.add(new_player_state)
 
         return await self.run_subaction(
             CreateRatingsStateAction(
@@ -107,8 +109,8 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         ratings_state: RatingsState,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> dict[_PlayerId, dict[RatingType, _RatingValue]]:
-        result: dict[_PlayerId, dict[RatingType, _RatingValue]] = defaultdict(dict)
+    ) -> dict[_PlayerId, dict[RatingType, int]]:
+        result: dict[_PlayerId, dict[RatingType, int]] = defaultdict(dict)
         for rating_type, calculator_cls in strategy.calculators.items():
             calculator = calculator_cls(ratings_state=ratings_state)
             calc_result_by_player = calculator.calculate(
