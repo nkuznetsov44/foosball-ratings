@@ -1,12 +1,12 @@
 version: '3.1'
 
 services:
-  db:
-    image: postgres
-    restart: unless-stopped
+  postgres:
+    build:
+      context: .
     environment:
-      POSTGRES_DB: ratings_core
-      POSTGRES_USER: ratings
       POSTGRES_PASSWORD: ratings
-    ports:
-      - 5432:5432
+      POSTGRES_USER: ratings
+      POSTGRES_DB: ratings_core
+    volumes:
+      - postgresdata:/var/lib/postgresql/data

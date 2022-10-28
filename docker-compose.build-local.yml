@@ -24,5 +24,7 @@ services:
     depends_on:
       - ratings_core
     restart: on-failure
+    ports:
+      - 9081:8081
 volumes:
   postgresdata:
