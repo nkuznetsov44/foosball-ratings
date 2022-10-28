@@ -1,4 +1,6 @@
 from decimal import Decimal
+from datetime import date, datetime, timezone, timedelta
+
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
@@ -43,6 +45,19 @@ def competition_type_adapter(competition_type: LegacyCompetitionType) -> Competi
     }[competition_type]
 
 
+def date_to_tz_aware_datetime(dt: date) -> datetime:
+    return datetime(
+        year=dt.year,
+        month=dt.month,
+        day=dt.day,
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        tzinfo=timezone(timedelta(hours=+3), 'MSK'),
+    )
+
+
 def create_ratings_engine(username, password):
     return create_engine(f"mysql+pymysql://{username}:{password}@localhost/ratings")
 
@@ -62,8 +77,8 @@ def main():
                 CompetitionReq(
                     external_id=competition.id,
                     competition_type=competition_type_adapter(competition.type),
-                    start_datetime=competition.date,
-                    end_datetime=competition.date,
+                    start_datetime=date_to_tz_aware_datetime(competition.date),
+                    end_datetime=date_to_tz_aware_datetime(competition.date),
                     teams=[
                         TeamReq(
                             external_id=team.id,
@@ -79,8 +94,8 @@ def main():
                             first_team_external_id=match.team1_id,
                             second_team_external_id=match.team2_id,
                             force_qualification=False,
-                            start_datetime=competition.date,
-                            end_datetime=competition.date,
+                            start_datetime=date_to_tz_aware_datetime(competition.date),
+                            end_datetime=date_to_tz_aware_datetime(competition.date),
                             sets=[
                                 MatchSetReq(
                                     external_id=mset.id,
