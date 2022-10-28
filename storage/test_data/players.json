@@ -1,0 +1,29 @@
+{
+    "players": [
+        {
+            "first_name": "Никита",
+            "last_name": "Кузнецов",
+            "city": "MOSCOW"
+        },
+        {
+            "first_name": "Артем",
+            "last_name": "Бочков",
+            "city": "MOSCOW"
+        },
+        {
+            "first_name": "Роман",
+            "last_name": "Бушуев",
+            "city": "MOSCOW"
+        },
+        {
+            "first_name": "Анна",
+            "last_name": "Мамаева",
+            "city": "MOSCOW"
+        },
+        {
+            "first_name": "Сафар",
+            "last_name": "Сафарлы",
+            "city": "MOSCOW"
+        }
+    ]
+}
