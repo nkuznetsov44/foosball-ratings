@@ -41,7 +41,7 @@ services:
       - ratings_webapp
       - nextjs
     ports:
-      - 3000:80
+      - 9081:80
     environment:
       - WEBAPP_BACKEND_URL=${WEBAPP_BACKEND_URL}
 volumes:
