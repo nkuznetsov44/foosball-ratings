@@ -4,6 +4,7 @@ from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
+from common.entities.ratings_state import RatingsState
 from core.actions.abstract_action import AbstractAction
 from core.actions.evks_player_rank import CalculateEvksPlayerRanksAction
 from core.exceptions import (
@@ -28,6 +29,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
         matches_played: Optional[int],
         matches_won: Optional[int],
         is_evks_rating_active: Optional[bool],
+        ratings_state: RatingsState,
     ):
         self.player = player
         self.evks_rating = evks_rating
@@ -35,13 +37,12 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
         self.matches_played = matches_played
         self.matches_won = matches_won
         self.is_evks_rating_active = is_evks_rating_active
+        self.ratings_state = ratings_state
 
     async def handle(self) -> PlayerState:
-        ratings_state = await self.storage.ratings_states.get_actual()
-
-        if ratings_state.player_states.get(self.player):
+        if self.ratings_state.player_states.get(self.player):
             raise PlayerStateAlreadyExists(
-                player_id=self.player.id, current_state=ratings_state
+                player_id=self.player.id, current_state=self.ratings_state
             )
 
         matches_played = self.matches_played or 0
@@ -81,10 +82,12 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
         player: Player,
         last_match: Match,
         ratings: dict[RatingType, int],
+        ratings_state: RatingsState,
     ) -> None:
         self.player = player
         self.last_match = last_match
         self.ratings = ratings
+        self.ratings_state = ratings_state
 
     async def handle(self) -> PlayerState:
         assert (
@@ -94,13 +97,11 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
             self.ratings.get(RatingType.CUMULATIVE) is not None
         ), "Need Cumulative rating value to create player state"
 
-        ratings_state = await self.storage.ratings_states.get_actual()
-
-        current_player_state = ratings_state.player_states[self.player]
+        current_player_state = self.ratings_state.player_states[self.player]
 
         if not current_player_state:
             raise PlayerStateNotFound(
-                player_id=self.player.id, current_state=ratings_state
+                player_id=self.player.id, current_state=self.ratings_state
             )
 
         if current_player_state.last_match and self.last_match.is_before(
@@ -109,7 +110,7 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
             raise PlayerStateSequenceError(
                 match_id=self.last_match.id,
                 last_match_id=current_player_state.last_match.id,
-                current_state=ratings_state,
+                current_state=self.ratings_state,
             )
 
         new_matches_played = current_player_state.matches_played + 1

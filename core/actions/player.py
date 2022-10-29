@@ -56,6 +56,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
                         matches_played=player_req.initial_matches_played,
                         matches_won=player_req.initial_matches_won,
                         is_evks_rating_active=player_req.is_evks_rating_active,
+                        ratings_state=ratings_state,
                     )
                 )
             )

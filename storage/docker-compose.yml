@@ -10,3 +10,7 @@ services:
       POSTGRES_DB: ratings_core
     volumes:
       - postgresdata:/var/lib/postgresql/data
+    ports:
+      - 6432:5432
+volumes:
+  postgresdata:

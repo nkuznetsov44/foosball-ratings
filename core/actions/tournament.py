@@ -30,7 +30,6 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
         self.request = request
 
     async def handle(self) -> RatingsState:
-        ratings_state = await self.storage.ratings_states.get_actual()
         tournament = await self.storage.tournaments.create(
             Tournament(
                 id=None,
@@ -41,14 +40,13 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
             )
         )
         return await self._save_and_process_tournament_competitions(
-            self.request.competitions, tournament, ratings_state
+            self.request.competitions, tournament
         )
 
     async def _save_and_process_tournament_competitions(
         self,
         competition_reqs: list[CompetitionReq],
         tournament: Tournament,
-        ratings_state: RatingsState,
     ) -> RatingsState:
         rs: Optional[RatingsState] = None
         for competition_req in competition_reqs:
@@ -66,7 +64,6 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
             competition_teams_map = await self._save_competition_teams(
                 competition_req.teams,
                 competition,
-                ratings_state,
             )
             await self._save_competition_matches(
                 competition_req.matches,
@@ -81,8 +78,8 @@ class CreateTournamentAction(AbstractAction[RatingsState]):
         self,
         team_reqs: list[TeamReq],
         competition: Competition,
-        ratings_state: RatingsState,
     ) -> dict[_TeamExternalId, Team]:
+        ratings_state = await self.storage.ratings_states.get_actual()
         teams_map: dict[_TeamExternalId, Team] = {}
         for team_req in team_reqs:
             first_player = self._get_player(ratings_state, team_req.first_player_id)

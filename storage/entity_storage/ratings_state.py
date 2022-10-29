@@ -41,10 +41,10 @@ class RatingsStateStorage(BaseEntityStorage):
         )
 
     async def get_actual(self) -> RatingsState:
-        # TODO: order_by, limit 1, subqueryload
+        # TODO: maybe cache RS by id
         result = await self._session.execute(
             self._select_entity_query()
-            # .filter(RatingsState.status==RatingsStateStatus.PUBLISHED)  # FIXME
-            .order_by(RatingsState.id.desc())  # TODO: fixme
+            .order_by(RatingsState.id.desc())
+            .limit(1)
         )
-        return result.scalars().first()
+        return result.one()[0]
