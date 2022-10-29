@@ -71,12 +71,12 @@ def main():
             external_id=tournament.id,
             city=City.MOSCOW,
             name=tournament.name,
-            evks_importance=Decimal('0.75'),
             url=None,
             competitions=[
                 CompetitionReq(
                     external_id=competition.id,
                     competition_type=competition_type_adapter(competition.type),
+                    evks_importance=Decimal(competition.importance).quantize(Decimal("1.00")),
                     start_datetime=date_to_tz_aware_datetime(competition.date),
                     end_datetime=date_to_tz_aware_datetime(competition.date),
                     teams=[

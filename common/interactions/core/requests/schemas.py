@@ -8,6 +8,7 @@ from common.interactions.core.requests.player_competition_matches import (
 )
 from common.interactions.core.requests.player import CreatePlayersRequest
 from common.interactions.core.requests.tournament import CreateTournamentRequest
+from common.interactions.core.requests.competition import CreateCompetitionRequest
 
 
 class PlayerIDSchema(BaseSchema):
@@ -27,6 +28,10 @@ CreatePlayersRequestSchema = class_schema(CreatePlayersRequest, base_schema=Base
 
 CreateTournamentRequestSchema = class_schema(
     CreateTournamentRequest, base_schema=BaseSchema
+)
+
+CreateCompetitionRequestSchema = class_schema(
+    CreateCompetitionRequest, base_schema=BaseSchema
 )
 
 RatingsStateResponseSchema = class_schema(RatingsStateResponse, base_schema=BaseSchema)

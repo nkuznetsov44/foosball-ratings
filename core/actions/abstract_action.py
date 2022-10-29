@@ -16,7 +16,7 @@ class AbstractAction(Generic[ActionResult], metaclass=ABCMeta):
         self.storage: Optional[Storage] = None
 
     @abstractmethod
-    async def handle(self) -> Any:
+    async def handle(self) -> ActionResult:
         raise NotImplementedError()
 
     @asynccontextmanager

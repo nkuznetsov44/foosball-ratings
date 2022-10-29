@@ -5,7 +5,7 @@ from common.entities.enums import City
 
 
 @dataclass
-class PlayerReq:
+class PlayerRequest:
     first_name: str
     last_name: str
     city: City
@@ -19,4 +19,4 @@ class PlayerReq:
 
 @dataclass
 class CreatePlayersRequest:
-    players: list[PlayerReq]
+    players: list[PlayerRequest]

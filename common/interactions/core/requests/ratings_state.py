@@ -13,7 +13,7 @@ from common.entities.ratings_state import RatingsState
 
 
 @dataclass
-class TournamentResp:
+class RatingsStateCompetitionTournament:
     id: int
     external_id: Optional[int]
     name: str
@@ -22,15 +22,15 @@ class TournamentResp:
 
 
 @dataclass
-class CompetitionResp:
+class RatingsStateCompetition:
     id: int
     external_id: Optional[int]
-    tournament: TournamentResp
+    tournament: RatingsStateCompetitionTournament
     competition_type: CompetitionType
 
 
 @dataclass
-class PlayerStateResp:
+class RatingsStatePlayerState:
     player: Player
     matches_played: int
     matches_won: int
@@ -42,18 +42,18 @@ class PlayerStateResp:
 @dataclass
 class RatingsStateResponse:
     id: int
-    last_competition: Optional[CompetitionResp]
-    player_states: list[PlayerStateResp]
+    last_competition: Optional[RatingsStateCompetition]
+    player_states: list[RatingsStatePlayerState]
     status: RatingsStateStatus
 
     @staticmethod
     def from_ratings_state(ratings_state: RatingsState) -> "RatingsStateResponse":
         last_competition = None
         if ratings_state.last_competition:
-            last_competition = CompetitionResp(
+            last_competition = RatingsStateCompetition(
                 id=ratings_state.last_competition.id,
                 external_id=ratings_state.last_competition.external_id,
-                tournament=TournamentResp(
+                tournament=RatingsStateCompetitionTournament(
                     id=ratings_state.last_competition.tournament.id,
                     external_id=ratings_state.last_competition.tournament.external_id,
                     name=ratings_state.last_competition.tournament.name,
@@ -66,7 +66,7 @@ class RatingsStateResponse:
             id=ratings_state.id,
             last_competition=last_competition,
             player_states=[
-                PlayerStateResp(
+                RatingsStatePlayerState(
                     player=player_state.player,
                     matches_played=player_state.matches_played,
                     matches_won=player_state.matches_won,
