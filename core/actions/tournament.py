@@ -6,6 +6,11 @@ from common.interactions.core.requests.tournament import (
 )
 
 
+class GetTournamentsAction(AbstractAction[list[Tournament]]):
+    async def handle(self) -> list[Tournament]:
+        return await self.storage.tournaments.lst()
+
+
 class CreateTournamentAction(AbstractAction[RatingsState]):
     def __init__(self, request: CreateTournamentRequest) -> None:
         self.request = request

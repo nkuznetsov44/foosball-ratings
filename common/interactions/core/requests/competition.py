@@ -4,6 +4,7 @@ from typing import Optional
 
 from marshmallow import fields
 
+from common.entities.competition import Competition
 from common.entities.enums import CompetitionType
 from common.utils import DatetimeWithTZ
 
@@ -53,3 +54,22 @@ class CreateCompetitionRequest:
     )
     matches: list[CompetitionMatch]
     teams: list[CompetitionTeam]
+
+
+@dataclass
+class CompetitionResponse:
+    id: int
+    competition_type: CompetitionType
+    evks_importance_coefficient: Decimal
+    start_datetime: DatetimeWithTZ
+    end_datetime: DatetimeWithTZ
+
+    @staticmethod
+    def from_competition(competition: Competition) -> "CompetitionResponse":
+        return CompetitionResponse(
+            id=competition.id,
+            competition_type=competition.competition_type,
+            evks_importance_coefficient=competition.evks_importance_coefficient,
+            start_datetime=competition.start_datetime,
+            end_datetime=competition.end_datetime,
+        )

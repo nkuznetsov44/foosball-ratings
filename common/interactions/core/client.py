@@ -1,13 +1,14 @@
-from common.entities.competition import Competition
 from common.entities.player import Player
 from common.entities.schemas import (
     PlayerSchema,
-    CompetitionSchema,
     TournamentSchema,
 )
 from common.entities.tournament import Tournament
 from common.interactions.core.requests.player_competition_matches import (
     PlayerCompetitionMatchesResponse,
+)
+from common.interactions.core.requests.competition import (
+    CompetitionResponse,
 )
 from common.interactions.core.requests.ratings_state import RatingsStateResponse
 from common.interactions.core.requests.player import CreatePlayersRequest
@@ -19,6 +20,7 @@ from common.interactions.core.requests.schemas import (
     CreatePlayersRequestSchema,
     CreateTournamentRequestSchema,
     CreateCompetitionRequestSchema,
+    CompetitionResponseSchema,
 )
 from common.interactions.base import BaseInteractionClient, InteractionClientContext
 
@@ -31,9 +33,11 @@ class CoreClient(BaseInteractionClient):
         resp_json = await self.get(f"{self.base_url}/players")
         return PlayerSchema(many=True).load(resp_json)
 
-    async def get_player_competitions(self, player_id: int) -> list[Competition]:
+    async def get_player_competitions(
+        self, player_id: int
+    ) -> list[CompetitionResponse]:
         resp_json = await self.get(f"{self.base_url}/player/{player_id}/competitions")
-        return CompetitionSchema(many=True).load(resp_json)
+        return CompetitionResponseSchema(many=True).load(resp_json)
 
     async def get_player_competition_matches(
         self, player_id: int, competition_id: int
@@ -42,6 +46,18 @@ class CoreClient(BaseInteractionClient):
             f"{self.base_url}/players/{player_id}/competitions/{competition_id}/matches"
         )
         return PlayerCompetitionMatchesResponseSchema().load(resp_json)
+
+    async def get_tournaments(self) -> list[Tournament]:
+        resp_json = await self.get(f"{self.base_url}/tournaments")
+        return TournamentSchema(many=True).load(resp_json)
+
+    async def get_tournament_competitions(
+        self, tournament_id: int
+    ) -> list[CompetitionResponse]:
+        resp_json = await self.get(
+            f"{self.base_url}/tournaments/{tournament_id}/competitions"
+        )
+        return CompetitionResponseSchema(many=True).load(resp_json)
 
     async def get_ratings_state(self) -> RatingsStateResponse:
         resp_json = await self.get(f"{self.base_url}/ratings_state")

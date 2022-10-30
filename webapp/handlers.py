@@ -4,12 +4,14 @@ from common.handlers import AbstractHandler, request_schema, response_schema
 from common.entities.enums import RatingType
 from common.entities.schemas import (
     PlayerSchema,
-    CompetitionSchema,
+    TournamentSchema,
 )
 from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
     PlayerCompetitionMatchesResponseSchema,
+    TournamentIDSchema,
+    CompetitionResponseSchema,
 )
 from common.interactions.core.client import CoreClientContext
 from common.interactions.referees.client import RefereesClientContext
@@ -44,7 +46,7 @@ class PlayersHandler(AbstractWebappHandler):
 
 class PlayerCompetitionsHandler(AbstractWebappHandler):
     @request_schema(PlayerIDSchema)
-    @response_schema(CompetitionSchema, many=True)
+    @response_schema(CompetitionResponseSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         async with self.core_client() as client:
@@ -59,6 +61,24 @@ class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
         request_data = await self.get_request_data()
         async with self.core_client() as client:
             response = await client.get_player_competition_matches(**request_data)
+        return self.make_response(response)
+
+
+class TournamentsHandler(AbstractWebappHandler):
+    @response_schema(TournamentSchema, many=True)
+    async def get(self) -> web.Response:
+        async with self.core_client() as client:
+            tournaments = await client.get_tournaments()
+        return self.make_response(tournaments)
+
+
+class TournamentCompetitionsHandler(AbstractWebappHandler):
+    @request_schema(TournamentIDSchema)
+    @response_schema(CompetitionResponseSchema, many=True)
+    async def get(self) -> web.Response:
+        request_data = await self.get_request_data()
+        async with self.core_client() as client:
+            response = await client.get_tournament_competitions(**request_data)
         return self.make_response(response)
 
 

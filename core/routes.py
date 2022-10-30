@@ -7,7 +7,10 @@ from core.api.handlers.player import (
     PlayerCompetitionMatchesHandler,
 )
 from core.api.handlers.ratings_state import RatingsStateHandler
-from core.api.handlers.tournament import TournamentHandler
+from core.api.handlers.tournament import (
+    TournamentHandler,
+    TournamentCompetitionsHandler,
+)
 from core.api.handlers.competition import CompetitionHandler
 
 
@@ -26,5 +29,9 @@ def setup_routes(app: web.Application) -> None:
         PlayerCompetitionMatchesHandler,
     )
     app.router.add_view(uri_v1("tournaments"), TournamentHandler)
+    app.router.add_view(
+        uri_v1("tournaments/{tournament_id}/competitions"),
+        TournamentCompetitionsHandler,
+    )
     app.router.add_view(uri_v1("competitions"), CompetitionHandler)
     app.router.add_view(uri_v1("ratings_state"), RatingsStateHandler)

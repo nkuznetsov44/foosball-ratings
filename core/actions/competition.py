@@ -32,6 +32,14 @@ class GetPlayerCompetitionsAction(AbstractAction[list[Competition]]):
         return await self.storage.competitions.find_by_player(self.player_id)
 
 
+class GetTournamentCompetitionsAction(AbstractAction[list[Competition]]):
+    def __init__(self, tournament_id: int) -> None:
+        self.tournament_id = tournament_id
+
+    async def handle(self) -> list[Competition]:
+        return await self.storage.competitions.find_by_tournament(self.tournament_id)
+
+
 class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
     def __init__(self, request: CreateCompetitionRequest) -> None:
         self.request = request

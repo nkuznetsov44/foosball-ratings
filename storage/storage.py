@@ -6,12 +6,12 @@ from sqlalchemy.orm import sessionmaker
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
 from common.entities.tournament import Tournament
-from common.entities.competition import Competition
 from common.entities.match import Team
 from storage.entity_storage.base import BaseEntityStorage
 from storage.entity_storage.match import MatchStorage
 from storage.entity_storage.sets import MatchSetStorage
 from storage.entity_storage.ratings_state import RatingsStateStorage
+from storage.entity_storage.competition import CompetitionStorage
 
 
 class Storage:
@@ -27,12 +27,10 @@ class Storage:
         self.tournaments: BaseEntityStorage[Tournament] = BaseEntityStorage.for_entity(
             Tournament, session
         )
-        self.competitions: BaseEntityStorage[
-            Competition
-        ] = BaseEntityStorage.for_entity(Competition, session)
         self.teams: BaseEntityStorage[Team] = BaseEntityStorage.for_entity(
             Team, session
         )
+        self.competitions = CompetitionStorage(session)
         self.matches = MatchStorage(session)
         self.sets = MatchSetStorage(session)
         self.ratings_states = RatingsStateStorage(session)
