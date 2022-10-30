@@ -4,7 +4,9 @@ from common.entities.enums import CompetitionType
 from storage.legacy_ratings.model import CompetitionType as LegacyCompetitionType
 
 
-def competition_type_adapter(competition_type: LegacyCompetitionType) -> CompetitionType:
+def competition_type_adapter(
+    competition_type: LegacyCompetitionType,
+) -> CompetitionType:
     return {
         LegacyCompetitionType.AD: CompetitionType.AD,
         LegacyCompetitionType.AS: CompetitionType.AS,
@@ -37,5 +39,5 @@ def date_to_tz_aware_datetime(dt: date) -> datetime:
         minute=0,
         second=0,
         microsecond=0,
-        tzinfo=timezone(timedelta(hours=+3), 'MSK'),
+        tzinfo=timezone(timedelta(hours=+3), "MSK"),
     )

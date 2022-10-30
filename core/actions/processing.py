@@ -71,7 +71,9 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                 match=match,
                 match_sets=match_sets,
             ).items():
-                current_player_state = intermediate_ratings_state.player_states[player_id]
+                current_player_state = intermediate_ratings_state.player_states[
+                    player_id
+                ]
                 ratings = {**current_player_state.ratings}
                 for rating_type in ratings:
                     ratings[rating_type] += ratings_delta[rating_type]

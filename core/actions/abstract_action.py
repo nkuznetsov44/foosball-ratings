@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Optional, Generic, TypeVar
+from typing import Optional, Generic, TypeVar
 from contextlib import asynccontextmanager
 
 from storage.storage import StorageContext, Storage

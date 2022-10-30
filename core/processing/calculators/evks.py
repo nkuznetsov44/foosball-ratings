@@ -97,7 +97,9 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
             return self._calculate_singles_reliability_coefficients(match)
         return self._calculate_doubles_reliability_coefficients(match)
 
-    def _calculate_singles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
+    def _calculate_singles_reliability_coefficients(
+        self, match: Match
+    ) -> PlayerValueMap:
         match_players_states = [
             self.ratings_state.player_states[player] for player in match.players
         ]
@@ -123,7 +125,9 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
                 raise ValueError()
         return res
 
-    def _calculate_doubles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
+    def _calculate_doubles_reliability_coefficients(
+        self, match: Match
+    ) -> PlayerValueMap:
         res: PlayerValueMap = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):

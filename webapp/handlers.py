@@ -17,14 +17,17 @@ from common.interactions.referees.schemas import RefereeSchema
 
 from webapp.settings import config
 from webapp.requests.ratings_state import PlayerStateResp, RatingsStateResponse
-from webapp.requests.schemas import RatingsStateRequestSchema, RatingsStateResponseSchema
+from webapp.requests.schemas import (
+    RatingsStateRequestSchema,
+    RatingsStateResponseSchema,
+)
 
 
 class AbstractWebappHandler(AbstractHandler):
     def core_client(self):
         return CoreClientContext(
-            host=config['core_client']['host'],
-            port=int(config['core_client']['port']),
+            host=config["core_client"]["host"],
+            port=int(config["core_client"]["port"]),
         )
 
     def referees_client(self):
@@ -64,8 +67,8 @@ class RatingsStateHandler(AbstractWebappHandler):
     @response_schema(RatingsStateResponseSchema)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
-        active_only = request_data['active_only']
-        rating_type = RatingType(request_data['rating_type'])
+        active_only = request_data["active_only"]
+        rating_type = RatingType(request_data["rating_type"])
 
         async with self.core_client() as client:
             core_response = await client.get_ratings_state()
@@ -76,7 +79,9 @@ class RatingsStateHandler(AbstractWebappHandler):
 
         ps_data = [
             PlayerStateResp(
-                player_name=f"{player_state.player.first_name} {player_state.player.last_name}",
+                player_name=(
+                    f"{player_state.player.first_name} {player_state.player.last_name}"
+                ),
                 evks_rank=player_state.evks_rank,
                 rating=player_state.ratings[rating_type],
                 is_evks_player_active=player_state.is_evks_rating_active,

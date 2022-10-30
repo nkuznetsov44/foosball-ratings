@@ -38,7 +38,9 @@ class AbstractHandler(web.View):
         schema_cls = self._get_handler_method().request_schema
         try:
             if request_method == "get":
-                request_data = dict(self.request.rel_url.query) | dict(self.request.match_info)
+                request_data = dict(self.request.rel_url.query) | dict(
+                    self.request.match_info
+                )
                 return schema_cls().load(request_data)
             elif request_method == "post":
                 return schema_cls().load(await self.request.json())

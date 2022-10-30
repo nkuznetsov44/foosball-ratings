@@ -1,11 +1,8 @@
-from typing import Optional
-
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.ratings_state import RatingsState
 from common.entities.team import Team
-from common.entities.tournament import Tournament
 from core.actions.abstract_action import AbstractAction
 from core.actions.processing import ProcessCompetitionAction
 from common.interactions.core.requests.competition import (
@@ -102,7 +99,9 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             )
             await self._save_match_sets(match.sets, stored_match)
 
-    async def _save_match_sets(self, match_sets: list[CompetitionMatchSet], match: Match) -> None:
+    async def _save_match_sets(
+        self, match_sets: list[CompetitionMatchSet], match: Match
+    ) -> None:
         for mset in match_sets:
             await self.storage.sets.create(
                 MatchSet(

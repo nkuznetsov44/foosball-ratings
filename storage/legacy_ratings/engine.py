@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 from storage.legacy_ratings.secrets import DB_USER, DB_PASSWORD
 
 
-
 def create_ratings_engine(username, password):
     return create_engine(f"mysql+pymysql://{username}:{password}@localhost/ratings")
 

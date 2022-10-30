@@ -55,7 +55,7 @@ def main():
                             second_team_score=mset.team2_score,
                         )
                         for mset in match.sets
-                    ]
+                    ],
                 )
                 for match in competition.matches
             ],
