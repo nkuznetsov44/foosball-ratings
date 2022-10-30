@@ -79,6 +79,7 @@ class RatingsStateHandler(AbstractWebappHandler):
 
         ps_data = [
             PlayerStateResp(
+                player_id=player_state.player.id,
                 player_name=(
                     f"{player_state.player.first_name} {player_state.player.last_name}"
                 ),

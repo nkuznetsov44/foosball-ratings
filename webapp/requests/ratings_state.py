@@ -5,6 +5,7 @@ from common.entities.enums import EvksPlayerRank, RatingType
 
 @dataclass
 class PlayerStateResp:
+    player_id: int
     player_name: str
     evks_rank: EvksPlayerRank
     rating: int
