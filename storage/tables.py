@@ -18,6 +18,7 @@ competitions = sa.Table(
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("tournament_id", sa.Integer, sa.ForeignKey("tournaments.id")),
     sa.Column("competition_type", sa.Enum(CompetitionType)),
+    sa.Column("order", sa.Integer),
     sa.Column("evks_importance_coefficient", sa.Numeric),
     sa.Column("start_datetime", sa.DateTime(timezone=True)),
     sa.Column("end_datetime", sa.DateTime(timezone=True)),
@@ -34,6 +35,7 @@ sets = sa.Table(
     sa.Column("first_team_score", sa.Integer),
     sa.Column("second_team_score", sa.Integer, nullable=True),
     sa.UniqueConstraint("match_id", "external_id"),
+    sa.UniqueConstraint("match_id", "order"),
 )
 
 matches = sa.Table(
@@ -42,12 +44,14 @@ matches = sa.Table(
     sa.Column("id", sa.Integer, autoincrement=True, primary_key=True),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
+    sa.Column("order", sa.Integer()),
     sa.Column("first_team_id", sa.Integer, sa.ForeignKey("teams.id")),
     sa.Column("second_team_id", sa.Integer, sa.ForeignKey("teams.id")),
     sa.Column("start_datetime", sa.DateTime(timezone=True)),
     sa.Column("end_datetime", sa.DateTime(timezone=True)),
     sa.Column("force_qualification", sa.Boolean),
     sa.UniqueConstraint("competition_id", "external_id"),
+    sa.UniqueConstraint("competition_id", "order"),
 )
 
 players = sa.Table(

@@ -11,6 +11,7 @@ from common.entities.player import Player
 class Match:
     id: int
     competition: Competition
+    order: int
     first_team: Team
     second_team: Team
     start_datetime: DatetimeWithTZ
