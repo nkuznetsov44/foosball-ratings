@@ -4,8 +4,8 @@ from common.interactions.core.requests.tournament import CreateTournamentRequest
 from common.interactions.core.requests.schemas import CreateTournamentRequestSchema
 from common.entities.enums import City
 
-from storage.legacy_ratings.engine import ratings_session
-from storage.legacy_ratings.model import Tournament
+from legacy_ratings.engine import ratings_session
+from legacy_ratings.model import Tournament
 
 
 def main():

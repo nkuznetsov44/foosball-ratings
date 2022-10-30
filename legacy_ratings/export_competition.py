@@ -9,9 +9,9 @@ from common.interactions.core.requests.competition import (
 )
 from common.interactions.core.requests.schemas import CreateCompetitionRequestSchema
 
-from storage.legacy_ratings.engine import ratings_session
-from storage.legacy_ratings.model import Competition
-from storage.legacy_ratings.adapters import (
+from legacy_ratings.engine import ratings_session
+from legacy_ratings.model import Competition
+from legacy_ratings.adapters import (
     competition_type_adapter,
     date_to_tz_aware_datetime,
 )

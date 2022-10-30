@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone, timedelta
 
 from common.entities.enums import CompetitionType
-from storage.legacy_ratings.model import CompetitionType as LegacyCompetitionType
+from legacy_ratings.model import CompetitionType as LegacyCompetitionType
 
 
 def competition_type_adapter(

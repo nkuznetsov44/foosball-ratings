@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from storage.legacy_ratings.secrets import DB_USER, DB_PASSWORD
+from legacy_ratings.secrets import DB_USER, DB_PASSWORD
 
 
 def create_ratings_engine(username, password):

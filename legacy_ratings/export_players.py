@@ -5,8 +5,8 @@ from common.interactions.core.requests.player import CreatePlayersRequest, Playe
 from common.interactions.core.requests.schemas import CreatePlayersRequestSchema
 from common.entities.enums import City
 
-from storage.legacy_ratings.secrets import DB_USER, DB_PASSWORD
-from storage.legacy_ratings.model import Player
+from legacy_ratings.secrets import DB_USER, DB_PASSWORD
+from legacy_ratings.model import Player
 
 
 def create_ratings_engine(username, password):
