@@ -1,17 +1,24 @@
+from sqlalchemy.exc import IntegrityError, NoResultFound
+
 from common.entities.competition import Competition
 from common.entities.match import Match, MatchSet
 from common.entities.player import Player
 from common.entities.ratings_state import RatingsState
 from common.entities.team import Team
-from core.actions.abstract_action import AbstractAction
-from core.actions.processing import ProcessCompetitionAction
 from common.interactions.core.requests.competition import (
     CreateCompetitionRequest,
     CompetitionTeam,
     CompetitionMatch,
     CompetitionMatchSet,
 )
-from core.exceptions import PlayerStateNotFound
+
+from core.actions.abstract_action import AbstractAction
+from core.actions.processing import ProcessCompetitionAction
+from core.exceptions import (
+    PlayerStateNotFound,
+    DuplicateTournamentCompetition,
+    TournamentNotFound,
+)
 
 
 _TeamExternalId = int
@@ -30,18 +37,30 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
         self.request = request
 
     async def handle(self) -> RatingsState:
-        tournament = await self.storage.tournaments.get(self.request.tournament_id)
-        competition = await self.storage.competitions.create(
-            Competition(
-                id=None,
-                tournament=tournament,
-                competition_type=self.request.competition_type,
-                evks_importance_coefficient=self.request.evks_importance,
-                start_datetime=self.request.start_datetime,
-                end_datetime=self.request.end_datetime,
-                external_id=self.request.external_id,
+        # TODO: Catch sqlalchemy errors in storage and raise core exceptions there
+        try:
+            tournament = await self.storage.tournaments.get(self.request.tournament_id)
+        except NoResultFound:
+            raise TournamentNotFound(tournament_id=self.request.tournament_id)
+
+        try:
+            competition = await self.storage.competitions.create(
+                Competition(
+                    id=None,
+                    tournament=tournament,
+                    competition_type=self.request.competition_type,
+                    evks_importance_coefficient=self.request.evks_importance,
+                    start_datetime=self.request.start_datetime,
+                    end_datetime=self.request.end_datetime,
+                    external_id=self.request.external_id,
+                )
             )
-        )
+        except IntegrityError:
+            raise DuplicateTournamentCompetition(
+                tournament_id=self.request.tournament_id,
+                competition_external_id=self.request.external_id,
+            )
+
         competition_teams_map = await self._save_competition_teams(
             self.request.teams,
             competition,

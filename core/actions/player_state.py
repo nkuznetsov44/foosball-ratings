@@ -132,6 +132,8 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
         return await self.storage.player_states.create(
             PlayerState(
                 id=None,
+                # FIXME: неправильно заполняется из ratings_state,
+                # а не после предыдущего матча
                 previous_state_id=current_player_state.id,
                 player=self.player,
                 matches_played=new_matches_played,

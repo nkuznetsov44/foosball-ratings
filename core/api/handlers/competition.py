@@ -14,6 +14,7 @@ class CompetitionHandler(AbstractHandler):
     @response_schema(RatingsStateResponseSchema)
     async def post(self) -> web.Response:
         request = await self.get_request_data()
+        # TODO: catch core errors and raise common api error
         ratings_state = await CreateProcessedCompetitionAction(request=request).run()
         response = RatingsStateResponse.from_ratings_state(ratings_state)
         return self.make_response(response)

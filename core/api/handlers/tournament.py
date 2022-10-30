@@ -13,5 +13,6 @@ class TournamentHandler(AbstractHandler):
     @response_schema(TournamentSchema)
     async def post(self) -> web.Response:
         request = await self.get_request_data()
+        # TODO: catch core errors and raise common api error
         tournament = await CreateTournamentAction(request=request).run()
         return self.make_response(tournament)

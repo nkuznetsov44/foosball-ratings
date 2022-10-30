@@ -1,4 +1,4 @@
-from logging import getLogger
+import logging
 from aiohttp import web
 
 from common.middlewares import malformed_request_400_middleware
@@ -8,7 +8,7 @@ from core.settings import config
 from storage.db import setup_storage
 
 
-logger = getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 async def make_app() -> web.Application:

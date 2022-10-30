@@ -3,14 +3,22 @@ from common.entities.player import Player
 from common.entities.schemas import (
     PlayerSchema,
     CompetitionSchema,
+    TournamentSchema,
 )
+from common.entities.tournament import Tournament
 from common.interactions.core.requests.player_competition_matches import (
     PlayerCompetitionMatchesResponse,
 )
 from common.interactions.core.requests.ratings_state import RatingsStateResponse
+from common.interactions.core.requests.player import CreatePlayersRequest
+from common.interactions.core.requests.tournament import CreateTournamentRequest
+from common.interactions.core.requests.competition import CreateCompetitionRequest
 from common.interactions.core.requests.schemas import (
     PlayerCompetitionMatchesResponseSchema,
     RatingsStateResponseSchema,
+    CreatePlayersRequestSchema,
+    CreateTournamentRequestSchema,
+    CreateCompetitionRequestSchema,
 )
 from common.interactions.base import BaseInteractionClient, InteractionClientContext
 
@@ -37,6 +45,23 @@ class CoreClient(BaseInteractionClient):
 
     async def get_ratings_state(self) -> RatingsStateResponse:
         resp_json = await self.get(f"{self.base_url}/ratings_state")
+        return RatingsStateResponseSchema().load(resp_json)
+
+    async def create_players(self, request: CreatePlayersRequest) -> list[Player]:
+        request_data = CreatePlayersRequestSchema().dump(request)
+        resp_json = await self.post(f"{self.base_url}/players", data=request_data)
+        return PlayerSchema(many=True).load(resp_json)
+
+    async def create_tournament(self, request: CreateTournamentRequest) -> Tournament:
+        request_data = CreateTournamentRequestSchema().dump(request)
+        resp_json = await self.post(f"{self.base_url}/tournaments", data=request_data)
+        return TournamentSchema().load(resp_json)
+
+    async def create_competition(
+        self, request: CreateCompetitionRequest
+    ) -> RatingsStateResponse:
+        request_data = CreateCompetitionRequestSchema().dump(request)
+        resp_json = await self.post(f"{self.base_url}/competitions", data=request_data)
         return RatingsStateResponseSchema().load(resp_json)
 
 

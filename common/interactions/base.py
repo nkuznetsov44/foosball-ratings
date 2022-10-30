@@ -20,11 +20,23 @@ class BaseInteractionClient:
         self._session = None
 
     async def _handle_response_error(self, resp: ClientResponse) -> None:
-        raise InteractionResponseError()  # TODO: pass error details
+        response_text = None
+        try:
+            response_text = await resp.text()
+        except:  # noqa: E722
+            pass
+
+        raise InteractionResponseError(
+            request_url=resp.url,
+            response_status=resp.status,
+            response_text=response_text,
+        )
 
     async def get(
         self, url: str, params: Optional[dict[str, Any]] = None
     ) -> Optional[dict[str, Any]]:
+        if params:
+            raise NotImplementedError
         async with self.session.get(url) as resp:
             if resp.status >= 400:
                 await self._handle_response_error(resp)
@@ -33,7 +45,9 @@ class BaseInteractionClient:
     async def post(
         self, url: str, data: Optional[dict[str, Any]] = None
     ) -> Optional[dict[str, Any]]:
-        async with self.session.post(url, data=data) as resp:
+        async with self.session.post(url, json=data) as resp:
+            if resp.status >= 400:
+                await self._handle_response_error(resp)
             return await resp.json()
 
 
