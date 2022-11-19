@@ -63,6 +63,9 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         matches = await self.storage.matches.find_by_competition(self.competition.id)
 
         for match in self._prepare_matches(matches):
+            if match.is_forfeit:
+                continue
+
             match_sets = await self.storage.sets.find_by_match(match.id)
 
             for player_id, ratings_delta in self._calculate_ratings_after_match(
@@ -103,7 +106,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
             return EvksAndCumulativeRatingCalculationStrategy
 
     def _prepare_matches(self, matches: Sequence[Match]) -> Sequence[Match]:
-        return sorted(matches, key=lambda match: match.end_datetime)
+        return sorted(matches, key=lambda match: match.order)
 
     def _calculate_ratings_after_match(
         self,

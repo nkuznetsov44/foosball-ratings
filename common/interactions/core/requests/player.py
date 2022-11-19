@@ -9,6 +9,7 @@ class PlayerRequest:
     first_name: str
     last_name: str
     city: City
+    is_foreigner: bool
     external_id: Optional[int] = None
     initial_evks_rating: Optional[int] = None
     initial_cumulative_rating: Optional[int] = None

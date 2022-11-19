@@ -22,11 +22,6 @@ class GetPlayersAction(AbstractAction[list[Player]]):
         return await self.storage.players.lst()
 
 
-# TODO: Refactor? Мне не нравится, что в Actions передается Request,
-# который должен разбираться на уровне handler'a. Но тогда там нужно
-# будет создавать все entities. Может, это и неплохо.
-
-
 class CreatePlayersAction(AbstractAction[list[PlayerState]]):
     def __init__(self, request: CreatePlayersRequest) -> None:
         self.players = request.players
@@ -43,6 +38,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
                 first_name=player_req.first_name,
                 last_name=player_req.last_name,
                 city=player_req.city,
+                is_foreigner=player_req.is_foreigner,
             )
 
             player = await self.storage.players.create(player)

@@ -14,6 +14,7 @@ class Competition:
     competition_type: CompetitionType
     order: int
     evks_importance_coefficient: Decimal
+    cumulative_coefficient: Decimal
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
     external_id: Optional[int] = None

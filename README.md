@@ -9,11 +9,9 @@ pre-commit:
 - `black .`
 - `flake8 .`
 
-db:
-- `chmod +x core/storage/init_db/create_db.sh`
-- `. core/storage/init_db/create_db.sh`
-- `python core/storage/schema/create_schema.py`
-
-console: `psql -U ratings ratings_core`
-
 Docker build and run locally: `docker-compose -f docker-compose.build-local.yml up --build`
+
+Run core without docker:
+- deploy database
+- `. ./env/bin/activate`
+- `python core/application.py`

@@ -9,7 +9,7 @@ def create_schema(engine):
 
 if __name__ == "__main__":
     engine = create_engine(
-        "postgresql://ratings:ratings@localhost:5432/ratings_core", echo=True
+        "postgresql://localhost:5432/ratings_core", echo=True
     )
     create_schema(engine)
     print("Created schema")

@@ -8,6 +8,12 @@ from common.entities.player import Player
 
 
 @dataclass
+class GrandFinalOptions:
+    sets_winner_bracket: int
+    sets_looser_bracket: int
+
+
+@dataclass
 class Match:
     id: int
     competition: Competition
@@ -17,6 +23,8 @@ class Match:
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
     force_qualification: Optional[bool] = None
+    is_forfeit: bool = False
+    grand_final_options: Optional[GrandFinalOptions] = None
     external_id: Optional[int] = None
 
     @property

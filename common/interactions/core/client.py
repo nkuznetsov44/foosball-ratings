@@ -1,6 +1,8 @@
 from common.entities.player import Player
+from common.entities.player_state import PlayerState
 from common.entities.schemas import (
     PlayerSchema,
+    PlayerStateSchema,
     TournamentSchema,
 )
 from common.entities.tournament import Tournament
@@ -63,10 +65,10 @@ class CoreClient(BaseInteractionClient):
         resp_json = await self.get(f"{self.base_url}/ratings_state")
         return RatingsStateResponseSchema().load(resp_json)
 
-    async def create_players(self, request: CreatePlayersRequest) -> list[Player]:
+    async def create_players(self, request: CreatePlayersRequest) -> list[PlayerState]:
         request_data = CreatePlayersRequestSchema().dump(request)
         resp_json = await self.post(f"{self.base_url}/players", data=request_data)
-        return PlayerSchema(many=True).load(resp_json)
+        return PlayerStateSchema(many=True).load(resp_json)
 
     async def create_tournament(self, request: CreateTournamentRequest) -> Tournament:
         request_data = CreateTournamentRequestSchema().dump(request)

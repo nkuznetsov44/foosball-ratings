@@ -10,6 +10,7 @@ class Team:
     id: int
     competition: Competition
     competition_place: int
+    competition_order: int
     first_player: Player
     second_player: Optional[Player]  # None for singles
     external_id: Optional[int] = None

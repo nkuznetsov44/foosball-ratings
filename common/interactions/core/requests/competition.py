@@ -6,6 +6,7 @@ from marshmallow import fields
 
 from common.entities.competition import Competition
 from common.entities.enums import CompetitionType
+from common.entities.match import GrandFinalOptions
 from common.utils import DatetimeWithTZ
 
 
@@ -13,6 +14,7 @@ from common.utils import DatetimeWithTZ
 class CompetitionTeam:
     external_id: int
     competition_place: int
+    competition_order: int
     first_player_id: int
     second_player_id: Optional[int]  # None for singles
 
@@ -30,8 +32,11 @@ class CompetitionMatch:
     external_id: Optional[int]
     first_team_external_id: int
     second_team_external_id: int
+    order: int
     sets: list[CompetitionMatchSet]
     force_qualification: Optional[bool]
+    is_forfeit: bool
+    grand_final_options: Optional[GrandFinalOptions]
     start_datetime: DatetimeWithTZ = field(
         metadata=dict(marshmallow_field=fields.DateTime())
     )
@@ -45,7 +50,9 @@ class CreateCompetitionRequest:
     tournament_id: int
     external_id: Optional[int]
     competition_type: CompetitionType
+    order: int
     evks_importance: Decimal
+    cumulative_coefficient: Decimal
     start_datetime: DatetimeWithTZ = field(
         metadata=dict(marshmallow_field=fields.DateTime())
     )
@@ -61,6 +68,7 @@ class CompetitionResponse:
     id: int
     competition_type: CompetitionType
     evks_importance_coefficient: Decimal
+    cumulative_coefficient: Decimal
     start_datetime: DatetimeWithTZ
     end_datetime: DatetimeWithTZ
 
@@ -70,6 +78,7 @@ class CompetitionResponse:
             id=competition.id,
             competition_type=competition.competition_type,
             evks_importance_coefficient=competition.evks_importance_coefficient,
+            cumulative_coefficient=competition.cumulative_coefficient,
             start_datetime=competition.start_datetime,
             end_datetime=competition.end_datetime,
         )

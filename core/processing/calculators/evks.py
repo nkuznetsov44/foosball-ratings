@@ -1,6 +1,7 @@
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from itertools import chain, permutations
+from multiprocessing.sharedctypes import Value
 from typing import ClassVar, Sequence
 
 from common.entities.competition import Competition
@@ -184,8 +185,20 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         winner_team_score: int,
         looser_team_score: int,
     ) -> int:
-        # TODO: implement grandfinals and other formats
-        score_diff = winner_team_score - looser_team_score
+        if gfo := match.grand_final_options:
+            if winner_team_score == gfo.sets_winner_bracket:
+                winner_is_from_winner_bracket = True
+            elif winner_team_score == gfo.sets_looser_bracket:
+                winner_is_from_winner_bracket = False
+            else:
+                raise ValueError
+
+            if winner_is_from_winner_bracket:
+                score_diff = gfo.sets_looser_bracket - looser_team_score
+            else:
+                score_diff = gfo.sets_winner_bracket - looser_team_score
+        else:
+            score_diff = winner_team_score - looser_team_score
         return (
             score_diff * self.game_coefficients[self._get_game_type(match, match_sets)]
         )

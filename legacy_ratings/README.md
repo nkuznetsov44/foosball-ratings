@@ -1,15 +1,6 @@
-Dump data from legacy ratings
-
-1. Players
-```
-python3 -m venv env
-. ./env/bin/activate
-python3 -m pip install -r requirements.txt
-
-export PYTHONPATH=/path/to/repo/root
-
-# proxy legacy mysql database port to localhost
-python3 export_players.py > players.json
-
-curl -X POST -H "Content-Type: application/json" --data @players.json http://localhost:9080/api/v1/players | jq '.'
-```
+Migrate data from legacy ratings to local instance:
+- `ssh -N -L 3306:127.0.0.1:3306 -p ${SSH_PORT} -i ~/path/to/privatekey ${SSH_HOST}
+- `export PYTHONPATH=/path/to/repo/root`
+- `python export_players.py | jq '.'`
+- `python export_tournaments.py`
+- `python 

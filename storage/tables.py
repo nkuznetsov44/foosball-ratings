@@ -6,7 +6,7 @@ from common.entities.enums import (
     EvksPlayerRank,
     RatingsStateStatus,
 )
-from storage.types import RatingsJSON
+from storage.types import RatingsJSON, GrandFinalOptionsJSON
 
 metadata_obj = sa.MetaData()
 
@@ -20,6 +20,7 @@ competitions = sa.Table(
     sa.Column("competition_type", sa.Enum(CompetitionType)),
     sa.Column("order", sa.Integer),
     sa.Column("evks_importance_coefficient", sa.Numeric),
+    sa.Column("cumulative_coefficient", sa.Numeric),
     sa.Column("start_datetime", sa.DateTime(timezone=True)),
     sa.Column("end_datetime", sa.DateTime(timezone=True)),
     sa.UniqueConstraint("tournament_id", "external_id"),
@@ -50,6 +51,8 @@ matches = sa.Table(
     sa.Column("start_datetime", sa.DateTime(timezone=True)),
     sa.Column("end_datetime", sa.DateTime(timezone=True)),
     sa.Column("force_qualification", sa.Boolean),
+    sa.Column("is_forfeit", sa.Boolean),
+    sa.Column("grand_final_options", GrandFinalOptionsJSON),
     sa.UniqueConstraint("competition_id", "external_id"),
     sa.UniqueConstraint("competition_id", "order"),
 )
@@ -62,6 +65,7 @@ players = sa.Table(
     sa.Column("first_name", sa.String(255)),
     sa.Column("last_name", sa.String(255)),
     sa.Column("city", sa.Enum(City)),
+    sa.Column("is_foreigner", sa.Boolean),
 )
 
 player_states = sa.Table(
@@ -111,6 +115,7 @@ teams = sa.Table(
     sa.Column("competition_id", sa.Integer, sa.ForeignKey("competitions.id")),
     sa.Column("external_id", sa.Integer, nullable=True),
     sa.Column("competition_place", sa.Integer),
+    sa.Column("competition_order", sa.Integer),
     sa.Column("first_player_id", sa.Integer, sa.ForeignKey("players.id")),
     sa.Column(
         "second_player_id", sa.Integer, sa.ForeignKey("players.id"), nullable=True

@@ -10,6 +10,7 @@ class Player:
     first_name: str
     last_name: str
     city: City
+    is_foreigner: bool = False
     external_id: Optional[int] = None
 
     def __hash__(self) -> int:

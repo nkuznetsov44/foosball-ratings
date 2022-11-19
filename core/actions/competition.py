@@ -57,7 +57,9 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
                     id=None,
                     tournament=tournament,
                     competition_type=self.request.competition_type,
+                    order=self.request.order,
                     evks_importance_coefficient=self.request.evks_importance,
+                    cumulative_coefficient=self.request.cumulative_coefficient,
                     start_datetime=self.request.start_datetime,
                     end_datetime=self.request.end_datetime,
                     external_id=self.request.external_id,
@@ -100,6 +102,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
                     first_player=first_player,
                     second_player=second_player,
                     competition_place=team.competition_place,
+                    competition_order=team.competition_order,
                     external_id=team.external_id,
                 )
             )
@@ -116,11 +119,14 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
                 Match(
                     id=None,
                     competition=competition,
+                    order=match.order,
                     first_team=competition_teams_map[match.first_team_external_id],
                     second_team=competition_teams_map[match.second_team_external_id],
                     start_datetime=match.start_datetime,
                     end_datetime=match.end_datetime,
                     force_qualification=match.force_qualification,
+                    is_forfeit=match.is_forfeit,
+                    grand_final_options=match.grand_final_options,
                     external_id=match.external_id,
                 )
             )

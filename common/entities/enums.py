@@ -11,6 +11,12 @@ class City(Enum):
     EKATERINBURG = "Ekaterinburg"
     YAROSLAVL = "Yaroslavl"
     TULA = "Tula"
+    SARATOV = "Saratov"
+    ROSTOV_NA_DONU = "RostovNaDonu"
+    IZHEVSK = "Izhevsk"
+    CHEREPOVETS = "Cherepovets"
+    KAZAN = "Kazan"
+    TAGANROG = "Taganrog"
 
 
 @unique

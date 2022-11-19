@@ -23,23 +23,23 @@ def send_core_request_sync(
     return asyncio.run(send_core_request(request, host, port))
 
 
-def export_tournament(tournament_id: int, city: City = City.MOSCOW) -> CoreTournament:
-    stmt = select(Tournament).where(Tournament.id == tournament_id)
+def export_tournaments(city: City = City.MOSCOW):
+    stmt = select(Tournament)
     with ratings_session() as session:
-        tournament: Tournament = session.execute(stmt).scalar_one()
-        request = CreateTournamentRequest(
-            external_id=tournament.id,
-            city=City.MOSCOW,  # FIXME
-            name=tournament.name,
-            url=None,
-        )
-    return send_core_request_sync(request)
+        tournaments: list[Tournament] = session.execute(stmt).scalars().all()
+        for tournament in tournaments:
+            request = CreateTournamentRequest(
+                external_id=tournament.id,
+                city=city,
+                name=tournament.name,
+                url=None,
+            )
+            core_tournament = send_core_request_sync(request)
+            print(f"Imported tournament {core_tournament}")
 
 
 def main():
-    tournament_id = 1
-    tournament = export_tournament(tournament_id)
-    print(f"Imported tournament {tournament}")
+    export_tournaments()
 
 
 if __name__ == "__main__":
