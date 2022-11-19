@@ -73,7 +73,10 @@ def create_competition_request(
     with ratings_session() as session:
         competition: Competition = session.execute(stmt).scalar_one()
         core_tournament = next(
-            filter(lambda trmt: trmt.external_id == competition.tournament_id, core_tournaments),
+            filter(
+                lambda trmt: trmt.external_id == competition.tournament_id,
+                core_tournaments,
+            ),
         )
         teams = [
             CompetitionTeam(
@@ -117,7 +120,8 @@ def create_competition_request(
             order=competition.order,
             evks_importance=Decimal(competition.importance).quantize(Decimal("1.00")),
             cumulative_coefficient=(
-                Decimal(competition.accumulative).quantize(Decimal("1.00")) if competition.accumulative
+                Decimal(competition.accumulative).quantize(Decimal("1.00"))
+                if competition.accumulative
                 else Decimal("0.00")
             ),
             start_datetime=date_to_tz_aware_datetime(competition.date),
@@ -143,7 +147,9 @@ def export_competitions(competitions: list[Competition]):
     for competition_id in competitions:
         print(f"Importing competition with external_id={competition_id}")
         request = create_competition_request(
-            competition_id, core_players, core_tournaments,
+            competition_id,
+            core_players,
+            core_tournaments,
         )
         send_core_request_sync(request)
         print(

@@ -36,7 +36,9 @@ class TestPlayerHandler:
 
 class TestPlayersHandler:
     @pytest.mark.asyncio
-    async def test_response(self, core_client, request_data, storage, stored_ratings_state):
+    async def test_response(
+        self, core_client, request_data, storage, stored_ratings_state
+    ):
         response = await core_client.post("/api/v1/players", json=request_data)
         response_json = await response.json()
         assert_that(

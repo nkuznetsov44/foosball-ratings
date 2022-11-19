@@ -20,11 +20,11 @@ from common.entities.schemas import (
 class PlayerResponseSchema(PlayerSchema):
     class Meta(PlayerSchema.Meta):
         fields = (
-            'id',
-            'first_name',
-            'last_name',
-            'city',
-            'is_foreigner',
+            "id",
+            "first_name",
+            "last_name",
+            "city",
+            "is_foreigner",
         )
 
 
@@ -51,10 +51,10 @@ class RatingsStateResponse:
 class MatchSetResponseSchema(MatchSetSchema):
     class Meta(MatchSetSchema.Meta):
         fields = (
-            'id',
-            'order',
-            'first_team_score',
-            'second_team_score',
+            "id",
+            "order",
+            "first_team_score",
+            "second_team_score",
         )
 
 
@@ -64,11 +64,11 @@ class TeamResponseSchema(TeamSchema):
 
     class Meta(TeamSchema.Meta):
         fields = (
-            'id',
-            'competition_place',
-            'competition_order',
-            'first_player',
-            'second_player',
+            "id",
+            "competition_place",
+            "competition_order",
+            "first_player",
+            "second_player",
         )
 
 
@@ -98,7 +98,9 @@ class MatchWithRelatedResponse:
     is_forfeit: Optional[bool]
     grand_final_options: Optional[GrandFinalOptions]
     sets: list[MatchSet] = field(
-        metadata=dict(marshmallow_field=fields.Nested(MatchSetResponseSchema, many=True))
+        metadata=dict(
+            marshmallow_field=fields.Nested(MatchSetResponseSchema, many=True)
+        )
     )
     player_states: list[MatchPlayerStateResponse]
 
@@ -106,22 +108,22 @@ class MatchWithRelatedResponse:
 class CompetitionResponseSchema(CompetitionSchema):
     class Meta(CompetitionSchema.Meta):
         fields = (
-            'id',
-            'start_datetime',
-            'end_datetime',
-            'competition_type',
-            'evks_importance_coefficient',
-            'cumulative_coefficient',
+            "id",
+            "start_datetime",
+            "end_datetime",
+            "competition_type",
+            "evks_importance_coefficient",
+            "cumulative_coefficient",
         )
 
 
 class TournamentResponseSchema(TournamentSchema):
     class Meta(TournamentSchema.Meta):
         fields = (
-            'id',
-            'name',
-            'city',
-            'url',
+            "id",
+            "name",
+            "city",
+            "url",
         )
 
 
@@ -130,11 +132,11 @@ class CompetitionWithRelatedResponseSchema(CompetitionSchema):
 
     class Meta(CompetitionSchema.Meta):
         fields = (
-            'id',
-            'start_datetime',
-            'end_datetime',
-            'competition_type',
-            'evks_importance_coefficient',
-            'cumulative_coefficient',
-            'tournament',
+            "id",
+            "start_datetime",
+            "end_datetime",
+            "competition_type",
+            "evks_importance_coefficient",
+            "cumulative_coefficient",
+            "tournament",
         )

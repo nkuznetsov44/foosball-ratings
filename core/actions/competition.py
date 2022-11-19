@@ -80,7 +80,9 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             competition,
             competition_teams_map,
         )
-        return await self.run_subaction(ProcessCompetitionAction(competition=competition))
+        return await self.run_subaction(
+            ProcessCompetitionAction(competition=competition)
+        )
 
     async def _save_competition_teams(
         self,

@@ -3,7 +3,14 @@ from random import randint
 import pytest
 import pytest_asyncio
 
-from hamcrest import assert_that, equal_to, match_equality, not_none, has_items, has_entries
+from hamcrest import (
+    assert_that,
+    equal_to,
+    match_equality,
+    not_none,
+    has_items,
+    has_entries,
+)
 
 from core.actions.competition import CreateProcessedCompetitionAction
 
@@ -25,7 +32,12 @@ class TestCompetitionHandler:
 
     @pytest.fixture
     def create_competition_request(
-        self, player1, player2, team1_external_id, team2_external_id, stored_tournament,
+        self,
+        player1,
+        player2,
+        team1_external_id,
+        team2_external_id,
+        stored_tournament,
     ):
         return {
             "tournament_id": stored_tournament.id,
@@ -89,48 +101,60 @@ class TestCompetitionHandler:
             "status": "READY_TO_PUBLISH",
             "last_competition_id": match_equality(not_none()),
             "player_states": has_items(
-                has_entries({
-                    "player": has_entries({
-                        "first_name": "Никита",
-                        "last_name": "Кузнецов",
-                        "city": "MOSCOW",
-                        "is_foreigner": False,
-                        "external_id": None,
-                        "id": player1.id,
-                    }),
-                    "matches_played": match_equality(not_none()),
-                    "matches_won": match_equality(not_none()),
-                    "last_match_id": match_equality(not_none()),
-                    "ratings": has_entries({
-                        "EVKS": match_equality(not_none()),
-                        "CUMULATIVE": match_equality(not_none()),
-                    }),
-                    "evks_rank": match_equality(not_none()),
-                    "is_evks_rating_active": match_equality(not_none()),
-                    "id": match_equality(not_none()),
-                    "previous_state_id": match_equality(not_none()),
-                }),
-                has_entries({
-                    "player": has_entries({
-                        "first_name": "Артем",
-                        "last_name": "Бочков",
-                        "city": "MOSCOW",
-                        "is_foreigner": False,
-                        "external_id": None,
-                        "id": player2.id,
-                    }),
-                    "matches_played": match_equality(not_none()),
-                    "matches_won": match_equality(not_none()),
-                    "last_match_id": match_equality(not_none()),
-                    "ratings": has_entries({
-                        "EVKS": match_equality(not_none()),
-                        "CUMULATIVE": match_equality(not_none()),
-                    }),
-                    "evks_rank": match_equality(not_none()),
-                    "is_evks_rating_active": match_equality(not_none()),
-                    "id": match_equality(not_none()),
-                    "previous_state_id": match_equality(not_none()),
-                }),
+                has_entries(
+                    {
+                        "player": has_entries(
+                            {
+                                "first_name": "Никита",
+                                "last_name": "Кузнецов",
+                                "city": "MOSCOW",
+                                "is_foreigner": False,
+                                "external_id": None,
+                                "id": player1.id,
+                            }
+                        ),
+                        "matches_played": match_equality(not_none()),
+                        "matches_won": match_equality(not_none()),
+                        "last_match_id": match_equality(not_none()),
+                        "ratings": has_entries(
+                            {
+                                "EVKS": match_equality(not_none()),
+                                "CUMULATIVE": match_equality(not_none()),
+                            }
+                        ),
+                        "evks_rank": match_equality(not_none()),
+                        "is_evks_rating_active": match_equality(not_none()),
+                        "id": match_equality(not_none()),
+                        "previous_state_id": match_equality(not_none()),
+                    }
+                ),
+                has_entries(
+                    {
+                        "player": has_entries(
+                            {
+                                "first_name": "Артем",
+                                "last_name": "Бочков",
+                                "city": "MOSCOW",
+                                "is_foreigner": False,
+                                "external_id": None,
+                                "id": player2.id,
+                            }
+                        ),
+                        "matches_played": match_equality(not_none()),
+                        "matches_won": match_equality(not_none()),
+                        "last_match_id": match_equality(not_none()),
+                        "ratings": has_entries(
+                            {
+                                "EVKS": match_equality(not_none()),
+                                "CUMULATIVE": match_equality(not_none()),
+                            }
+                        ),
+                        "evks_rank": match_equality(not_none()),
+                        "is_evks_rating_active": match_equality(not_none()),
+                        "id": match_equality(not_none()),
+                        "previous_state_id": match_equality(not_none()),
+                    }
+                ),
             ),
         }
 

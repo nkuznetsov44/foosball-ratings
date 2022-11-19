@@ -42,6 +42,7 @@ def app_config(tempdb) -> dict[str, Any]:
         }
     }
 
+
 @pytest.fixture
 def storage_context(app_config) -> StorageContext:
     setup_storage(app_config)

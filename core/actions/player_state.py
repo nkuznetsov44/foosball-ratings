@@ -105,7 +105,9 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
             )
 
         if current_player_state.last_match_id:
-            last_match = await self.storage.matches.get(current_player_state.last_match_id)
+            last_match = await self.storage.matches.get(
+                current_player_state.last_match_id
+            )
 
             if self.last_match.is_before(last_match):
                 raise PlayerStateSequenceError(

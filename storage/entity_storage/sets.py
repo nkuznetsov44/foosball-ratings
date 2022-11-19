@@ -9,7 +9,6 @@ class MatchSetStorage(BaseEntityStorage):
 
     async def find_by_match(self, match_id: int) -> list[MatchSet]:
         result = await self._session.execute(
-            select(MatchSet)
-            .filter(MatchSet.match_id == match_id)
+            select(MatchSet).filter(MatchSet.match_id == match_id)
         )
         return result.scalars().all()

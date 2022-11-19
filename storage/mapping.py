@@ -83,9 +83,10 @@ mapper_registry.map_imperatively(
         ),
         "sets": relationship(MatchSet),
         "player_states": relationship(
-            PlayerState, primaryjoin="MatchWithRelated.id == PlayerState.last_match_id",
-        )
-    }
+            PlayerState,
+            primaryjoin="MatchWithRelated.id == PlayerState.last_match_id",
+        ),
+    },
 )
 
 mapper_registry.map_imperatively(

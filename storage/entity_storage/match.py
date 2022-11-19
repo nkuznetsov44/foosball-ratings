@@ -26,9 +26,7 @@ class MatchStorage(BaseEntityStorage):
 
     async def find_by_competition(self, competition_id: int) -> list[Match]:
         result = await self._session.execute(
-            self._select_entity_query().filter(
-                Match.competition_id == competition_id
-            )
+            self._select_entity_query().filter(Match.competition_id == competition_id)
         )
         return result.scalars().all()
 

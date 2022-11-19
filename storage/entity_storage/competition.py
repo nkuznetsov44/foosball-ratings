@@ -13,13 +13,13 @@ class CompetitionStorage(BaseEntityStorage):
     entity_cls = Competition
 
     def _select_entity_query(self) -> Select:
-        return select(Competition).options(
-            joinedload(Competition.tournament)
-        )
+        return select(Competition).options(joinedload(Competition.tournament))
 
     async def find_by_player(self, player_id: int) -> list[Competition]:
         result = await self._session.execute(
-            self._select_entity_query().join(Team).filter(
+            self._select_entity_query()
+            .join(Team)
+            .filter(
                 or_(
                     Team.first_player.has(Player.id == player_id),
                     Team.second_player.has(Player.id == player_id),

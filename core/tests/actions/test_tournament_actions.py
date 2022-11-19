@@ -9,12 +9,16 @@ from core.actions.tournament import CreateTournamentAction
 
 class TestCreateTournamentAction:
     @pytest.mark.asyncio
-    async def test_result(self, create_tournament_request, expected_tournament, storage):
+    async def test_result(
+        self, create_tournament_request, expected_tournament, storage
+    ):
         result = await CreateTournamentAction(request=create_tournament_request).run()
         assert_that(result, equal_to(expected_tournament))
 
     @pytest.mark.asyncio
-    async def test_creates_tournament(self, create_tournament_request, expected_tournament, storage):
+    async def test_creates_tournament(
+        self, create_tournament_request, expected_tournament, storage
+    ):
         result = await CreateTournamentAction(request=create_tournament_request).run()
         tournament = await storage.tournaments.get(result.id)
         assert_that(tournament, equal_to(expected_tournament))

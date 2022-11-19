@@ -23,33 +23,52 @@ from core.actions.processing import ProcessCompetitionAction
 class TestCreateProcessedCompetitionAction:
     @pytest.mark.asyncio
     async def test_creates_competition(
-        self, storage, stored_tournament, stored_ratings_state, create_competition_request, expected_competition,
+        self,
+        storage,
+        stored_tournament,
+        stored_ratings_state,
+        create_competition_request,
+        expected_competition,
     ):
-        result = await CreateProcessedCompetitionAction(request=create_competition_request).run()
+        result = await CreateProcessedCompetitionAction(
+            request=create_competition_request
+        ).run()
         competition = await storage.competitions.get(result.last_competition_id)
-        assert_that(competition, equal_to(
-            replace(
-                expected_competition,
-                id=result.last_competition_id,
-            )
-        ))
+        assert_that(
+            competition,
+            equal_to(
+                replace(
+                    expected_competition,
+                    id=result.last_competition_id,
+                )
+            ),
+        )
 
     @pytest.mark.asyncio
     async def test_calls_ratings_calculation(
-        self, storage, stored_tournament, stored_ratings_state, create_competition_request, expected_competition, mock_action
+        self,
+        storage,
+        stored_tournament,
+        stored_ratings_state,
+        create_competition_request,
+        expected_competition,
+        mock_action,
     ):
         mock = mock_action(ProcessCompetitionAction, None)
         await CreateProcessedCompetitionAction(request=create_competition_request).run()
         assert_that(
-            mock.call_args.kwargs, equal_to(
+            mock.call_args.kwargs,
+            equal_to(
                 {
                     "competition": expected_competition,
                 }
-            )
+            ),
         )
 
     @pytest.fixture
-    def create_competition_request(self, stored_tournament, stored_player1, stored_player2):
+    def create_competition_request(
+        self, stored_tournament, stored_player1, stored_player2
+    ):
         return CreateCompetitionRequest(
             tournament_id=stored_tournament.id,
             external_id=42,
@@ -81,7 +100,7 @@ class TestCreateProcessedCompetitionAction:
                             order=2,
                             first_team_score=5,
                             second_team_score=3,
-                        )
+                        ),
                     ],
                     force_qualification=False,
                     is_forfeit=False,
@@ -90,10 +109,22 @@ class TestCreateProcessedCompetitionAction:
                         sets_looser_bracket=3,
                     ),
                     start_datetime=datetime(
-                        year=2022, month=8, day=13, hour=3, minute=12, second=58, tzinfo=UTC
+                        year=2022,
+                        month=8,
+                        day=13,
+                        hour=3,
+                        minute=12,
+                        second=58,
+                        tzinfo=UTC,
                     ),
                     end_datetime=datetime(
-                        year=2022, month=8, day=13, hour=6, minute=12, second=58, tzinfo=UTC
+                        year=2022,
+                        month=8,
+                        day=13,
+                        hour=6,
+                        minute=12,
+                        second=58,
+                        tzinfo=UTC,
                     ),
                 ),
             ],
@@ -111,7 +142,7 @@ class TestCreateProcessedCompetitionAction:
                     competition_order=2,
                     first_player_id=stored_player2.id,
                     second_player_id=None,
-                )
+                ),
             ],
         )
 
@@ -125,10 +156,22 @@ class TestCreateProcessedCompetitionAction:
             evks_importance_coefficient=Decimal("0.75"),
             cumulative_coefficient=Decimal("1.0"),
             start_datetime=datetime(
-                year=2022, month=8, day=13, hour=3, minute=12, second=58, tzinfo=UTC,
+                year=2022,
+                month=8,
+                day=13,
+                hour=3,
+                minute=12,
+                second=58,
+                tzinfo=UTC,
             ),
             end_datetime=datetime(
-                year=2022, month=8, day=13, hour=6, minute=12, second=58, tzinfo=UTC,
+                year=2022,
+                month=8,
+                day=13,
+                hour=6,
+                minute=12,
+                second=58,
+                tzinfo=UTC,
             ),
             external_id=42,
         )
