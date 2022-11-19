@@ -1,3 +1,4 @@
+from typing import Any
 import logging
 from aiohttp import web
 
@@ -11,7 +12,7 @@ from storage.db import setup_storage
 logging.basicConfig(level=logging.DEBUG)
 
 
-async def make_app() -> web.Application:
+async def make_app(cfg: dict[str, Any]) -> web.Application:
     app = web.Application(
         middlewares=[
             malformed_request_400_middleware,  # type: ignore
@@ -19,9 +20,9 @@ async def make_app() -> web.Application:
         ]
     )
     setup_routes(app)
-    setup_storage(config, echo=False)
+    setup_storage(cfg, echo=False)
     return app
 
 
 if __name__ == "__main__":
-    web.run_app(make_app(), port=8080)  # TODO: to settings
+    web.run_app(make_app(config), port=8080)  # TODO: to settings

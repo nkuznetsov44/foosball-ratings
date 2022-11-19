@@ -80,7 +80,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             competition,
             competition_teams_map,
         )
-        return await self.run_subaction(ProcessCompetitionAction(competition))
+        return await self.run_subaction(ProcessCompetitionAction(competition=competition))
 
     async def _save_competition_teams(
         self,
@@ -139,7 +139,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             await self.storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=match,
+                    match_id=match.id,
                     order=mset.order,
                     first_team_score=mset.first_team_score,
                     second_team_score=mset.second_team_score,

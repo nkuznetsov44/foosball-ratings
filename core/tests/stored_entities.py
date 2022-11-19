@@ -1,5 +1,6 @@
 from decimal import Decimal
 from datetime import datetime
+from pytz import UTC
 
 import pytest_asyncio
 
@@ -75,7 +76,10 @@ async def stored_player1_state(storage_context, stored_player1):
                 matches_played=100,
                 matches_won=50,
                 last_match_id=None,
-                ratings={RatingType.EVKS: 1710},
+                ratings={
+                    RatingType.EVKS: 1710,
+                    RatingType.CUMULATIVE: 0,
+                },
                 evks_rank=EvksPlayerRank.SEMIPRO,
                 is_evks_rating_active=True,
             )
@@ -93,7 +97,10 @@ async def stored_player2_state(storage_context, stored_player2):
                 matches_played=100,
                 matches_won=50,
                 last_match_id=None,
-                ratings={RatingType.EVKS: 2063},
+                ratings={
+                    RatingType.EVKS: 2063,
+                    RatingType.CUMULATIVE: 0,
+                },
                 evks_rank=EvksPlayerRank.MASTER,
                 is_evks_rating_active=True,
             )
@@ -111,7 +118,10 @@ async def stored_player3_state(storage_context, stored_player3):
                 matches_played=100,
                 matches_won=50,
                 last_match_id=None,
-                ratings={RatingType.EVKS: 1638},
+                ratings={
+                    RatingType.EVKS: 1638,
+                    RatingType.CUMULATIVE: 0,
+                },
                 evks_rank=EvksPlayerRank.SEMIPRO,
                 is_evks_rating_active=True,
             )
@@ -129,7 +139,10 @@ async def stored_player4_state(storage_context, stored_player4):
                 matches_played=100,
                 matches_won=50,
                 last_match_id=None,
-                ratings={RatingType.EVKS: 1218},
+                ratings={
+                    RatingType.EVKS: 1218,
+                    RatingType.CUMULATIVE: 0,
+                },
                 evks_rank=EvksPlayerRank.NOVICE,
                 is_evks_rating_active=True,
             )
@@ -175,10 +188,10 @@ async def stored_doubles_competition(storage_context, stored_tournament):
                 evks_importance_coefficient=Decimal("0.75"),
                 cumulative_coefficient=Decimal("1.0"),
                 start_datetime=datetime(
-                    year=2022, month=8, day=13, hour=3, minute=12, second=58
+                    year=2022, month=8, day=13, hour=3, minute=12, second=58, tzinfo=UTC
                 ),
                 end_datetime=datetime(
-                    year=2022, month=8, day=13, hour=4, minute=12, second=58
+                    year=2022, month=8, day=13, hour=4, minute=12, second=58, tzinfo=UTC
                 ),
             )
         )
@@ -196,10 +209,10 @@ async def stored_singles_competition(storage_context, stored_tournament):
                 evks_importance_coefficient=Decimal("0.75"),
                 cumulative_coefficient=Decimal("1.0"),
                 start_datetime=datetime(
-                    year=2022, month=8, day=14, hour=3, minute=12, second=58
+                    year=2022, month=8, day=14, hour=3, minute=12, second=58, tzinfo=UTC
                 ),
                 end_datetime=datetime(
-                    year=2022, month=8, day=14, hour=4, minute=12, second=58
+                    year=2022, month=8, day=14, hour=4, minute=12, second=58, tzinfo=UTC
                 ),
             )
         )

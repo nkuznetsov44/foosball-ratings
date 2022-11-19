@@ -32,5 +32,7 @@ def setup_routes(app: web.Application) -> None:
         uri_v1("tournaments/{tournament_id}/competitions"),
         TournamentCompetitionsHandler,
     )
+    # TODO: move to CompetitionHandler tournaments/{tournament_id}/competitions
+    # move tournament_id from CreateTournamentCompetitionRequest to url param
     app.router.add_view(uri_v1("competitions"), CompetitionHandler)
     app.router.add_view(uri_v1("ratings_state"), RatingsStateHandler)

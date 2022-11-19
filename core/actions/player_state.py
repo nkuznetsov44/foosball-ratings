@@ -104,14 +104,15 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
                 player_id=self.player.id, current_state=self.ratings_state
             )
 
-        if current_player_state.last_match and self.last_match.is_before(
-            current_player_state.last_match
-        ):
-            raise PlayerStateSequenceError(
-                match_id=self.last_match.id,
-                last_match_id=current_player_state.last_match.id,
-                current_state=self.ratings_state,
-            )
+        if current_player_state.last_match_id:
+            last_match = await self.storage.matches.get(current_player_state.last_match_id)
+
+            if self.last_match.is_before(last_match):
+                raise PlayerStateSequenceError(
+                    match_id=self.last_match.id,
+                    last_match_id=current_player_state.last_match.id,
+                    current_state=self.ratings_state,
+                )
 
         new_matches_played = current_player_state.matches_played + 1
 

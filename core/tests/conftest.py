@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 
 from sqlalchemy import create_engine
@@ -30,8 +31,8 @@ def tempdb() -> str:
 
 
 @pytest.fixture
-def storage_context(tempdb) -> StorageContext:
-    config = {
+def app_config(tempdb) -> dict[str, Any]:
+    return {
         "postgres": {
             "user": "ratings",
             "password": "ratings",
@@ -40,7 +41,10 @@ def storage_context(tempdb) -> StorageContext:
             "database": tempdb,
         }
     }
-    setup_storage(config)
+
+@pytest.fixture
+def storage_context(app_config) -> StorageContext:
+    setup_storage(app_config)
     return StorageContext
 
 
@@ -51,8 +55,8 @@ async def storage(storage_context):
 
 
 @pytest_asyncio.fixture
-async def core_client(aiohttp_client, storage_context):
-    return await aiohttp_client(await make_app())
+async def core_client(aiohttp_client, app_config):
+    return await aiohttp_client(await make_app(app_config))
 
 
 @pytest.fixture

@@ -1,4 +1,3 @@
-from common.entities.ratings_state import RatingsState
 from common.entities.tournament import Tournament
 from core.actions.abstract_action import AbstractAction
 from common.interactions.core.requests.tournament import (
@@ -11,7 +10,7 @@ class GetTournamentsAction(AbstractAction[list[Tournament]]):
         return await self.storage.tournaments.lst()
 
 
-class CreateTournamentAction(AbstractAction[RatingsState]):
+class CreateTournamentAction(AbstractAction[Tournament]):
     def __init__(self, request: CreateTournamentRequest) -> None:
         self.request = request
 
