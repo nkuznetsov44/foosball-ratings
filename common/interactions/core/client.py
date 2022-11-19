@@ -3,13 +3,13 @@ from typing import Any
 from common.entities.player import Player
 from common.entities.competition import Competition
 from common.entities.tournament import Tournament
-from common.entities.match import Match
+from common.entities.match import MatchWithRelated
 from common.entities.ratings_state import RatingsState
 from common.entities.player_state import PlayerState
 from common.entities.schemas import (
     PlayerSchema,
     CompetitionSchema,
-    MatchSchema,
+    MatchWithRelatedSchema,
     TournamentSchema,
     RatingsStateSchema,
     PlayerStateSchema,
@@ -39,11 +39,11 @@ class CoreClient(BaseInteractionClient):
 
     async def get_player_competition_matches(
         self, player_id: int, competition_id: int
-    ) -> list[Match]:
+    ) -> list[MatchWithRelated]:
         resp_json = await self.get(
             f"{self.base_url}/players/{player_id}/competitions/{competition_id}/matches"
         )
-        return MatchSchema(many=True).load(resp_json)
+        return MatchWithRelatedSchema(many=True).load(resp_json)
 
     async def get_tournaments(self) -> list[Tournament]:
         resp_json = await self.get(f"{self.base_url}/tournaments")

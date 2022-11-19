@@ -7,7 +7,7 @@ from common.entities.competition import Competition
 from common.entities.player import Player
 from common.entities.tournament import Tournament
 from common.entities.player_state import PlayerState
-from common.entities.match import Match, MatchSet
+from common.entities.match import Match, MatchSet, MatchWithRelated
 from common.entities.team import Team
 
 
@@ -18,6 +18,8 @@ PlayerStateSchema = class_schema(PlayerState, base_schema=BaseSchema)
 MatchSchema = class_schema(Match, base_schema=BaseSchema)
 
 MatchSetSchema = class_schema(MatchSet, base_schema=BaseSchema)
+
+MatchWithRelatedSchema = class_schema(MatchWithRelated, base_schema=BaseSchema)
 
 TournamentSchema = class_schema(Tournament, base_schema=BaseSchema)
 

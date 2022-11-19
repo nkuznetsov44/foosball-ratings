@@ -1,14 +1,19 @@
-from typing import ClassVar, Type
+from typing import ClassVar, Type, Optional
+from dataclasses import field
 from marshmallow import fields, Schema
 from marshmallow_dataclass import dataclass
 
 from common.entities.enums import EvksPlayerRank, RatingType
+from common.entities.team import Team
+from common.entities.match import MatchSet, GrandFinalOptions
+from common.entities.player_state import PlayerState
 from common.entities.schemas import (
     CompetitionSchema,
     TournamentSchema,
     TeamSchema,
-    MatchSchema,
+    MatchSetSchema,
     PlayerSchema,
+    PlayerStateSchema,
 )
 
 
@@ -21,6 +26,81 @@ class PlayerResponseSchema(PlayerSchema):
             'city',
             'is_foreigner',
         )
+
+
+@dataclass
+class PlayerStateResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    player_id: int
+    player_name: str
+    evks_rank: EvksPlayerRank
+    rating: int
+    is_evks_player_active: bool
+
+
+@dataclass
+class RatingsStateResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    id: int
+    rating_type: RatingType
+    player_states: list[PlayerStateResponse]
+
+
+class MatchSetResponseSchema(MatchSetSchema):
+    class Meta(MatchSetSchema.Meta):
+        fields = (
+            'id',
+            'order',
+            'first_team_score',
+            'second_team_score',
+        )
+
+
+class TeamResponseSchema(TeamSchema):
+    first_player = fields.Nested(PlayerResponseSchema)
+    second_player = fields.Nested(PlayerResponseSchema)
+
+    class Meta(TeamSchema.Meta):
+        fields = (
+            'id',
+            'competition_place',
+            'competition_order',
+            'first_player',
+            'second_player',
+        )
+
+
+@dataclass
+class MatchPlayerStateResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    id: int
+    player_id: int
+    evks_rank: EvksPlayerRank
+    ratings: dict[RatingType, int]
+    is_evks_player_active: bool
+
+
+@dataclass
+class MatchWithRelatedResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    id: int
+    first_team: Team = field(
+        metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema))
+    )
+    second_team: Team = field(
+        metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema))
+    )
+    is_qualification: bool
+    is_forfeit: Optional[bool]
+    grand_final_options: Optional[GrandFinalOptions]
+    sets: list[MatchSet] = field(
+        metadata=dict(marshmallow_field=fields.Nested(MatchSetResponseSchema, many=True))
+    )
+    player_states: list[MatchPlayerStateResponse]
 
 
 class CompetitionResponseSchema(CompetitionSchema):
@@ -58,59 +138,3 @@ class CompetitionWithRelatedResponseSchema(CompetitionSchema):
             'cumulative_coefficient',
             'tournament',
         )
-
-
-class TeamResponseSchema(TeamSchema):
-    first_player = fields.Nested(PlayerResponseSchema)
-    second_player = fields.Nested(PlayerResponseSchema)
-
-    class Meta(TeamSchema.Meta):
-        fields = (
-            'id',
-            'competition_place',
-            'competition_order',
-            'first_player',
-            'second_player',
-        )
-
-
-class MatchResponseSchema(MatchSchema):
-    first_team = fields.Nested(TeamResponseSchema)
-    second_team = fields.Nested(TeamResponseSchema)
-
-    class Meta(MatchSchema.Meta):
-        fields = (
-            'id',
-            'first_team',
-            'second_team',
-            'start_datetime',
-            'end_datetime',
-            'force_qualification',
-            'is_forfeit',
-            'grand_final_options',
-        )
-
-
-@dataclass
-class PlayerStateResponse:
-    Schema: ClassVar[Type[Schema]] = Schema
-
-    player_id: int
-    player_name: str
-    evks_rank: EvksPlayerRank
-    rating: int
-    is_evks_player_active: bool
-
-
-class PlayerCompetitionMatchesResponseSchema(MatchResponseSchema):
-    # player_state = fields.Nested(PlayerStateResponseSchema)  # FIXME
-    pass
-
-
-@dataclass
-class RatingsStateResponse:
-    Schema: ClassVar[Type[Schema]] = Schema
-
-    id: int
-    rating_type: RatingType
-    player_states: list[PlayerStateResponse]

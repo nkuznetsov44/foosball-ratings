@@ -138,7 +138,7 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
                 player=self.player,
                 matches_played=new_matches_played,
                 matches_won=new_matches_won,
-                last_match=self.last_match,
+                last_match_id=self.last_match.id,
                 ratings=self.ratings,
                 # NOTE: ранг вычисляется в отдельном Action после процессинга
                 evks_rank=current_player_state.evks_rank,

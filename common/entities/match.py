@@ -1,9 +1,10 @@
 from typing import Optional, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from common.utils import DatetimeWithTZ
 from common.entities.team import Team
 from common.entities.player import Player
+from common.entities.player_state import PlayerState
 
 
 @dataclass
@@ -104,3 +105,9 @@ class MatchUtils:
         first_team_score = len([mset for mset in match_sets if mset.is_first_team_win])
         second_team_score = len(match_sets) - first_team_score
         return first_team_score, second_team_score
+
+
+@dataclass
+class MatchWithRelated(Match):
+    sets: list[MatchSet] = field(default_factory=list)
+    player_states: list[PlayerState] = field(default_factory=list)

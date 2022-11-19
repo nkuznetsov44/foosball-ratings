@@ -4,7 +4,6 @@ from sqlalchemy.sql.selectable import Select
 
 from common.entities.player_state import PlayerState
 from common.entities.ratings_state import RatingsState
-from common.entities.competition import Competition
 from storage.entity_storage.base import BaseEntityStorage
 
 

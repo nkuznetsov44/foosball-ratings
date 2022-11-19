@@ -1,8 +1,7 @@
 from aiohttp import web
 
-from core.api.handlers.player import (
-    PlayersHandler,
-    PlayerHandler,
+from core.api.handlers.player import PlayersHandler, PlayerHandler
+from core.api.handlers.player_competition import (
     PlayerCompetitionsHandler,
     PlayerCompetitionMatchesHandler,
 )

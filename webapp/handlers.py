@@ -2,6 +2,7 @@ from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
 from common.entities.enums import RatingType
+from common.entities.match import MatchUtils
 from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
@@ -14,12 +15,13 @@ from common.interactions.referees.schemas import RefereeSchema
 from webapp.settings import config
 from webapp.request_schemas import RatingsStateRequestSchema
 from webapp.responses import (
-    PlayerResponseSchema,
+    MatchPlayerStateResponse,
+    MatchWithRelatedResponse,
     PlayerStateResponse,
     RatingsStateResponse,
+    PlayerResponseSchema,
     CompetitionResponseSchema,
     CompetitionWithRelatedResponseSchema,
-    PlayerCompetitionMatchesResponseSchema,
     TournamentSchema,
 )
 
@@ -55,11 +57,33 @@ class PlayerCompetitionsHandler(AbstractWebappHandler):
 
 class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
     @request_schema(PlayerCompetitionIDSchema)
-    @response_schema(PlayerCompetitionMatchesResponseSchema)
+    @response_schema(MatchWithRelatedResponse.Schema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         async with self.core_client() as client:
-            response = await client.get_player_competition_matches(**request_data)
+            matches = await client.get_player_competition_matches(**request_data)
+        response = [
+            MatchWithRelatedResponse(
+                id=match.id,
+                first_team=match.first_team,
+                second_team=match.second_team,
+                is_qualification=MatchUtils.is_qualification(match, match.sets),
+                is_forfeit=match.is_forfeit,
+                grand_final_options=match.grand_final_options,
+                sets=match.sets,
+                player_states=[
+                    MatchPlayerStateResponse(
+                        id=player_state.id,
+                        player_id=player_state.player.id,
+                        evks_rank=player_state.evks_rank,
+                        ratings=player_state.ratings,
+                        is_evks_player_active=player_state.is_evks_rating_active,
+                    )
+                    for player_state in match.player_states
+                ],
+            )
+            for match in matches
+        ]
         return self.make_response(response)
 
 

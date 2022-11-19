@@ -1,7 +1,7 @@
 from sqlalchemy.orm import registry, relationship
 
 from common.entities.competition import Competition
-from common.entities.match import Match, MatchSet
+from common.entities.match import Match, MatchSet, MatchWithRelated
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
 from common.entities.ratings_state import PlayerStateSet, RatingsState
@@ -63,6 +63,29 @@ mapper_registry.map_imperatively(
             primaryjoin="Match.second_team_id == Team.id",
         ),
     },
+)
+
+mapper_registry.map_imperatively(
+    MatchWithRelated,
+    matches,
+    properties={
+        "first_team": relationship(
+            Team,
+            uselist=False,
+            primaryjoin="MatchWithRelated.first_team_id == Team.id",
+            overlaps="first_team",
+        ),
+        "second_team": relationship(
+            Team,
+            uselist=False,
+            primaryjoin="MatchWithRelated.second_team_id == Team.id",
+            overlaps="second_team",
+        ),
+        "sets": relationship(MatchSet),
+        "player_states": relationship(
+            PlayerState, primaryjoin="MatchWithRelated.id == PlayerState.last_match_id",
+        )
+    }
 )
 
 mapper_registry.map_imperatively(

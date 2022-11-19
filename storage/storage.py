@@ -9,6 +9,7 @@ from common.entities.tournament import Tournament
 from common.entities.match import Team
 from storage.entity_storage.base import BaseEntityStorage
 from storage.entity_storage.match import MatchStorage
+from storage.entity_storage.match_with_related import MatchWithRelatedStorage
 from storage.entity_storage.sets import MatchSetStorage
 from storage.entity_storage.ratings_state import RatingsStateStorage
 from storage.entity_storage.competition import CompetitionStorage
@@ -32,6 +33,7 @@ class Storage:
         )
         self.competitions = CompetitionStorage(session)
         self.matches = MatchStorage(session)
+        self.matches_with_related = MatchWithRelatedStorage(session)
         self.sets = MatchSetStorage(session)
         self.ratings_states = RatingsStateStorage(session)
 

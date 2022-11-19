@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.player import Player
-from common.entities.match import Match
 
 
 _RatingValue = int
@@ -18,7 +17,7 @@ class PlayerState:
     player: Player
     matches_played: int
     matches_won: int
-    last_match: Optional[Match]
+    last_match_id: Optional[int]
     ratings: dict[RatingType, _RatingValue]
     evks_rank: EvksPlayerRank
     is_evks_rating_active: bool
