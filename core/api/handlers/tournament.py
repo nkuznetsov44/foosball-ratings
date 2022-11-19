@@ -1,13 +1,11 @@
 from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
-from common.interactions.core.requests.competition import CompetitionResponse
+from common.entities.schemas import CompetitionSchema, TournamentSchema
 from common.interactions.core.requests.schemas import (
     CreateTournamentRequestSchema,
     TournamentIDSchema,
-    CompetitionResponseSchema,
 )
-from common.entities.schemas import TournamentSchema
 from core.actions.tournament import GetTournamentsAction, CreateTournamentAction
 from core.actions.competition import GetTournamentCompetitionsAction
 
@@ -29,9 +27,8 @@ class TournamentHandler(AbstractHandler):
 
 class TournamentCompetitionsHandler(AbstractHandler):
     @request_schema(TournamentIDSchema)
-    @response_schema(CompetitionResponseSchema, many=True)
+    @response_schema(CompetitionSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         competitions = await GetTournamentCompetitionsAction(**request_data).run()
-        response = map(CompetitionResponse.from_competition, competitions)
-        return self.make_response(response)
+        return self.make_response(competitions)

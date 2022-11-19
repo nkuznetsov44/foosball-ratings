@@ -4,17 +4,13 @@ from common.handlers import AbstractHandler, request_schema, response_schema
 from common.entities.schemas import (
     PlayerSchema,
     PlayerStateSchema,
-)
-from common.interactions.core.requests.competition import CompetitionResponse
-from common.interactions.core.requests.player_competition_matches import (
-    PlayerCompetitionMatchesResponse,
+    CompetitionSchema,
+    MatchSchema,
 )
 from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
-    PlayerCompetitionMatchesResponseSchema,
     CreatePlayersRequestSchema,
-    CompetitionResponseSchema,
 )
 from core.actions.player import CreatePlayersAction, GetPlayersAction, GetPlayerAction
 from core.actions.match import GetPlayerCompetitionMatchesAction
@@ -46,19 +42,17 @@ class PlayersHandler(AbstractHandler):
 
 class PlayerCompetitionsHandler(AbstractHandler):
     @request_schema(PlayerIDSchema)
-    @response_schema(CompetitionResponseSchema, many=True)
+    @response_schema(CompetitionSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         competitions = await GetPlayerCompetitionsAction(**request_data).run()
-        response = map(CompetitionResponse.from_competition, competitions)
-        return self.make_response(response)
+        return self.make_response(competitions)
 
 
 class PlayerCompetitionMatchesHandler(AbstractHandler):
     @request_schema(PlayerCompetitionIDSchema)
-    @response_schema(PlayerCompetitionMatchesResponseSchema)
+    @response_schema(MatchSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         matches = await GetPlayerCompetitionMatchesAction(**request_data).run()
-        response = PlayerCompetitionMatchesResponse.from_matches(matches)
-        return self.make_response(response)
+        return self.make_response(matches)

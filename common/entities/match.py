@@ -2,7 +2,6 @@ from typing import Optional, Sequence
 from dataclasses import dataclass
 
 from common.utils import DatetimeWithTZ
-from common.entities.competition import Competition
 from common.entities.team import Team
 from common.entities.player import Player
 
@@ -16,7 +15,7 @@ class GrandFinalOptions:
 @dataclass
 class Match:
     id: int
-    competition: Competition
+    competition_id: int
     order: int
     first_team: Team
     second_team: Team
@@ -42,7 +41,7 @@ class Match:
 @dataclass
 class MatchSet:
     id: int
-    match: Match
+    match_id: int
     order: int
     first_team_score: int
     second_team_score: int

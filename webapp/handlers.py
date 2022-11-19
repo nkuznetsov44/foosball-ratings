@@ -2,26 +2,25 @@ from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
 from common.entities.enums import RatingType
-from common.entities.schemas import (
-    PlayerSchema,
-    TournamentSchema,
-)
 from common.interactions.core.requests.schemas import (
     PlayerIDSchema,
     PlayerCompetitionIDSchema,
-    PlayerCompetitionMatchesResponseSchema,
     TournamentIDSchema,
-    CompetitionResponseSchema,
 )
 from common.interactions.core.client import CoreClientContext
 from common.interactions.referees.client import RefereesClientContext
 from common.interactions.referees.schemas import RefereeSchema
 
 from webapp.settings import config
-from webapp.requests.ratings_state import PlayerStateResp, RatingsStateResponse
-from webapp.requests.schemas import (
-    RatingsStateRequestSchema,
-    RatingsStateResponseSchema,
+from webapp.request_schemas import RatingsStateRequestSchema
+from webapp.responses import (
+    PlayerResponseSchema,
+    PlayerStateResponse,
+    RatingsStateResponse,
+    CompetitionResponseSchema,
+    CompetitionWithRelatedResponseSchema,
+    PlayerCompetitionMatchesResponseSchema,
+    TournamentSchema,
 )
 
 
@@ -37,7 +36,7 @@ class AbstractWebappHandler(AbstractHandler):
 
 
 class PlayersHandler(AbstractWebappHandler):
-    @response_schema(PlayerSchema, many=True)
+    @response_schema(PlayerResponseSchema, many=True)
     async def get(self) -> web.Response:
         async with self.core_client() as client:
             players = await client.get_players()
@@ -46,7 +45,7 @@ class PlayersHandler(AbstractWebappHandler):
 
 class PlayerCompetitionsHandler(AbstractWebappHandler):
     @request_schema(PlayerIDSchema)
-    @response_schema(CompetitionResponseSchema, many=True)
+    @response_schema(CompetitionWithRelatedResponseSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
         async with self.core_client() as client:
@@ -84,21 +83,22 @@ class TournamentCompetitionsHandler(AbstractWebappHandler):
 
 class RatingsStateHandler(AbstractWebappHandler):
     @request_schema(RatingsStateRequestSchema)
-    @response_schema(RatingsStateResponseSchema)
+    @response_schema(RatingsStateResponse.Schema)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
-        active_only = request_data["active_only"]
-        rating_type = RatingType(request_data["rating_type"])
+        active_only = request_data.get("active_only", True)
+        rating_type = RatingType(request_data.get("rating_type", RatingType.EVKS))
 
         async with self.core_client() as client:
             core_response = await client.get_ratings_state()
 
-        player_states = core_response.player_states
+        player_states = core_response.player_states.to_list()
+
         if active_only:
             player_states = filter(lambda ps: ps.is_evks_rating_active, player_states)
 
         ps_data = [
-            PlayerStateResp(
+            PlayerStateResponse(
                 player_id=player_state.player.id,
                 player_name=(
                     f"{player_state.player.first_name} {player_state.player.last_name}"

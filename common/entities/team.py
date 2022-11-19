@@ -2,13 +2,12 @@ from typing import Optional
 from dataclasses import dataclass
 
 from common.entities.player import Player
-from common.entities.competition import Competition
 
 
 @dataclass
 class Team:
     id: int
-    competition: Competition
+    competition_id: int
     competition_place: int
     competition_order: int
     first_player: Player

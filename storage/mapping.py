@@ -25,6 +25,8 @@ mapper_registry.map_imperatively(Tournament, tournaments)
 
 mapper_registry.map_imperatively(Player, players)
 
+mapper_registry.map_imperatively(MatchSet, sets)
+
 mapper_registry.map_imperatively(
     Competition,
     competitions,
@@ -37,7 +39,6 @@ mapper_registry.map_imperatively(
     Team,
     teams,
     properties={
-        "competition": relationship(Competition, uselist=False),
         "first_player": relationship(
             Player, uselist=False, primaryjoin="Team.first_player_id == Player.id"
         ),
@@ -51,7 +52,6 @@ mapper_registry.map_imperatively(
     Match,
     matches,
     properties={
-        "competition": relationship(Competition, uselist=False),
         "first_team": relationship(
             Team,
             uselist=False,
@@ -66,19 +66,10 @@ mapper_registry.map_imperatively(
 )
 
 mapper_registry.map_imperatively(
-    MatchSet,
-    sets,
-    properties={
-        "match": relationship(Match, uselist=False),
-    },
-)
-
-mapper_registry.map_imperatively(
     PlayerState,
     player_states,
     properties={
         "player": relationship(Player, uselist=False),
-        "last_match": relationship(Match, uselist=False),
     },
 )
 
@@ -91,6 +82,5 @@ mapper_registry.map_imperatively(
             secondary=ratings_state_player_states,
             collection_class=PlayerStateSet,
         ),
-        "last_competition": relationship(Competition, uselist=False),
     },
 )

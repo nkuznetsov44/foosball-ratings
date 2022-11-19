@@ -214,7 +214,7 @@ async def stored_doubles_match_teams(
         first_team = await storage.teams.create(
             Team(
                 id=None,
-                competition=stored_doubles_competition,
+                competition_id=stored_doubles_competition.id,
                 first_player=stored_player1,
                 second_player=stored_player2,
                 competition_place=1,
@@ -223,7 +223,7 @@ async def stored_doubles_match_teams(
         second_team = await storage.teams.create(
             Team(
                 id=None,
-                competition=stored_doubles_competition,
+                competition_id=stored_doubles_competition.id,
                 first_player=stored_player3,
                 second_player=stored_player4,
                 competition_place=2,
@@ -241,7 +241,7 @@ async def stored_doubles_match(
         return await storage.matches.create(
             Match(
                 id=None,
-                competition=stored_doubles_competition,
+                competition_id=stored_doubles_competition.id,
                 first_team=first_team,
                 second_team=second_team,
                 start_datetime=stored_doubles_competition.start_datetime,
@@ -257,7 +257,7 @@ async def stored_doubles_match_sets(storage_context, stored_doubles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_doubles_match,
+                    match_id=stored_doubles_match.id,
                     order=1,
                     first_team_score=5,
                     second_team_score=2,
@@ -266,7 +266,7 @@ async def stored_doubles_match_sets(storage_context, stored_doubles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_doubles_match,
+                    match_id=stored_doubles_match.id,
                     order=2,
                     first_team_score=5,
                     second_team_score=2,
@@ -275,7 +275,7 @@ async def stored_doubles_match_sets(storage_context, stored_doubles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_doubles_match,
+                    match_id=stored_doubles_match.id,
                     order=3,
                     first_team_score=2,
                     second_team_score=5,
@@ -284,7 +284,7 @@ async def stored_doubles_match_sets(storage_context, stored_doubles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_doubles_match,
+                    match_id=stored_doubles_match.id,
                     order=4,
                     first_team_score=5,
                     second_team_score=2,
@@ -301,7 +301,7 @@ async def stored_singles_match_teams(
         first_team = await storage.teams.create(
             Team(
                 id=None,
-                competition=stored_singles_competition,
+                competition_id=stored_singles_competition.id,
                 first_player=stored_player2,
                 second_player=None,
                 competition_place=1,
@@ -310,7 +310,7 @@ async def stored_singles_match_teams(
         second_team = await storage.teams.create(
             Team(
                 id=None,
-                competition=stored_singles_competition,
+                competition_id=stored_singles_competition.id,
                 first_player=stored_player4,
                 second_player=None,
                 competition_place=2,
@@ -328,7 +328,7 @@ async def stored_singles_match(
         return await storage.matches.create(
             Match(
                 id=None,
-                competition=stored_singles_competition,
+                competition_id=stored_singles_competition.id,
                 first_team=first_team,
                 second_team=second_team,
                 start_datetime=stored_singles_competition.start_datetime,
@@ -344,7 +344,7 @@ async def stored_singles_match_sets(storage_context, stored_singles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_singles_match,
+                    match_id=stored_singles_match.id,
                     order=1,
                     first_team_score=1,
                     second_team_score=5,
@@ -353,7 +353,7 @@ async def stored_singles_match_sets(storage_context, stored_singles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_singles_match,
+                    match_id=stored_singles_match.id,
                     order=2,
                     first_team_score=2,
                     second_team_score=5,
@@ -362,7 +362,7 @@ async def stored_singles_match_sets(storage_context, stored_singles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_singles_match,
+                    match_id=stored_singles_match.id,
                     order=3,
                     first_team_score=5,
                     second_team_score=3,
@@ -371,7 +371,7 @@ async def stored_singles_match_sets(storage_context, stored_singles_match):
             await storage.sets.create(
                 MatchSet(
                     id=None,
-                    match=stored_singles_match,
+                    match_id=stored_singles_match.id,
                     order=4,
                     first_team_score=4,
                     second_team_score=5,

@@ -98,7 +98,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             teams_map[team.external_id] = await self.storage.teams.create(
                 Team(
                     id=None,
-                    competition=competition,
+                    competition_id=competition.id,
                     first_player=first_player,
                     second_player=second_player,
                     competition_place=team.competition_place,
@@ -118,7 +118,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             stored_match: Match = await self.storage.matches.create(
                 Match(
                     id=None,
-                    competition=competition,
+                    competition_id=competition.id,
                     order=match.order,
                     first_team=competition_teams_map[match.first_team_external_id],
                     second_team=competition_teams_map[match.second_team_external_id],

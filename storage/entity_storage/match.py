@@ -14,29 +14,20 @@ class MatchStorage(BaseEntityStorage):
 
     def _select_entity_query(self) -> Select:
         return select(Match).options(
-            # joinedload(Match.competition).options(
-            #    joinedload(Competition.tournament),
-            # ),
             joinedload(Match.first_team).options(
                 joinedload(Team.first_player),
                 joinedload(Team.second_player),
-                # joinedload(Team.competition).options(
-                #    joinedload(Competition.tournament),
-                # ),
             ),
             joinedload(Match.second_team).options(
                 joinedload(Team.first_player),
                 joinedload(Team.second_player),
-                # joinedload(Team.competition).options(
-                #    joinedload(Competition.tournament),
-                # ),
             ),
         )
 
     async def find_by_competition(self, competition_id: int) -> list[Match]:
         result = await self._session.execute(
             self._select_entity_query().filter(
-                Match.competition.has(Competition.id == competition_id)
+                Match.competition_id == competition_id
             )
         )
         return result.scalars().all()
@@ -46,7 +37,7 @@ class MatchStorage(BaseEntityStorage):
     ) -> list[Match]:
         result = await self._session.execute(
             self._select_entity_query()
-            .filter(Match.competition.has(Competition.id == competition_id))
+            .filter(Match.competition_id == competition_id)
             .filter(
                 (Match.first_team.has(Team.first_player.has(Player.id == player_id)))
                 | (Match.first_team.has(Team.second_player.has(Player.id == player_id)))

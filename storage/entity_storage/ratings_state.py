@@ -14,29 +14,7 @@ class RatingsStateStorage(BaseEntityStorage):
     def _select_entity_query(self) -> Select:
         return select(RatingsState).options(
             subqueryload(RatingsState.player_states).options(
-                joinedload(PlayerState.last_match).options(
-                    # joinedload(Match.competition).options(
-                    #    joinedload(Competition.tournament),
-                    # ),
-                    # joinedload(Match.first_team).options(
-                    #    joinedload(Team.first_player),
-                    #    joinedload(Team.second_player),
-                    #    joinedload(Team.competition).options(
-                    #        joinedload(Competition.tournament),
-                    #    ),
-                    # ),
-                    # joinedload(Match.second_team).options(
-                    #    joinedload(Team.first_player),
-                    #    joinedload(Team.second_player),
-                    #    joinedload(Team.competition).options(
-                    #        joinedload(Competition.tournament),
-                    #    ),
-                    # ),
-                ),
                 joinedload(PlayerState.player),
-            ),
-            joinedload(RatingsState.last_competition).options(
-                joinedload(Competition.tournament),
             ),
         )
 
