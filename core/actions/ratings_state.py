@@ -13,10 +13,10 @@ class CreateRatingsStateAction(AbstractAction[RatingsState]):
         self,
         *,
         player_states: Collection[PlayerState],
-        last_competition: Competition,
+        last_competition_id: int,
     ) -> None:
         self.player_states = player_states
-        self.last_competition = last_competition
+        self.last_competition_id = last_competition_id
 
     async def handle(self) -> RatingsState:
         current_state = await self.storage.ratings_states.get_actual()
@@ -29,7 +29,7 @@ class CreateRatingsStateAction(AbstractAction[RatingsState]):
         new_state = RatingsState(
             id=None,
             previous_state_id=current_state.id,
-            last_competition=self.last_competition,
+            last_competition_id=self.last_competition_id,
             player_states=PlayerStateSet(self.player_states),
             status=RatingsStateStatus.READY_TO_PUBLISH,
         )

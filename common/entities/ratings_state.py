@@ -80,7 +80,7 @@ class RatingsState:
 
     id: int
     previous_state_id: Optional[int]
-    last_competition: Optional[Competition]
+    last_competition_id: Optional[int]
     player_states: PlayerStateSet
     status: RatingsStateStatus
 

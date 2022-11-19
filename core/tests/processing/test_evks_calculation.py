@@ -26,10 +26,10 @@ class TestEvksCalculation:
             result,
             equal_to(
                 {
-                    stored_player1.id: 1713,
-                    stored_player2.id: 2066,
-                    stored_player3.id: 1635,
-                    stored_player4.id: 1215,
+                    stored_player1.id: 3,
+                    stored_player2.id: 3,
+                    stored_player3.id: -3,
+                    stored_player4.id: -3,
                 }
             ),
         )
@@ -53,8 +53,8 @@ class TestEvksCalculation:
             result,
             equal_to(
                 {
-                    stored_player2.id: 2027,
-                    stored_player4.id: 1254,
+                    stored_player2.id: -36,
+                    stored_player4.id: 36,
                 }
             ),
         )

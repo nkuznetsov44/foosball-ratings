@@ -83,7 +83,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                 new_player_state = await self.run_subaction(
                     CreatePlayerStateAction(
                         player=current_player_state.player,
-                        last_match=match,
+                        last_match_id=match.id,
                         ratings=ratings,
                         ratings_state=ratings_state,
                     )
@@ -93,7 +93,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         return await self.run_subaction(
             CreateRatingsStateAction(
                 player_states=intermediate_ratings_state.player_states,
-                last_competition=self.competition,
+                last_competition_id=self.competition.id,
             )
         )
 

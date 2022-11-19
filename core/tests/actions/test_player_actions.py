@@ -2,7 +2,7 @@ import pytest
 import pytest_asyncio
 from hamcrest import assert_that, equal_to, match_equality, not_none, has_item
 
-from common.interactions.core.requests.player import CreatePlayersRequest, PlayerReq
+from common.interactions.core.requests.player import CreatePlayersRequest, PlayerRequest
 from common.entities.enums import City, EvksPlayerRank, RatingType
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
@@ -63,10 +63,11 @@ class TestCreatePlayersAction:
     def create_players_request(self):
         return CreatePlayersRequest(
             players=[
-                PlayerReq(
+                PlayerRequest(
                     first_name="John",
                     last_name="Doe",
                     city=City.EKATERINBURG,
+                    is_foreigner=False,
                     external_id=42,
                     initial_evks_rating=1666,
                     initial_cumulative_rating=0,
@@ -87,11 +88,12 @@ class TestCreatePlayersAction:
                 first_name="John",
                 last_name="Doe",
                 city=City.EKATERINBURG,
+                is_foreigner=False,
                 external_id=42,
             ),
             matches_played=666,
             matches_won=66,
-            last_match=None,
+            last_match_id=None,
             ratings={
                 RatingType.EVKS: 1666,
                 RatingType.CUMULATIVE: 0,

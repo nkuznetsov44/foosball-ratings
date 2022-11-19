@@ -67,7 +67,7 @@ class CreatePlayersAction(AbstractAction[list[PlayerState]]):
         await self.run_subaction(
             CreateRatingsStateAction(
                 player_states=new_state.player_states,
-                last_competition=ratings_state.last_competition,
+                last_competition_id=ratings_state.last_competition_id,
             )
         )
 

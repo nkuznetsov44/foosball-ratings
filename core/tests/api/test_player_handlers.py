@@ -3,7 +3,7 @@ import pytest_asyncio
 
 from hamcrest import assert_that, equal_to, match_equality, not_none, has_item
 
-from common.interactions.core.requests.player import CreatePlayersRequest, PlayerReq
+from common.interactions.core.requests.player import CreatePlayersRequest, PlayerRequest
 from common.entities.enums import City
 from core.actions.player import CreatePlayersAction
 
@@ -24,6 +24,7 @@ class TestPlayerHandler:
                     "first_name": player.first_name,
                     "last_name": player.last_name,
                     "city": player.city.name,
+                    "is_foreigner": player.is_foreigner,
                 }
             ),
         )
@@ -51,9 +52,10 @@ class TestPlayersHandler:
                         "first_name": "John",
                         "last_name": "Doe",
                         "city": "EKATERINBURG",
+                        "is_foreigner": False,
                     },
                     "previous_state_id": None,
-                    "last_match": None,
+                    "last_match_id": None,
                     "matches_played": 666,
                     "matches_won": 66,
                     "ratings": {"EVKS": 1666, "CUMULATIVE": 0},
@@ -81,6 +83,7 @@ class TestPlayersHandler:
                     "first_name": "John",
                     "last_name": "Doe",
                     "city": "EKATERINBURG",
+                    "is_foreigner": False,
                     "external_id": 42,
                     "initial_evks_rating": 1666,
                     "initial_cumulative_rating": 0,
@@ -95,10 +98,11 @@ class TestPlayersHandler:
     def create_players_request(self):
         return CreatePlayersRequest(
             players=[
-                PlayerReq(
+                PlayerRequest(
                     first_name="John",
                     last_name="Doe",
                     city=City.EKATERINBURG,
+                    is_foreigner=False,
                     external_id=42,
                     initial_evks_rating=1666,
                     initial_cumulative_rating=0,

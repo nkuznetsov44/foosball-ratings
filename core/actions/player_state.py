@@ -62,7 +62,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
             player=self.player,
             matches_played=matches_played,
             matches_won=self.matches_won or 0,
-            last_match=None,
+            last_match_id=None,
             ratings=ratings,
             evks_rank=EvksPlayerRank.BEGINNER,
             is_evks_rating_active=is_evks_rating_active,

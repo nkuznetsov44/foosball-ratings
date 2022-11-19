@@ -19,11 +19,11 @@ class PlayerCompetitionIDSchema(BaseSchema):
 
 
 class TournamentIDSchema(BaseSchema):
-    tournament_id = fields.Integer(requried=True, allow_nonw=False)
+    tournament_id = fields.Integer(requried=True, allow_none=False)
 
 
 class TournamentCompetitionIDSchema(BaseSchema):
-    tournament_id = fields.Integer(requried=True, allow_nonw=False)
+    tournament_id = fields.Integer(requried=True, allow_none=False)
     competition_id = fields.Integer(required=True, allow_none=False)
 
 
