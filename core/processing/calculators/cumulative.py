@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Sequence
 
 from common.entities.competition import Competition
@@ -10,6 +11,7 @@ from core.processing.calculators.abstract_rating_calculator import (
 )
 
 
+@dataclass(frozen=True)
 class PlayerCumulativeResult(BasePlayerRatingResult):
     pass
 

@@ -9,7 +9,7 @@ from common.entities.match import Match, MatchSet
 from common.entities.ratings_state import RatingsState
 
 
-@dataclass
+@dataclass(frozen=True)
 class BasePlayerRatingResult:
     rating_value: int
 

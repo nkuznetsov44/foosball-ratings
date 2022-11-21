@@ -26,7 +26,7 @@ class EvksGameType(Enum):
 PlayerValueMap = dict[int, Decimal]
 
 
-@dataclass
+@dataclass(frozen=True)
 class PlayerEvksResult(BasePlayerRatingResult):
     rw: Decimal
     rl: Decimal
