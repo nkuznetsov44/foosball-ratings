@@ -85,7 +85,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                         player=current_player_state.player,
                         last_match=match,
                         ratings=ratings,
-                        ratings_state=ratings_state,
+                        ratings_state=intermediate_ratings_state,
                     )
                 )
                 intermediate_ratings_state.player_states.add(new_player_state)

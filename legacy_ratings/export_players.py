@@ -3,7 +3,6 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from common.interactions.core.requests.player import CreatePlayersRequest, PlayerRequest
-from common.interactions.core.requests.schemas import CreatePlayersRequestSchema
 from common.interactions.core.client import CoreClientContext
 from common.entities.enums import City
 from common.entities.player import Player as CorePlayer

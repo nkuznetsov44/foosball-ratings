@@ -6,13 +6,13 @@ from sqlalchemy import select
 from common.entities.match import GrandFinalOptions
 from common.entities.player import Player as CorePlayer
 from common.entities.tournament import Tournament as CoreTournament
+from common.entities.ratings_state import RatingsState
 from common.interactions.core.requests.competition import (
     CreateCompetitionRequest,
     CompetitionTeam,
     CompetitionMatch,
     CompetitionMatchSet,
 )
-from common.interactions.core.requests.ratings_state import RatingsStateResponse
 from common.interactions.core.client import CoreClientContext
 
 from legacy_ratings.engine import ratings_session
@@ -50,7 +50,7 @@ def send_core_request_sync(
     request: CreateCompetitionRequest,
     host: str = "localhost",
     port: int = 8080,
-) -> RatingsStateResponse:
+) -> RatingsState:
     return asyncio.run(send_core_request(request, host, port))
 
 
@@ -131,10 +131,14 @@ def create_competition_request(
         )
 
 
-def get_competitions(start_date=None) -> list[Competition]:
+def get_competitions(start_date=None, start_order=None) -> list[Competition]:
     stmt = select(Competition.id)
     if start_date:
         stmt = stmt.where(Competition.date >= start_date)
+
+    if start_order:
+        stmt = stmt.where(Competition.order >= start_order)
+
     stmt = stmt.order_by(Competition.date.asc(), Competition.order.asc())
 
     with ratings_session() as session:
@@ -158,7 +162,10 @@ def export_competitions(competitions: list[Competition]):
 
 
 def main():
-    competitions = get_competitions(start_date=datetime(year=2019, month=10, day=28))
+    competitions = get_competitions(
+        start_date=datetime(year=2020, month=12, day=6),
+        start_order=2,
+    )
     export_competitions(competitions)
 
 
