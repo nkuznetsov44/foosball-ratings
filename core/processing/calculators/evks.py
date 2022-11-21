@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from itertools import chain, permutations
@@ -11,6 +12,7 @@ from common.entities.team import Team
 from core.exceptions import PlayerStateNotFound
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
+    BasePlayerRatingResult,
     RatingCalculationResult,
 )
 
@@ -24,6 +26,16 @@ class EvksGameType(Enum):
 PlayerValueMap = dict[int, Decimal]
 
 
+@dataclass
+class PlayerEvksResult(BasePlayerRatingResult):
+    rw: Decimal
+    rl: Decimal
+    t: Decimal
+    d: Decimal
+    k: Decimal
+    r: Decimal
+
+
 class BaseEvksRatingCalculator(AbstractRatingCalculator):
     rating_type = RatingType.EVKS
     game_coefficients = ClassVar[dict[EvksGameType, int]]
@@ -34,7 +46,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult:
+    ) -> RatingCalculationResult[PlayerEvksResult]:
         for player in match.players:
             try:
                 self.ratings_state.player_states[player]
@@ -65,17 +77,33 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
 
-        res: RatingCalculationResult = RatingCalculationResult()
+        res: RatingCalculationResult[PlayerEvksResult] = {}
 
         for winner_player in winner_team.players:
             r = d[winner_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[winner_player.id] = r_rounded
+            res[winner_player.id] = PlayerEvksResult(
+                rating_value=r_rounded,
+                rw=rw,
+                rl=rl,
+                t=t,
+                d=d[winner_player.id],
+                k=k,
+                r=r,
+            )
 
         for looser_player in looser_team.players:
             r = d[looser_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[looser_player.id] = -r_rounded
+            res[looser_player.id] = PlayerEvksResult(
+                rating_value=-r_rounded,
+                rw=rw,
+                rl=rl,
+                t=t,
+                d=d[looser_player.id],
+                k=k,
+                r=r,
+            )
 
         return res
 

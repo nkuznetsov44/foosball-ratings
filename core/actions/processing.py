@@ -124,6 +124,6 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                 match=match,
                 match_sets=match_sets,
             )
-            for player, rating_value in calc_result_by_player.items():
-                result[player][rating_type] = rating_value
+            for player, player_result in calc_result_by_player.items():
+                result[player][rating_type] = player_result.rating_value
         return result

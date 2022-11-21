@@ -6,7 +6,12 @@ from common.entities.match import Match, MatchSet
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
     RatingCalculationResult,
+    BasePlayerRatingResult,
 )
+
+
+class PlayerCumulativeResult(BasePlayerRatingResult):
+    pass
 
 
 class CumulativeRatingCalculator(AbstractRatingCalculator):
@@ -18,6 +23,9 @@ class CumulativeRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult:
+    ) -> RatingCalculationResult[PlayerCumulativeResult]:
         # TODO: implement cumulative rating calcuation logic
-        return {player.id: 0 for player in match.players}
+        return {
+            player.id: PlayerCumulativeResult(rating_value=0)
+            for player in match.players
+        }

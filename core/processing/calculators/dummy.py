@@ -6,7 +6,12 @@ from common.entities.match import Match, MatchSet
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
     RatingCalculationResult,
+    BasePlayerRatingResult,
 )
+
+
+class PlayerDummyResult(BasePlayerRatingResult):
+    pass
 
 
 class DummyCumulativeRatingCalculator(AbstractRatingCalculator):
@@ -18,5 +23,7 @@ class DummyCumulativeRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult:
-        return {player.id: 0 for player in match.players}
+    ) -> RatingCalculationResult[PlayerDummyResult]:
+        return {
+            player.id: PlayerDummyResult(rating_value=0) for player in match.players
+        }

@@ -1,4 +1,5 @@
-from typing import Sequence
+from typing import Sequence, TypeVar
+from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import ClassVar
 
@@ -8,8 +9,13 @@ from common.entities.match import Match, MatchSet
 from common.entities.ratings_state import RatingsState
 
 
-class RatingCalculationResult(dict[int, int]):
-    pass
+@dataclass
+class BasePlayerRatingResult:
+    rating_value: int
+
+
+T = TypeVar("T")
+RatingCalculationResult = dict[int, T]
 
 
 class AbstractRatingCalculator(ABC):
@@ -25,5 +31,5 @@ class AbstractRatingCalculator(ABC):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult:
+    ) -> RatingCalculationResult[BasePlayerRatingResult]:
         raise NotImplementedError()
