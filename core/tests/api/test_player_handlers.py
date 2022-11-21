@@ -61,6 +61,7 @@ class TestPlayersHandler:
                     "ratings": {"EVKS": 1666, "CUMULATIVE": 0},
                     "is_evks_rating_active": True,
                     "evks_rank": "SEMIPRO",
+                    "evks_rating_calculation": None,
                 }
             ),
         )

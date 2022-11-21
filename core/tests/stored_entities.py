@@ -81,6 +81,7 @@ async def stored_player1_state(storage_context, stored_player1):
                     RatingType.CUMULATIVE: 0,
                 },
                 evks_rank=EvksPlayerRank.SEMIPRO,
+                evks_rating_calculation=None,
                 is_evks_rating_active=True,
             )
         )
@@ -102,6 +103,7 @@ async def stored_player2_state(storage_context, stored_player2):
                     RatingType.CUMULATIVE: 0,
                 },
                 evks_rank=EvksPlayerRank.MASTER,
+                evks_rating_calculation=None,
                 is_evks_rating_active=True,
             )
         )
@@ -123,6 +125,7 @@ async def stored_player3_state(storage_context, stored_player3):
                     RatingType.CUMULATIVE: 0,
                 },
                 evks_rank=EvksPlayerRank.SEMIPRO,
+                evks_rating_calculation=None,
                 is_evks_rating_active=True,
             )
         )
@@ -144,6 +147,7 @@ async def stored_player4_state(storage_context, stored_player4):
                     RatingType.CUMULATIVE: 0,
                 },
                 evks_rank=EvksPlayerRank.NOVICE,
+                evks_rating_calculation=None,
                 is_evks_rating_active=True,
             )
         )

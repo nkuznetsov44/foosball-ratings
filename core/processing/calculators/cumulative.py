@@ -1,22 +1,16 @@
-from dataclasses import dataclass
 from typing import Sequence
 
 from common.entities.competition import Competition
 from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet
+from common.entities.rating_calculation import CumulativeCalculation
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
     RatingCalculationResult,
-    BasePlayerRatingResult,
 )
 
 
-@dataclass(frozen=True)
-class PlayerCumulativeResult(BasePlayerRatingResult):
-    pass
-
-
-class CumulativeRatingCalculator(AbstractRatingCalculator):
+class CumulativeRatingCalculator(AbstractRatingCalculator[CumulativeCalculation]):
     rating_type = RatingType.CUMULATIVE
 
     def calculate(
@@ -25,9 +19,6 @@ class CumulativeRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult[PlayerCumulativeResult]:
+    ) -> RatingCalculationResult[CumulativeCalculation]:
         # TODO: implement cumulative rating calcuation logic
-        return {
-            player.id: PlayerCumulativeResult(rating_value=0)
-            for player in match.players
-        }
+        return {player.id: CumulativeCalculation(value=0) for player in match.players}

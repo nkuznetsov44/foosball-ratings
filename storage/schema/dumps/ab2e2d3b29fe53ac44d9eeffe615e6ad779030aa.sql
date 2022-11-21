@@ -199,6 +199,7 @@ CREATE TABLE public.player_states (
     last_match_id integer,
     ratings json,
     evks_rank public.evksplayerrank,
+    evks_rating_calculation json,
     is_evks_rating_active boolean
 );
 

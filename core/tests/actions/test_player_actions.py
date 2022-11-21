@@ -99,5 +99,6 @@ class TestCreatePlayersAction:
                 RatingType.CUMULATIVE: 0,
             },
             evks_rank=EvksPlayerRank.SEMIPRO,
+            evks_rating_calculation=None,
             is_evks_rating_active=True,
         )

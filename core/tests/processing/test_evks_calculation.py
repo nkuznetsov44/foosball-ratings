@@ -2,7 +2,8 @@ from decimal import Decimal
 import pytest_asyncio
 from hamcrest import assert_that, equal_to
 
-from core.processing.calculators.evks import EvksRatingCalculator, PlayerEvksResult
+from common.entities.rating_calculation import EvksCalculation
+from core.processing.calculators.evks import EvksRatingCalculator
 
 
 class TestEvksCalculation:
@@ -26,8 +27,8 @@ class TestEvksCalculation:
             result,
             equal_to(
                 {
-                    stored_player1.id: PlayerEvksResult(
-                        rating_value=3,
+                    stored_player1.id: EvksCalculation(
+                        value=3,
                         rw=Decimal("1945.333333333333333333333333"),
                         rl=Decimal("1498"),
                         t=Decimal("0.75"),
@@ -35,8 +36,8 @@ class TestEvksCalculation:
                         k=48,
                         r=Decimal("2.547396728611409795104721012"),
                     ),
-                    stored_player2.id: PlayerEvksResult(
-                        rating_value=3,
+                    stored_player2.id: EvksCalculation(
+                        value=3,
                         rw=Decimal("1945.333333333333333333333333"),
                         rl=Decimal("1498"),
                         t=Decimal("0.75"),
@@ -44,8 +45,8 @@ class TestEvksCalculation:
                         k=48,
                         r=Decimal("2.547396728611409795104721012"),
                     ),
-                    stored_player3.id: PlayerEvksResult(
-                        rating_value=-3,
+                    stored_player3.id: EvksCalculation(
+                        value=-3,
                         rw=Decimal("1945.333333333333333333333333"),
                         rl=Decimal("1498"),
                         t=Decimal("0.75"),
@@ -53,8 +54,8 @@ class TestEvksCalculation:
                         k=48,
                         r=Decimal("2.547396728611409795104721012"),
                     ),
-                    stored_player4.id: PlayerEvksResult(
-                        rating_value=-3,
+                    stored_player4.id: EvksCalculation(
+                        value=-3,
                         rw=Decimal("1945.333333333333333333333333"),
                         rl=Decimal("1498"),
                         t=Decimal("0.75"),
@@ -84,8 +85,8 @@ class TestEvksCalculation:
             result,
             equal_to(
                 {
-                    stored_player2.id: PlayerEvksResult(
-                        rating_value=-36,
+                    stored_player2.id: EvksCalculation(
+                        value=-36,
                         rw=Decimal("1218"),
                         rl=Decimal("2063"),
                         t=Decimal("0.75"),
@@ -93,8 +94,8 @@ class TestEvksCalculation:
                         k=Decimal("48"),
                         r=Decimal("35.72428301468905220089739857"),
                     ),
-                    stored_player4.id: PlayerEvksResult(
-                        rating_value=36,
+                    stored_player4.id: EvksCalculation(
+                        value=36,
                         rw=Decimal("1218"),
                         rl=Decimal("2063"),
                         t=Decimal("0.75"),

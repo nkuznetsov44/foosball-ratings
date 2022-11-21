@@ -6,7 +6,7 @@ from common.entities.enums import (
     EvksPlayerRank,
     RatingsStateStatus,
 )
-from storage.types import RatingsJSON, GrandFinalOptionsJSON
+from storage.types import RatingsJSON, GrandFinalOptionsJSON, EvksCalculationJSON
 
 metadata_obj = sa.MetaData()
 
@@ -84,6 +84,7 @@ player_states = sa.Table(
     sa.Column("last_match_id", sa.Integer, sa.ForeignKey("matches.id")),
     sa.Column("ratings", RatingsJSON),
     sa.Column("evks_rank", sa.Enum(EvksPlayerRank)),
+    sa.Column("evks_rating_calculation", EvksCalculationJSON),
     sa.Column("is_evks_rating_active", sa.Boolean),
 )
 

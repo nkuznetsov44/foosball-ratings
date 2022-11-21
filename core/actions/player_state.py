@@ -5,6 +5,7 @@ from common.entities.match import Match, MatchUtils
 from common.entities.player import Player
 from common.entities.player_state import PlayerState
 from common.entities.ratings_state import RatingsState
+from common.entities.rating_calculation import EvksCalculation
 from core.actions.abstract_action import AbstractAction
 from core.actions.evks_player_rank import CalculateEvksPlayerRanksAction
 from core.exceptions import (
@@ -65,6 +66,7 @@ class CreateInitialPlayerStateAction(AbstractAction[PlayerState]):
             last_match_id=None,
             ratings=ratings,
             evks_rank=EvksPlayerRank.BEGINNER,
+            evks_rating_calculation=None,
             is_evks_rating_active=is_evks_rating_active,
         )
 
@@ -82,11 +84,13 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
         player: Player,
         last_match: Match,
         ratings: dict[RatingType, int],
+        evks_rating_calculation: Optional[EvksCalculation],
         ratings_state: RatingsState,
     ) -> None:
         self.player = player
         self.last_match = last_match
         self.ratings = ratings
+        self.evks_rating_calculation = evks_rating_calculation
         self.ratings_state = ratings_state
 
     async def handle(self) -> PlayerState:
@@ -145,6 +149,7 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
                 ratings=self.ratings,
                 # NOTE: ранг вычисляется в отдельном Action после процессинга
                 evks_rank=current_player_state.evks_rank,
+                evks_rating_calculation=self.evks_rating_calculation,
                 is_evks_rating_active=is_evks_rating_active,
             )
         )

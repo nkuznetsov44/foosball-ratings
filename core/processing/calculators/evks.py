@@ -9,10 +9,10 @@ from common.entities.competition import Competition
 from common.entities.enums import RatingType
 from common.entities.match import Match, MatchSet, MatchUtils
 from common.entities.team import Team
+from common.entities.rating_calculation import EvksCalculation
 from core.exceptions import PlayerStateNotFound
 from core.processing.calculators.abstract_rating_calculator import (
     AbstractRatingCalculator,
-    BasePlayerRatingResult,
     RatingCalculationResult,
 )
 
@@ -26,17 +26,7 @@ class EvksGameType(Enum):
 PlayerValueMap = dict[int, Decimal]
 
 
-@dataclass(frozen=True)
-class PlayerEvksResult(BasePlayerRatingResult):
-    rw: Decimal
-    rl: Decimal
-    t: Decimal
-    d: Decimal
-    k: Decimal
-    r: Decimal
-
-
-class BaseEvksRatingCalculator(AbstractRatingCalculator):
+class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
     rating_type = RatingType.EVKS
     game_coefficients = ClassVar[dict[EvksGameType, int]]
 
@@ -46,7 +36,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         competition: Competition,
         match: Match,
         match_sets: Sequence[MatchSet],
-    ) -> RatingCalculationResult[PlayerEvksResult]:
+    ) -> RatingCalculationResult[EvksCalculation]:
         for player in match.players:
             try:
                 self.ratings_state.player_states[player]
@@ -77,13 +67,13 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         fraction = 1 / (10 ** ((rl - rw) / 400) + 1)
         base_rating = t * k * (1 - fraction)
 
-        res: RatingCalculationResult[PlayerEvksResult] = {}
+        res: RatingCalculationResult[EvksCalculation] = {}
 
         for winner_player in winner_team.players:
             r = d[winner_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[winner_player.id] = PlayerEvksResult(
-                rating_value=r_rounded,
+            res[winner_player.id] = EvksCalculation(
+                value=r_rounded,
                 rw=rw,
                 rl=rl,
                 t=t,
@@ -95,8 +85,8 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator):
         for looser_player in looser_team.players:
             r = d[looser_player.id] * base_rating
             r_rounded = self._round_decimal(r)
-            res[looser_player.id] = PlayerEvksResult(
-                rating_value=-r_rounded,
+            res[looser_player.id] = EvksCalculation(
+                value=-r_rounded,
                 rw=rw,
                 rl=rl,
                 t=t,
