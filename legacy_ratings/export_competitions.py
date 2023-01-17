@@ -163,8 +163,8 @@ def export_competitions(competitions: list[Competition]):
 
 def main():
     competitions = get_competitions(
-        start_date=datetime(year=2020, month=12, day=6),
-        start_order=2,
+        # start_date=datetime(year=2020, month=12, day=6),
+        # start_order=2,
     )
     export_competitions(competitions)
 
