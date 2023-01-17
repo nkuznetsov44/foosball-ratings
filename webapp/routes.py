@@ -8,6 +8,7 @@ from webapp.handlers import (
     RefereesHandler,
     TournamentsHandler,
     TournamentCompetitionsHandler,
+    ExternalRatingsStateHandler,
 )
 
 
@@ -25,3 +26,5 @@ def setup_routes(app: web.Application) -> None:
     )
     app.router.add_view("/ratings_state", RatingsStateHandler)
     app.router.add_view("/referees", RefereesHandler)
+
+    app.router.add_view('/external/v1/ratings_state', ExternalRatingsStateHandler)

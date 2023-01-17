@@ -19,6 +19,8 @@ from webapp.responses import (
     MatchWithRelatedResponse,
     PlayerStateResponse,
     RatingsStateResponse,
+    ExternalPlayerStateResponse,
+    ExternalRatingsStateResponse,
     PlayerResponseSchema,
     CompetitionResponseSchema,
     CompetitionWithRelatedResponseSchema,
@@ -140,6 +142,31 @@ class RatingsStateHandler(AbstractWebappHandler):
             RatingsStateResponse(
                 id=core_response.id,
                 rating_type=rating_type,
+                player_states=ps_data,
+            )
+        )
+
+
+class ExternalRatingsStateHandler(AbstractWebappHandler):
+    @response_schema(ExternalRatingsStateResponse.Schema)
+    async def get(self) -> web.Response:
+        async with self.core_client() as client:
+            core_response = await client.get_ratings_state()
+
+        player_states = core_response.player_states.to_list()
+
+        ps_data = [
+            ExternalPlayerStateResponse(
+                player=player_state.player,
+                evks_rank=player_state.evks_rank,
+                rating=player_state.ratings[RatingType.EVKS],
+                is_evks_player_active=player_state.is_evks_rating_active,
+            )
+            for player_state in player_states
+        ]
+
+        return self.make_response(
+            ExternalRatingsStateResponse(
                 player_states=ps_data,
             )
         )

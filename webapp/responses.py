@@ -1,19 +1,17 @@
 from typing import ClassVar, Type, Optional
 from dataclasses import field
 from marshmallow import fields, Schema
-from marshmallow_dataclass import dataclass
+from marshmallow_dataclass import dataclass as mm_dataclass
 
 from common.entities.enums import EvksPlayerRank, RatingType
 from common.entities.team import Team
 from common.entities.match import MatchSet, GrandFinalOptions
-from common.entities.player_state import PlayerState
 from common.entities.schemas import (
     CompetitionSchema,
     TournamentSchema,
     TeamSchema,
     MatchSetSchema,
     PlayerSchema,
-    PlayerStateSchema,
 )
 
 
@@ -28,7 +26,7 @@ class PlayerResponseSchema(PlayerSchema):
         )
 
 
-@dataclass
+@mm_dataclass
 class PlayerStateResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
@@ -39,13 +37,34 @@ class PlayerStateResponse:
     is_evks_player_active: bool
 
 
-@dataclass
+@mm_dataclass
 class RatingsStateResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
     id: int
     rating_type: RatingType
     player_states: list[PlayerStateResponse]
+
+
+@mm_dataclass
+class ExternalPlayerStateResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    player: PlayerResponseSchema = field(
+        metadata=dict(
+            marshmallow_field=fields.Nested(PlayerResponseSchema)
+        )
+    )
+    evks_rank: EvksPlayerRank
+    rating: int
+    is_evks_player_active: bool
+
+
+@mm_dataclass
+class ExternalRatingsStateResponse:
+    Schema: ClassVar[Type[Schema]] = Schema
+
+    player_states: list[ExternalPlayerStateResponse]
 
 
 class MatchSetResponseSchema(MatchSetSchema):
@@ -72,7 +91,7 @@ class TeamResponseSchema(TeamSchema):
         )
 
 
-@dataclass
+@mm_dataclass
 class MatchPlayerStateResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
@@ -83,7 +102,7 @@ class MatchPlayerStateResponse:
     is_evks_player_active: bool
 
 
-@dataclass
+@mm_dataclass
 class MatchWithRelatedResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
