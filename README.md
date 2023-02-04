@@ -43,7 +43,7 @@
 - `python3 core/application.py`
 
 ### Webapp
-- `python3 webapp/application.py`curl -X POST -H "Content-Type: application/json" --data "@$(pwd)/storage/test_data/players.json" http://localhost:9080/v1/players | jq '.'
+- `python3 webapp/application.py`
 
 ## Environment
 - WEBAPP_BACKEND_URL needed to run frontend in docker
