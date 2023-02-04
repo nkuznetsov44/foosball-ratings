@@ -2,6 +2,9 @@
 - `black -l 100 .`
 - `flake8 .`
 
+## Frontend repository
+[link](https://github.com/artbocha/foosball-fsk)
+
 ## Build and run locally in Docker
 - `docker-compose -f docker-compose.build-local.yml up --build`
   Now you have your core app on port 9080 and webapp on port 9081
