@@ -11,19 +11,20 @@
 - Upload tournament:
   ```
   TOURNAMENT_ID=$(curl -X POST -H "Content-Type: application/json" \
-  --data "@$(pwd)/storage/test_data/tournament.json" http://localhost:9080/api/v1/tournaments | jq '.id' --raw-output)
+  --data "@$(pwd)/storage/test_data/tournament.json" \
+  http://localhost:9080/api/v1/tournaments | jq '.id' --raw-output)
   ```
 - Upload OS:
   ```
   curl -X POST -H "Content-Type: application/json" \
-    --data "$(sed "s/%TOURNAMENT_ID%/$TOURNAMENT_ID/" "$(pwd)/storage/test_data/competition_singles.json")" \
-    http://localhost:9080/api/v1/competitions | jq '.'`
+    --data "@$(pwd)/storage/test_data/competition_singles.json" \
+    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'`
   ```
 - Upload OD:
   ```
   curl -X POST -H "Content-Type: application/json" \
-    --data "$(sed "s/%TOURNAMENT_ID%/$TOURNAMENT_ID/" "$(pwd)/storage/test_data/competition_doubles.json")" \
-    http://localhost:9080/api/v1/competitions | jq '.'`
+    --data "@$(pwd)/storage/test_data/competition_doubles.json" \
+    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'`
   ```
 
 ## Run locally without docker

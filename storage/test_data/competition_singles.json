@@ -1,5 +1,4 @@
 {
-    "tournament_id": "%TOURNAMENT_ID%",
     "competition_type": "OS",
     "evks_importance": "0.75",
     "cumulative_coefficient": "1.0",
