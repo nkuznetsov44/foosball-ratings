@@ -1,0 +1,90 @@
+{
+    "name": "Тестовый турнир",
+    "city": "MOSCOW",
+    "evks_importance": "0.75",
+    "url": "https://vk.invalid/tournament",
+    "competitions": [
+        {
+            "competition_type": "OS",
+            "start_datetime": "2022-12-22T03:12:58.019077+00:00",
+            "end_datetime": "2022-12-22T03:12:58.019077+00:00",
+            "teams": [
+                {
+                    "external_id": 1,
+                    "first_player_id": 1,
+                    "second_player_id": null,
+                    "competition_place": 1
+                },
+                {
+                    "external_id": 2,
+                    "first_player_id": 2,
+                    "second_player_id": null,
+                    "competition_place": 2
+                },
+                {
+                    "external_id": 3,
+                    "first_player_id": 3,
+                    "second_player_id": null,
+                    "competition_place": 3
+                }
+            ],
+            "matches": [
+                {
+                    "first_team_external_id": 1,
+                    "second_team_external_id": 2,
+                    "sets": [
+                        {"order": 1, "first_team_score": 5, "second_team_score": 2},
+                        {"order": 2, "first_team_score": 5, "second_team_score": 1},
+                        {"order": 3, "first_team_score": 5, "second_team_score": 0}
+                    ],
+                    "start_datetime": "2022-12-22T03:12:58.019077+00:00",
+                    "end_datetime": "2022-12-22T03:12:58.019077+00:00"
+                },
+                {
+                    "first_team_external_id": 2,
+                    "second_team_external_id": 3,
+                    "sets": [
+                        {"order": 1, "first_team_score": 5, "second_team_score": 3},
+                        {"order": 2, "first_team_score": 5, "second_team_score": 4},
+                        {"order": 3, "first_team_score": 5, "second_team_score": 4}
+                    ],
+                    "start_datetime": "2022-12-22T03:12:58.019077+00:00",
+                    "end_datetime": "2022-12-22T03:12:58.019077+00:00"
+                }
+            ]
+        },
+        {
+            "competition_type": "OD",
+            "start_datetime": "2022-12-23T03:12:58.019077+00:00",
+            "end_datetime": "2022-12-23T03:12:58.019077+00:00",
+            "teams": [
+                {
+                    "external_id": 1,
+                    "first_player_id": 1,
+                    "second_player_id": 2,
+                    "competition_place": 1
+                },
+                {
+                    "external_id": 2,
+                    "first_player_id": 4,
+                    "second_player_id": 5,
+                    "competition_place": 2
+                }
+            ],
+            "matches": [
+                {
+                    "first_team_external_id": 1,
+                    "second_team_external_id": 2,
+                    "sets": [
+                        {"order": 1, "first_team_score": 2, "second_team_score": 5},
+                        {"order": 2, "first_team_score": 1, "second_team_score": 5},
+                        {"order": 3, "first_team_score": 5, "second_team_score": 1},
+                        {"order": 3, "first_team_score": 4, "second_team_score": 5}
+                    ],
+                    "start_datetime": "2022-12-22T03:12:58.019077+00:00",
+                    "end_datetime": "2022-12-22T03:12:58.019077+00:00"
+                }
+            ]
+        }
+    ]
+}
