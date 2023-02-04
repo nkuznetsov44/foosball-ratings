@@ -10,7 +10,7 @@
 - Upload players: `curl -X POST -H "Content-Type: application/json" --data "@$(pwd)/storage/test_data/players.json" http://localhost:9080/api/v1/players | jq '.'`
 - Upload tournament:
   ```
-  TOURNAMENT_ID = $(curl -X POST -H "Content-Type: application/json" \
+  TOURNAMENT_ID=$(curl -X POST -H "Content-Type: application/json" \
   --data "@$(pwd)/storage/test_data/tournament.json" http://localhost:9080/api/v1/tournaments | jq '.id' --raw-output)
   ```
 - Upload OS:
