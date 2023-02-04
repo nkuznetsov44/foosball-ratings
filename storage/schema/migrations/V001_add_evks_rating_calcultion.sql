@@ -1,0 +1,1 @@
+alter table player_states add column evks_rating_calculation json;
