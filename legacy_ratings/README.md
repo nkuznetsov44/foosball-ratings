@@ -1,10 +1,12 @@
+This directory contains convinience classes and scripts to integrate this application with legacy ratings database.
+
 Migrate data from legacy ratings to local instance:
-- `ssh -N -L 3306:127.0.0.1:3306 -p ${SSH_PORT} -i ~/path/to/privatekey ${SSH_HOST}
+- `ssh -N -L 3306:127.0.0.1:3306 -p ${SSH_PORT} -i ~/path/to/privatekey ${SSH_HOST}`
 - `export PYTHONPATH=/path/to/repo/root`
 - `. ./env/bin/activate`
 - `python export_players.py`
 - `python export_tournaments.py`
-- `python 
+- `python export_competitions.py`
 
 Debug queries to compare:
 ```
