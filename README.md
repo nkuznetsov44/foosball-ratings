@@ -5,8 +5,26 @@
 ## Build and run locally in Docker
 - `docker-compose -f docker-compose.build-local.yml up --build`
   Now you have your core app on port 9080 and webapp on port 9081
-- If needed fill the database with test data:
-  `
+
+## How to upload test data
+- Upload players: `curl -X POST -H "Content-Type: application/json" --data "@$(pwd)/storage/test_data/players.json" http://localhost:9080/api/v1/players | jq '.'`
+- Upload tournament:
+  ```
+  TOURNAMENT_ID = $(curl -X POST -H "Content-Type: application/json" \
+  --data "@$(pwd)/storage/test_data/tournament.json" http://localhost:9080/api/v1/tournaments | jq '.id' --raw-output)
+  ```
+- Upload OS:
+  ```
+  curl -X POST -H "Content-Type: application/json" \
+    --data "$(sed "s/%TOURNAMENT_ID%/$TOURNAMENT_ID/" "$(pwd)/storage/test_data/competition_singles.json")" \
+    http://localhost:9080/api/v1/competitions | jq '.'`
+  ```
+- Upload OD:
+  ```
+  curl -X POST -H "Content-Type: application/json" \
+    --data "$(sed "s/%TOURNAMENT_ID%/$TOURNAMENT_ID/" "$(pwd)/storage/test_data/competition_doubles.json")" \
+    http://localhost:9080/api/v1/competitions | jq '.'`
+  ```
 
 ## Run locally without docker
 
@@ -22,9 +40,6 @@
     - `python3 schema/create_schema.py`
     - `cat ./init_db/init_db.sql | docker exec storage-postgres-1 psql -U ratings -d ratings_core`
 - `python3 core/application.py`
-- if needed upload testing data or data from legacy ratings via api:
-  - Upload test players: `curl -X POST -H "Content-Type: application/json" --data "@$(pwd)/storage/test_data/players.json" http://localhost:9080/api/v1/players | jq '.'`
-  - Upload test tournament: 
 
 ### Webapp
 - `python3 webapp/application.py`curl -X POST -H "Content-Type: application/json" --data "@$(pwd)/storage/test_data/players.json" http://localhost:9080/v1/players | jq '.'
