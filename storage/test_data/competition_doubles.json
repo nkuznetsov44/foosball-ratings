@@ -1,0 +1,44 @@
+{
+    "tournament_id": "%TOURNAMENT_ID%",
+    "competition_type": "OD",
+    "evks_importance": "0.75",
+    "cumulative_coefficient": "1.0",
+    "order": 2,
+    "start_datetime": "2022-12-23T03:12:58.019077+00:00",
+    "end_datetime": "2022-12-23T03:12:58.019077+00:00",
+    "teams": [
+        {
+            "external_id": 1,
+            "first_player_id": 1,
+            "second_player_id": 2,
+            "competition_place": 1,
+            "competition_order": 1
+        },
+        {
+            "external_id": 2,
+            "first_player_id": 4,
+            "second_player_id": 5,
+            "competition_place": 2,
+            "competition_order": 2
+        }
+    ],
+    "matches": [
+        {
+            "first_team_external_id": 1,
+            "second_team_external_id": 2,
+            "sets": [
+                {"order": 1, "first_team_score": 2, "second_team_score": 5},
+                {"order": 2, "first_team_score": 1, "second_team_score": 5},
+                {"order": 3, "first_team_score": 5, "second_team_score": 1},
+                {"order": 4, "first_team_score": 4, "second_team_score": 5}
+            ],
+            "start_datetime": "2022-12-22T03:12:58.019077+00:00",
+            "end_datetime": "2022-12-22T03:12:58.019077+00:00",
+            "order": 1,
+            "grand_final_options": {
+                "sets_winner_bracket": 2,
+                "sets_looser_bracket": 3
+            }
+        }
+    ]
+}

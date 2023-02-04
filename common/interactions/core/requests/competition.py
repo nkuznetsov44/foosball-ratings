@@ -35,7 +35,6 @@ class CompetitionMatch:
     order: int
     sets: list[CompetitionMatchSet]
     force_qualification: Optional[bool]
-    is_forfeit: bool
     grand_final_options: Optional[GrandFinalOptions]
     start_datetime: DatetimeWithTZ = field(
         metadata=dict(marshmallow_field=fields.DateTime())
@@ -43,6 +42,7 @@ class CompetitionMatch:
     end_datetime: DatetimeWithTZ = field(
         metadata=dict(marshmallow_field=fields.DateTime())
     )
+    is_forfeit: Optional[bool] = False
 
 
 @dataclass

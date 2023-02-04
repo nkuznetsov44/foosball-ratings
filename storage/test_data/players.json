@@ -3,27 +3,32 @@
         {
             "first_name": "Никита",
             "last_name": "Кузнецов",
-            "city": "MOSCOW"
+            "city": "MOSCOW",
+            "is_foreigner": false
         },
         {
             "first_name": "Артем",
             "last_name": "Бочков",
-            "city": "MOSCOW"
+            "city": "MOSCOW",
+            "is_foreigner": false
         },
         {
             "first_name": "Роман",
             "last_name": "Бушуев",
-            "city": "MOSCOW"
+            "city": "MOSCOW",
+            "is_foreigner": false
         },
         {
             "first_name": "Анна",
             "last_name": "Мамаева",
-            "city": "MOSCOW"
+            "city": "MOSCOW",
+            "is_foreigner": false
         },
         {
             "first_name": "Сафар",
             "last_name": "Сафарлы",
-            "city": "MOSCOW"
+            "city": "MOSCOW",
+            "is_foreigner": false
         }
     ]
 }
