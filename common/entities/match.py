@@ -63,14 +63,8 @@ class MatchUtils:
             match.force_qualification
             or len(match_sets) == 1
             and (
-                (
-                    match_sets[0].first_team_score == 7
-                    and match_sets[0].second_team_score < 7
-                )
-                or (
-                    match_sets[0].first_team_score < 7
-                    and match_sets[0].second_team_score == 7
-                )
+                (match_sets[0].first_team_score == 7 and match_sets[0].second_team_score < 7)
+                or (match_sets[0].first_team_score < 7 and match_sets[0].second_team_score == 7)
             )
         )
 

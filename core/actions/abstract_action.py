@@ -32,7 +32,5 @@ class AbstractAction(Generic[ActionResult], metaclass=ABCMeta):
             self.storage = strg
             return await self.handle()
 
-    async def run_subaction(
-        self, action: "AbstractAction[SubActionResult]"
-    ) -> SubActionResult:
+    async def run_subaction(self, action: "AbstractAction[SubActionResult]") -> SubActionResult:
         return await action.run(self.storage)

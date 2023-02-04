@@ -10,7 +10,6 @@ from common.entities.ratings_state import RatingsState
 from common.entities.rating_calculation import (
     BaseRatingCalculation,
     EvksCalculation,
-    CumulativeCalculation,
 )
 from common.utils import DatetimeWithTZ
 from core.actions.abstract_action import AbstractAction
@@ -24,9 +23,7 @@ from core.processing.strategies import (
 )
 
 
-DATE_2018_01_01 = DatetimeWithTZ(
-    year=2018, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC
-)
+DATE_2018_01_01 = DatetimeWithTZ(year=2018, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC)
 DATE_2022_01_01 = DatetimeWithTZ(
     year=2022, month=1, day=1, hour=0, minute=0, second=0, tzinfo=UTC
 )  # TODO: уточнить, с какого момента начали считать накопительный рейтинг и поправить
@@ -79,9 +76,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
                 match=match,
                 match_sets=match_sets,
             ).items():
-                current_player_state = intermediate_ratings_state.player_states[
-                    player_id
-                ]
+                current_player_state = intermediate_ratings_state.player_states[player_id]
                 ratings = {**current_player_state.ratings}
                 for rating_type in ratings:
                     ratings[rating_type] += rating_calculations[rating_type].value
@@ -125,9 +120,7 @@ class ProcessCompetitionAction(AbstractAction[RatingsState]):
         match: Match,
         match_sets: Sequence[MatchSet],
     ) -> dict[_PlayerId, dict[RatingType, BaseRatingCalculation]]:
-        result: dict[_PlayerId, dict[RatingType, BaseRatingCalculation]] = defaultdict(
-            dict
-        )
+        result: dict[_PlayerId, dict[RatingType, BaseRatingCalculation]] = defaultdict(dict)
         for rating_type, calculator_cls in strategy.calculators.items():
             calculator = calculator_cls(ratings_state=ratings_state)
             calc_result_by_player = calculator.calculate(

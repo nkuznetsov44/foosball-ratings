@@ -1,5 +1,5 @@
 ## Pre-commit
-- `black .`
+- `black -l 100 .`
 - `flake8 .`
 
 ## Build and run locally in Docker
@@ -31,7 +31,7 @@
 ### Python venv
 - If you dont have an existing env, create it `python3 -m venv env`
 - Activate the environment `. ./env/bin/activate`
-- If needed install requirements `python3 -m pip install -r requirements.txt`
+- If needed install requirements `python3 -m pip install -r requirements.dev.txt`
 - Set PYTHONPATH variable `export PYTHONPATH=$(pwd)`
 
 ### Core
@@ -46,3 +46,6 @@
 
 ## Environment
 - WEBAPP_BACKEND_URL needed to run frontend in docker
+
+## Testing
+- `pytest .`

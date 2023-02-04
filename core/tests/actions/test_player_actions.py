@@ -25,14 +25,12 @@ class TestCreatePlayersAction:
     async def test_result(
         self, stored_ratings_state, create_players_request, expected_player_state
     ):
-        result = await CreatePlayersAction(request=create_players_request).run()
+        result = await CreatePlayersAction(create_players_request=create_players_request).run()
         assert_that(result, equal_to([expected_player_state]))
 
     @pytest.mark.asyncio
-    async def test_creates_player(
-        self, stored_ratings_state, storage, create_players_request
-    ):
-        result = await CreatePlayersAction(request=create_players_request).run()
+    async def test_creates_player(self, stored_ratings_state, storage, create_players_request):
+        result = await CreatePlayersAction(create_players_request=create_players_request).run()
         player = await storage.players.get(result[0].player.id)
         assert_that(
             player,
@@ -55,7 +53,7 @@ class TestCreatePlayersAction:
         create_players_request,
         expected_player_state,
     ):
-        await CreatePlayersAction(request=create_players_request).run()
+        await CreatePlayersAction(create_players_request=create_players_request).run()
         new_state = await storage.ratings_states.get_actual()
         assert_that(new_state.player_states, has_item(expected_player_state))
 

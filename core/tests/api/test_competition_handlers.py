@@ -5,27 +5,26 @@ import pytest_asyncio
 
 from hamcrest import (
     assert_that,
-    equal_to,
     match_equality,
     not_none,
     has_items,
     has_entries,
 )
 
-from core.actions.competition import CreateProcessedCompetitionAction
-
 
 class TestCompetitionHandler:
     @pytest.mark.asyncio
     async def test_response(
         self,
+        stored_tournament,
         stored_ratings_state,
         core_client,
         create_competition_request,
         expected_response,
     ):
         response = await core_client.post(
-            "/api/v1/competitions", json=create_competition_request
+            f"/api/v1/tournaments/{stored_tournament.id}/competitions",
+            json=create_competition_request,
         )
         response_json = await response.json()
         assert_that(response_json, has_entries(expected_response))
@@ -37,10 +36,8 @@ class TestCompetitionHandler:
         player2,
         team1_external_id,
         team2_external_id,
-        stored_tournament,
     ):
         return {
-            "tournament_id": stored_tournament.id,
             "competition_type": "OS",
             "evks_importance": "0.75",
             "cumulative_coefficient": "1.0",

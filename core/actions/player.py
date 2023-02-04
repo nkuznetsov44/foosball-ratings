@@ -23,8 +23,8 @@ class GetPlayersAction(AbstractAction[list[Player]]):
 
 
 class CreatePlayersAction(AbstractAction[list[PlayerState]]):
-    def __init__(self, request: CreatePlayersRequest) -> None:
-        self.players = request.players
+    def __init__(self, create_players_request: CreatePlayersRequest) -> None:
+        self.players = create_players_request.players
 
     async def handle(self) -> list[PlayerState]:
         ratings_state = await self.storage.ratings_states.get_actual()

@@ -48,7 +48,7 @@ class PlayersHandler(AbstractWebappHandler):
 
 
 class PlayerCompetitionsHandler(AbstractWebappHandler):
-    @request_schema(PlayerIDSchema)
+    @request_schema(PlayerIDSchema, location="match_info")
     @response_schema(CompetitionWithRelatedResponseSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
@@ -58,7 +58,7 @@ class PlayerCompetitionsHandler(AbstractWebappHandler):
 
 
 class PlayerCompetitionMatchesHandler(AbstractWebappHandler):
-    @request_schema(PlayerCompetitionIDSchema)
+    @request_schema(PlayerCompetitionIDSchema, location="match_info")
     @response_schema(MatchWithRelatedResponse.Schema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
@@ -98,7 +98,7 @@ class TournamentsHandler(AbstractWebappHandler):
 
 
 class TournamentCompetitionsHandler(AbstractWebappHandler):
-    @request_schema(TournamentIDSchema)
+    @request_schema(TournamentIDSchema, location="match_info")
     @response_schema(CompetitionResponseSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
@@ -108,7 +108,7 @@ class TournamentCompetitionsHandler(AbstractWebappHandler):
 
 
 class RatingsStateHandler(AbstractWebappHandler):
-    @request_schema(RatingsStateRequestSchema)
+    @request_schema(RatingsStateRequestSchema, location="query")
     @response_schema(RatingsStateResponse.Schema)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
@@ -126,9 +126,7 @@ class RatingsStateHandler(AbstractWebappHandler):
         ps_data = [
             PlayerStateResponse(
                 player_id=player_state.player.id,
-                player_name=(
-                    f"{player_state.player.first_name} {player_state.player.last_name}"
-                ),
+                player_name=(f"{player_state.player.first_name} {player_state.player.last_name}"),
                 evks_rank=player_state.evks_rank,
                 rating=player_state.ratings[rating_type],
                 is_evks_player_active=player_state.is_evks_rating_active,

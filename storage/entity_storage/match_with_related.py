@@ -35,26 +35,10 @@ class MatchWithRelatedStorage(BaseEntityStorage):
             self._select_entity_query()
             .filter(MatchWithRelated.competition_id == competition_id)
             .filter(
-                (
-                    MatchWithRelated.first_team.has(
-                        Team.first_player.has(Player.id == player_id)
-                    )
-                )
-                | (
-                    MatchWithRelated.first_team.has(
-                        Team.second_player.has(Player.id == player_id)
-                    )
-                )
-                | (
-                    MatchWithRelated.second_team.has(
-                        Team.first_player.has(Player.id == player_id)
-                    )
-                )
-                | (
-                    MatchWithRelated.second_team.has(
-                        Team.first_player.has(Player.id == player_id)
-                    )
-                )
+                (MatchWithRelated.first_team.has(Team.first_player.has(Player.id == player_id)))
+                | (MatchWithRelated.first_team.has(Team.second_player.has(Player.id == player_id)))
+                | (MatchWithRelated.second_team.has(Team.first_player.has(Player.id == player_id)))
+                | (MatchWithRelated.second_team.has(Team.first_player.has(Player.id == player_id)))
             )
         )
         return result.scalars().all()

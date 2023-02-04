@@ -19,18 +19,14 @@ class Storage:
     def __init__(self, session: AsyncSessionTransaction) -> None:
         self._session = session
 
-        self.players: BaseEntityStorage[Player] = BaseEntityStorage.for_entity(
-            Player, session
+        self.players: BaseEntityStorage[Player] = BaseEntityStorage.for_entity(Player, session)
+        self.player_states: BaseEntityStorage[PlayerState] = BaseEntityStorage.for_entity(
+            PlayerState, session
         )
-        self.player_states: BaseEntityStorage[
-            PlayerState
-        ] = BaseEntityStorage.for_entity(PlayerState, session)
         self.tournaments: BaseEntityStorage[Tournament] = BaseEntityStorage.for_entity(
             Tournament, session
         )
-        self.teams: BaseEntityStorage[Team] = BaseEntityStorage.for_entity(
-            Team, session
-        )
+        self.teams: BaseEntityStorage[Team] = BaseEntityStorage.for_entity(Team, session)
         self.competitions = CompetitionStorage(session)
         self.matches = MatchStorage(session)
         self.matches_with_related = MatchWithRelatedStorage(session)
@@ -69,7 +65,5 @@ class StorageContext:
         session = await self._session_context.__aenter__()
         return Storage(session)
 
-    async def __aexit__(
-        self, exc_type: Type[Exception], exc: Exception, tb: TracebackType
-    ) -> None:
+    async def __aexit__(self, exc_type: Type[Exception], exc: Exception, tb: TracebackType) -> None:
         await self._session_context.__aexit__(exc_type, exc, tb)

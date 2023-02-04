@@ -1,9 +1,8 @@
-from typing import Collection, Iterable, Optional, Union, Iterator, Any
-from dataclasses import dataclass, field
+from typing import Collection, Iterable, Optional, Union, Iterator
+from dataclasses import dataclass
 
 from common.entities.enums import RatingsStateStatus
 from common.entities.player import Player
-from common.entities.competition import Competition
 from common.entities.player_state import PlayerState
 
 

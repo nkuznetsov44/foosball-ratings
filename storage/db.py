@@ -7,10 +7,8 @@ from storage.storage import StorageContext
 
 def setup_storage(config: dict[str, Any], echo: Optional[bool] = False) -> None:
     db_cfg = config["postgres"]
-    connection_string = (
-        "postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
-            **db_cfg
-        )
+    connection_string = "postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
+        **db_cfg
     )
     engine = create_async_engine(connection_string, echo=echo)
     mapper_registry.configure()

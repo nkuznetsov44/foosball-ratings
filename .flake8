@@ -1,4 +1,4 @@
 [flake8]
 
 exclude = .git,__pycache__,env,.pytest_cache
-max-line-length = 88
+max-line-length = 100

@@ -1,8 +1,6 @@
-from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from itertools import chain, permutations
-from multiprocessing.sharedctypes import Value
 from typing import ClassVar, Sequence
 
 from common.entities.competition import Competition
@@ -41,16 +39,10 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
             try:
                 self.ratings_state.player_states[player]
             except KeyError:
-                raise PlayerStateNotFound(
-                    player_id=player.id, current_state=self.ratings_state
-                )
+                raise PlayerStateNotFound(player_id=player.id, current_state=self.ratings_state)
 
-        winner_team, winner_team_score = MatchUtils.get_winner_team_and_score(
-            match, match_sets
-        )
-        looser_team, looser_team_score = MatchUtils.get_looser_team_and_score(
-            match, match_sets
-        )
+        winner_team, winner_team_score = MatchUtils.get_winner_team_and_score(match, match_sets)
+        looser_team, looser_team_score = MatchUtils.get_looser_team_and_score(match, match_sets)
 
         rw = self._get_team_rating(winner_team)
         rl = self._get_team_rating(looser_team)
@@ -106,9 +98,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
             return Decimal(first_player_state.evks_rating)
 
         second_player_state = self.ratings_state.player_states[team.second_player]
-        r1, r2 = sorted(
-            [first_player_state.evks_rating, second_player_state.evks_rating]
-        )
+        r1, r2 = sorted([first_player_state.evks_rating, second_player_state.evks_rating])
         return Decimal(2 * r2 + r1) / 3
 
     def _calculate_reliability_coefficients(self, match: Match) -> PlayerValueMap:
@@ -116,9 +106,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
             return self._calculate_singles_reliability_coefficients(match)
         return self._calculate_doubles_reliability_coefficients(match)
 
-    def _calculate_singles_reliability_coefficients(
-        self, match: Match
-    ) -> PlayerValueMap:
+    def _calculate_singles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
         match_players_states = [
             self.ratings_state.player_states[player] for player in match.players
         ]
@@ -130,40 +118,25 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
         for player_state, opp_state in permutations(match_players_states):
             if player_state.is_evks_rating_active == opp_state.is_evks_rating_active:
                 res[player_state.player.id] = Decimal(1)
-            elif (
-                player_state.is_evks_rating_active
-                and not opp_state.is_evks_rating_active
-            ):
+            elif player_state.is_evks_rating_active and not opp_state.is_evks_rating_active:
                 res[player_state.player.id] = Decimal("0.5")
-            elif (
-                not player_state.is_evks_rating_active
-                and opp_state.is_evks_rating_active
-            ):
+            elif not player_state.is_evks_rating_active and opp_state.is_evks_rating_active:
                 res[player_state.player.id] = Decimal(2)
             else:
                 raise ValueError()
         return res
 
-    def _calculate_doubles_reliability_coefficients(
-        self, match: Match
-    ) -> PlayerValueMap:
+    def _calculate_doubles_reliability_coefficients(self, match: Match) -> PlayerValueMap:
         res: PlayerValueMap = {}
 
         for team, opp_team in permutations([match.first_team, match.second_team]):
-            team_states = [
-                self.ratings_state.player_states[player] for player in team.players
-            ]
-            opp_states = [
-                self.ratings_state.player_states[opp] for opp in opp_team.players
-            ]
+            team_states = [self.ratings_state.player_states[player] for player in team.players]
+            opp_states = [self.ratings_state.player_states[opp] for opp in opp_team.players]
 
             for player_state, partner_state in permutations(team_states):
                 if player_state.is_evks_rating_active:
                     if all(
-                        [
-                            plr.is_evks_rating_active
-                            for plr in chain(opp_states, [partner_state])
-                        ]
+                        [plr.is_evks_rating_active for plr in chain(opp_states, [partner_state])]
                     ):
                         res[player_state.player.id] = Decimal(1)
                     else:
@@ -171,9 +144,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
                         # одного другого участника матча предварительный
                         res[player_state.player.id] = Decimal("0.5")
                 else:
-                    if all(
-                        [opp_state.is_evks_rating_active for opp_state in opp_states]
-                    ):
+                    if all([opp_state.is_evks_rating_active for opp_state in opp_states]):
                         # Рейтинг игрока предварительный,
                         # а рейтинги обоих соперников актуальные
                         res[player_state.player.id] = Decimal(2)
@@ -181,9 +152,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
                         res[player_state.player.id] = Decimal(1)
         return res
 
-    def _get_game_type(
-        self, match: Match, match_sets: Sequence[MatchSet]
-    ) -> EvksGameType:
+    def _get_game_type(self, match: Match, match_sets: Sequence[MatchSet]) -> EvksGameType:
         if MatchUtils.is_qualification(match, match_sets):
             return EvksGameType.QUALIFICATION
         if (
@@ -217,9 +186,7 @@ class BaseEvksRatingCalculator(AbstractRatingCalculator[EvksCalculation]):
                 score_diff = gfo.sets_winner_bracket - looser_team_score
         else:
             score_diff = winner_team_score - looser_team_score
-        return (
-            score_diff * self.game_coefficients[self._get_game_type(match, match_sets)]
-        )
+        return score_diff * self.game_coefficients[self._get_game_type(match, match_sets)]
 
 
 class Pre2018EvksRatingCalculator(BaseEvksRatingCalculator):

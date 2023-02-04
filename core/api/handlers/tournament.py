@@ -1,13 +1,9 @@
 from aiohttp import web
 
 from common.handlers import AbstractHandler, request_schema, response_schema
-from common.entities.schemas import CompetitionSchema, TournamentSchema
-from common.interactions.core.requests.schemas import (
-    CreateTournamentRequestSchema,
-    TournamentIDSchema,
-)
+from common.entities.schemas import TournamentSchema
+from common.interactions.core.requests.schemas import CreateTournamentRequestSchema
 from core.actions.tournament import GetTournamentsAction, CreateTournamentAction
-from core.actions.competition import GetTournamentCompetitionsAction
 
 
 class TournamentHandler(AbstractHandler):
@@ -16,19 +12,10 @@ class TournamentHandler(AbstractHandler):
         tournaments = await GetTournamentsAction().run()
         return self.make_response(tournaments)
 
-    @request_schema(CreateTournamentRequestSchema)
+    @request_schema(CreateTournamentRequestSchema, location="json")
     @response_schema(TournamentSchema)
     async def post(self) -> web.Response:
-        request = await self.get_request_data()
-        # TODO: catch core errors and raise common api error
-        tournament = await CreateTournamentAction(request=request).run()
-        return self.make_response(tournament)
-
-
-class TournamentCompetitionsHandler(AbstractHandler):
-    @request_schema(TournamentIDSchema)
-    @response_schema(CompetitionSchema, many=True)
-    async def get(self) -> web.Response:
         request_data = await self.get_request_data()
-        competitions = await GetTournamentCompetitionsAction(**request_data).run()
-        return self.make_response(competitions)
+        # TODO: catch core errors and raise common api error
+        tournament = await CreateTournamentAction(**request_data).run()
+        return self.make_response(tournament)

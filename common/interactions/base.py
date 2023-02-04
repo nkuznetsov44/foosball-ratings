@@ -63,7 +63,5 @@ class InteractionClientContext(Generic[InteractionClient]):
     async def __aenter__(self) -> InteractionClient:
         return self._client
 
-    async def __aexit__(
-        self, exc_type: Type[Exception], exc: Exception, tb: TracebackType
-    ) -> None:
+    async def __aexit__(self, exc_type: Type[Exception], exc: Exception, tb: TracebackType) -> None:
         await self._client.close()

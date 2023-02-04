@@ -118,9 +118,7 @@ teams = sa.Table(
     sa.Column("competition_place", sa.Integer),
     sa.Column("competition_order", sa.Integer),
     sa.Column("first_player_id", sa.Integer, sa.ForeignKey("players.id")),
-    sa.Column(
-        "second_player_id", sa.Integer, sa.ForeignKey("players.id"), nullable=True
-    ),
+    sa.Column("second_player_id", sa.Integer, sa.ForeignKey("players.id"), nullable=True),
     sa.UniqueConstraint("competition_id", "external_id"),
 )
 

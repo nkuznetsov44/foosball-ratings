@@ -3,12 +3,10 @@ from datetime import datetime
 from decimal import Decimal
 from pytz import UTC
 import pytest
-from hamcrest import assert_that, equal_to, has_properties, match_equality, not_none
+from hamcrest import assert_that, equal_to, match_equality, not_none
 
-from common.entities.enums import CompetitionType, RatingsStateStatus
+from common.entities.enums import CompetitionType
 from common.entities.match import GrandFinalOptions
-from common.entities.ratings_state import RatingsState
-from common.entities.player_state import PlayerState
 from common.entities.competition import Competition
 from common.interactions.core.requests.competition import (
     CreateCompetitionRequest,
@@ -31,7 +29,8 @@ class TestCreateProcessedCompetitionAction:
         expected_competition,
     ):
         result = await CreateProcessedCompetitionAction(
-            request=create_competition_request
+            tournament_id=stored_tournament.id,
+            create_competition_request=create_competition_request,
         ).run()
         competition = await storage.competitions.get(result.last_competition_id)
         assert_that(
@@ -55,7 +54,10 @@ class TestCreateProcessedCompetitionAction:
         mock_action,
     ):
         mock = mock_action(ProcessCompetitionAction, None)
-        await CreateProcessedCompetitionAction(request=create_competition_request).run()
+        await CreateProcessedCompetitionAction(
+            tournament_id=stored_tournament.id,
+            create_competition_request=create_competition_request,
+        ).run()
         assert_that(
             mock.call_args.kwargs,
             equal_to(
@@ -66,11 +68,8 @@ class TestCreateProcessedCompetitionAction:
         )
 
     @pytest.fixture
-    def create_competition_request(
-        self, stored_tournament, stored_player1, stored_player2
-    ):
+    def create_competition_request(self, stored_player1, stored_player2):
         return CreateCompetitionRequest(
-            tournament_id=stored_tournament.id,
             external_id=42,
             competition_type=CompetitionType.OS,
             order=1,

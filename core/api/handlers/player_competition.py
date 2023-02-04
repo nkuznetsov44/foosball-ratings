@@ -11,7 +11,7 @@ from core.actions.competition import GetPlayerCompetitionsAction
 
 
 class PlayerCompetitionsHandler(AbstractHandler):
-    @request_schema(PlayerIDSchema)
+    @request_schema(PlayerIDSchema, location="match_info")
     @response_schema(CompetitionSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()
@@ -20,7 +20,7 @@ class PlayerCompetitionsHandler(AbstractHandler):
 
 
 class PlayerCompetitionMatchesHandler(AbstractHandler):
-    @request_schema(PlayerCompetitionIDSchema)
+    @request_schema(PlayerCompetitionIDSchema, location="match_info")
     @response_schema(MatchWithRelatedSchema, many=True)
     async def get(self) -> web.Response:
         request_data = await self.get_request_data()

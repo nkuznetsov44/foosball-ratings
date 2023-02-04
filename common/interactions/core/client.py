@@ -1,5 +1,3 @@
-from typing import Any
-
 from common.entities.player import Player
 from common.entities.competition import Competition
 from common.entities.tournament import Tournament
@@ -49,12 +47,8 @@ class CoreClient(BaseInteractionClient):
         resp_json = await self.get(f"{self.base_url}/tournaments")
         return TournamentSchema(many=True).load(resp_json)
 
-    async def get_tournament_competitions(
-        self, tournament_id: int
-    ) -> list[Competition]:
-        resp_json = await self.get(
-            f"{self.base_url}/tournaments/{tournament_id}/competitions"
-        )
+    async def get_tournament_competitions(self, tournament_id: int) -> list[Competition]:
+        resp_json = await self.get(f"{self.base_url}/tournaments/{tournament_id}/competitions")
         return CompetitionSchema(many=True).load(resp_json)
 
     async def get_ratings_state(self) -> RatingsState:
@@ -71,9 +65,7 @@ class CoreClient(BaseInteractionClient):
         resp_json = await self.post(f"{self.base_url}/tournaments", data=request_data)
         return TournamentSchema().load(resp_json)
 
-    async def create_competition(
-        self, request: CreateCompetitionRequest
-    ) -> RatingsState:
+    async def create_competition(self, request: CreateCompetitionRequest) -> RatingsState:
         request_data = CreateCompetitionRequestSchema().dump(request)
         resp_json = await self.post(f"{self.base_url}/competitions", data=request_data)
         return RatingsStateSchema().load(resp_json)

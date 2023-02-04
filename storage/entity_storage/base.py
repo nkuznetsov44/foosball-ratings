@@ -39,9 +39,7 @@ class BaseEntityStorage(Generic[Entity]):
         return entity
 
     @staticmethod
-    def for_entity(
-        entity_cls: Type[Entity], session: AsyncSession
-    ) -> "BaseEntityStorage":
+    def for_entity(entity_cls: Type[Entity], session: AsyncSession) -> "BaseEntityStorage":
         storage = BaseEntityStorage(session)
         storage.entity_cls = entity_cls
         return storage

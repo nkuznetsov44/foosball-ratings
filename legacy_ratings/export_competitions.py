@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import select
 
@@ -156,9 +155,7 @@ def export_competitions(competitions: list[Competition]):
             core_tournaments,
         )
         send_core_request_sync(request)
-        print(
-            f"Imported {request.competition_type} with external_id={request.external_id}"
-        )
+        print(f"Imported {request.competition_type} with external_id={request.external_id}")
 
 
 def main():

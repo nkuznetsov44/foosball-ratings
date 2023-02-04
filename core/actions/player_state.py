@@ -104,14 +104,10 @@ class CreatePlayerStateAction(AbstractAction[PlayerState]):
         current_player_state = self.ratings_state.player_states[self.player]
 
         if not current_player_state:
-            raise PlayerStateNotFound(
-                player_id=self.player.id, current_state=self.ratings_state
-            )
+            raise PlayerStateNotFound(player_id=self.player.id, current_state=self.ratings_state)
 
         if current_player_state.last_match_id:
-            last_match = await self.storage.matches.get(
-                current_player_state.last_match_id
-            )
+            last_match = await self.storage.matches.get(current_player_state.last_match_id)
 
             if self.last_match.is_before(last_match):
                 raise PlayerStateSequenceError(

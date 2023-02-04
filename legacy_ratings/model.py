@@ -22,13 +22,9 @@ class Player:
     itsf_first_name: Optional[str] = field(
         metadata={"sa": sa.Column(sa.String(255), nullable=True)}
     )
-    itsf_last_name: Optional[str] = field(
-        metadata={"sa": sa.Column(sa.String(255), nullable=True)}
-    )
+    itsf_last_name: Optional[str] = field(metadata={"sa": sa.Column(sa.String(255), nullable=True)})
     itsf_license: int = field(metadata={"sa": sa.Column(sa.Integer)})
-    itsf_rating: Optional[int] = field(
-        metadata={"sa": sa.Column(sa.Integer, nullable=True)}
-    )
+    itsf_rating: Optional[int] = field(metadata={"sa": sa.Column(sa.Integer, nullable=True)})
     evks_initial_rating: int = field(metadata={"sa": sa.Column(sa.Integer)})
     evks_initial_matches_count: int = field(metadata={"sa": sa.Column(sa.Integer)})
     evks_initial_matches_win: int = field(metadata={"sa": sa.Column(sa.Integer)})
@@ -42,9 +38,7 @@ class Team:
     __sa_dataclass_metadata_key__ = "sa"
 
     id: int = field(metadata={"sa": sa.Column(sa.Integer, primary_key=True)})
-    competition_id: int = field(
-        metadata={"sa": sa.Column(sa.ForeignKey("competitions.id"))}
-    )
+    competition_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("competitions.id"))})
     player1_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("players.id"))})
     player2_id: Optional[int] = field(
         metadata={"sa": sa.Column(sa.ForeignKey("players.id"), nullable=True)}
@@ -54,16 +48,12 @@ class Team:
 
     player1: Player = field(
         metadata={
-            "sa": relationship(
-                Player, uselist=False, primaryjoin="Team.player1_id == Player.id"
-            )
+            "sa": relationship(Player, uselist=False, primaryjoin="Team.player1_id == Player.id")
         }
     )
     player2: Optional[Player] = field(
         metadata={
-            "sa": relationship(
-                Player, uselist=False, primaryjoin="Team.player2_id == Player.id"
-            )
+            "sa": relationship(Player, uselist=False, primaryjoin="Team.player2_id == Player.id")
         }
     )
 
@@ -88,37 +78,21 @@ class Match:
     __sa_dataclass_metadata_key__ = "sa"
 
     id: int = field(metadata={"sa": sa.Column(sa.Integer, primary_key=True)})
-    competition_id: int = field(
-        metadata={"sa": sa.Column(sa.ForeignKey("competitions.id"))}
-    )
+    competition_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("competitions.id"))})
     team1_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("teams.id"))})
     team2_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("teams.id"))})
     order: int = field(metadata={"sa": sa.Column(sa.Integer)})
     forfeit: bool = field(metadata={"sa": sa.Column(sa.Boolean)})
-    team1_max_sets: Optional[int] = field(
-        metadata={"sa": sa.Column(sa.Integer, nullable=True)}
-    )
-    team2_max_sets: Optional[int] = field(
-        metadata={"sa": sa.Column(sa.Integer, nullable=True)}
-    )
+    team1_max_sets: Optional[int] = field(metadata={"sa": sa.Column(sa.Integer, nullable=True)})
+    team2_max_sets: Optional[int] = field(metadata={"sa": sa.Column(sa.Integer, nullable=True)})
 
     team1: Team = field(
-        metadata={
-            "sa": relationship(
-                Team, uselist=False, primaryjoin="Match.team1_id == Team.id"
-            )
-        },
+        metadata={"sa": relationship(Team, uselist=False, primaryjoin="Match.team1_id == Team.id")},
     )
     team2: Team = field(
-        metadata={
-            "sa": relationship(
-                Team, uselist=False, primaryjoin="Match.team2_id == Team.id"
-            )
-        },
+        metadata={"sa": relationship(Team, uselist=False, primaryjoin="Match.team2_id == Team.id")},
     )
-    sets: list[MatchSet] = field(
-        default_factory=list, metadata={"sa": relationship(MatchSet)}
-    )
+    sets: list[MatchSet] = field(default_factory=list, metadata={"sa": relationship(MatchSet)})
 
 
 @unique
@@ -149,9 +123,7 @@ class Competition:
     __sa_dataclass_metadata_key__ = "sa"
 
     id: int = field(metadata={"sa": sa.Column(sa.Integer, primary_key=True)})
-    tournament_id: int = field(
-        metadata={"sa": sa.Column(sa.ForeignKey("tournaments.id"))}
-    )
+    tournament_id: int = field(metadata={"sa": sa.Column(sa.ForeignKey("tournaments.id"))})
     type: CompetitionType = field(
         metadata={
             "sa": sa.Column(
@@ -159,21 +131,15 @@ class Competition:
             )
         }
     )
-    name: Optional[str] = field(
-        metadata={"sa": sa.Column(sa.String(255), nullable=True)}
-    )
+    name: Optional[str] = field(metadata={"sa": sa.Column(sa.String(255), nullable=True)})
     date: datetime = field(metadata={"sa": sa.Column(sa.Date)})
     order: int = field(metadata={"sa": sa.Column(sa.Integer)})
     importance: float = field(metadata={"sa": sa.Column(sa.Float)})
-    accumulative: Optional[float] = field(
-        metadata={"sa": sa.Column(sa.Float, nullable=True)}
-    )
+    accumulative: Optional[float] = field(metadata={"sa": sa.Column(sa.Float, nullable=True)})
     disable: Optional[bool] = field(metadata={"sa": sa.Column(sa.Float, nullable=True)})
 
     teams: list[Team] = field(default_factory=list, metadata={"sa": relationship(Team)})
-    matches: list[Match] = field(
-        default_factory=list, metadata={"sa": relationship(Match)}
-    )
+    matches: list[Match] = field(default_factory=list, metadata={"sa": relationship(Match)})
 
 
 @mapper_registry.mapped

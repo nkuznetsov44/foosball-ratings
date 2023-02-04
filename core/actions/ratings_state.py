@@ -1,6 +1,5 @@
 from typing import Collection
 
-from common.entities.competition import Competition
 from common.entities.enums import RatingsStateStatus
 from common.entities.player_state import PlayerState
 from common.entities.ratings_state import PlayerStateSet, RatingsState

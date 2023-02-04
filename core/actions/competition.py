@@ -41,15 +41,18 @@ class GetTournamentCompetitionsAction(AbstractAction[list[Competition]]):
 
 
 class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
-    def __init__(self, request: CreateCompetitionRequest) -> None:
-        self.request = request
+    def __init__(
+        self, tournament_id: int, create_competition_request: CreateCompetitionRequest
+    ) -> None:
+        self.tournament_id = tournament_id
+        self.request = create_competition_request
 
     async def handle(self) -> RatingsState:
         # TODO: Catch sqlalchemy errors in storage and raise core exceptions there
         try:
-            tournament = await self.storage.tournaments.get(self.request.tournament_id)
+            tournament = await self.storage.tournaments.get(self.tournament_id)
         except NoResultFound:
-            raise TournamentNotFound(tournament_id=self.request.tournament_id)
+            raise TournamentNotFound(tournament_id=self.tournament_id)
 
         try:
             competition = await self.storage.competitions.create(
@@ -80,9 +83,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             competition,
             competition_teams_map,
         )
-        return await self.run_subaction(
-            ProcessCompetitionAction(competition=competition)
-        )
+        return await self.run_subaction(ProcessCompetitionAction(competition=competition))
 
     async def _save_competition_teams(
         self,
@@ -134,9 +135,7 @@ class CreateProcessedCompetitionAction(AbstractAction[RatingsState]):
             )
             await self._save_match_sets(match.sets, stored_match)
 
-    async def _save_match_sets(
-        self, match_sets: list[CompetitionMatchSet], match: Match
-    ) -> None:
+    async def _save_match_sets(self, match_sets: list[CompetitionMatchSet], match: Match) -> None:
         for mset in match_sets:
             await self.storage.sets.create(
                 MatchSet(

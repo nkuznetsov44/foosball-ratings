@@ -5,7 +5,6 @@ from sqlalchemy.sql.selectable import Select
 from common.entities.match import Match
 from common.entities.team import Team
 from common.entities.player import Player
-from common.entities.competition import Competition
 from storage.entity_storage.base import BaseEntityStorage
 
 

@@ -11,8 +11,8 @@ class GetTournamentsAction(AbstractAction[list[Tournament]]):
 
 
 class CreateTournamentAction(AbstractAction[Tournament]):
-    def __init__(self, request: CreateTournamentRequest) -> None:
-        self.request = request
+    def __init__(self, create_tournament_request: CreateTournamentRequest) -> None:
+        self.request = create_tournament_request
 
     async def handle(self) -> Tournament:
         return await self.storage.tournaments.create(

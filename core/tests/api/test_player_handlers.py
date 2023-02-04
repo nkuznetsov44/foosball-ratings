@@ -36,9 +36,7 @@ class TestPlayerHandler:
 
 class TestPlayersHandler:
     @pytest.mark.asyncio
-    async def test_response(
-        self, core_client, request_data, storage, stored_ratings_state
-    ):
+    async def test_response(self, core_client, request_data, storage, stored_ratings_state):
         response = await core_client.post("/api/v1/players", json=request_data)
         response_json = await response.json()
         assert_that(
@@ -73,7 +71,7 @@ class TestPlayersHandler:
         mock = mock_action(CreatePlayersAction, None)
         await core_client.post("/api/v1/players", json=request_data)
         assert_that(
-            mock.call_args.kwargs, equal_to({"request": create_players_request})
+            mock.call_args.kwargs, equal_to({"create_players_request": create_players_request})
         )
 
     @pytest.fixture

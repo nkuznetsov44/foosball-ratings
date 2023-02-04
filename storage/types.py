@@ -16,14 +16,10 @@ _RatingValue = int
 class RatingsJSON(TypeDecorator):
     impl = JSON
 
-    def process_bind_param(
-        self, value: dict[RatingType, _RatingValue], _: Any
-    ) -> dict[str, int]:
+    def process_bind_param(self, value: dict[RatingType, _RatingValue], _: Any) -> dict[str, int]:
         return {key.name: val for key, val in value.items()}
 
-    def process_result_value(
-        self, value: dict[str, int], _: Any
-    ) -> dict[RatingType, _RatingValue]:
+    def process_result_value(self, value: dict[str, int], _: Any) -> dict[RatingType, _RatingValue]:
         return {RatingType[key]: val for key, val in value.items()}
 
 
@@ -38,9 +34,7 @@ class GrandFinalOptionsJSON(TypeDecorator):
             return None
         return self.schema().dump(value)
 
-    def process_result_value(
-        self, value: dict[str, Any], _: Any
-    ) -> Optional[GrandFinalOptions]:
+    def process_result_value(self, value: dict[str, Any], _: Any) -> Optional[GrandFinalOptions]:
         if value is None:
             return None
         return self.schema().load(value)
@@ -57,9 +51,7 @@ class EvksCalculationJSON(TypeDecorator):
             return None
         return self.schema().dump(value)
 
-    def process_result_value(
-        self, value: dict[str, Any], _: Any
-    ) -> Optional[EvksCalculation]:
+    def process_result_value(self, value: dict[str, Any], _: Any) -> Optional[EvksCalculation]:
         if value is None:
             return None
         return self.schema().load(value)

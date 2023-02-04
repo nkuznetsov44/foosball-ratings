@@ -29,10 +29,6 @@ class TournamentCompetitionIDSchema(BaseSchema):
 
 CreatePlayersRequestSchema = class_schema(CreatePlayersRequest, base_schema=BaseSchema)
 
-CreateTournamentRequestSchema = class_schema(
-    CreateTournamentRequest, base_schema=BaseSchema
-)
+CreateTournamentRequestSchema = class_schema(CreateTournamentRequest, base_schema=BaseSchema)
 
-CreateCompetitionRequestSchema = class_schema(
-    CreateCompetitionRequest, base_schema=BaseSchema
-)
+CreateCompetitionRequestSchema = class_schema(CreateCompetitionRequest, base_schema=BaseSchema)

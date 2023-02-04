@@ -51,9 +51,7 @@ class ExternalPlayerStateResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
     player: PlayerResponseSchema = field(
-        metadata=dict(
-            marshmallow_field=fields.Nested(PlayerResponseSchema)
-        )
+        metadata=dict(marshmallow_field=fields.Nested(PlayerResponseSchema))
     )
     evks_rank: EvksPlayerRank
     rating: int
@@ -107,19 +105,13 @@ class MatchWithRelatedResponse:
     Schema: ClassVar[Type[Schema]] = Schema
 
     id: int
-    first_team: Team = field(
-        metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema))
-    )
-    second_team: Team = field(
-        metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema))
-    )
+    first_team: Team = field(metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema)))
+    second_team: Team = field(metadata=dict(marshmallow_field=fields.Nested(TeamResponseSchema)))
     is_qualification: bool
     is_forfeit: Optional[bool]
     grand_final_options: Optional[GrandFinalOptions]
     sets: list[MatchSet] = field(
-        metadata=dict(
-            marshmallow_field=fields.Nested(MatchSetResponseSchema, many=True)
-        )
+        metadata=dict(marshmallow_field=fields.Nested(MatchSetResponseSchema, many=True))
     )
     player_states: list[MatchPlayerStateResponse]
 

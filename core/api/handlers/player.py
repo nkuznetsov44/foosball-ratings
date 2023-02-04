@@ -10,11 +10,11 @@ from core.actions.player import CreatePlayersAction, GetPlayersAction, GetPlayer
 
 
 class PlayerHandler(AbstractHandler):
-    @request_schema(PlayerIDSchema)
+    @request_schema(PlayerIDSchema, location="match_info")
     @response_schema(PlayerSchema)
     async def get(self) -> web.Response:
-        get_player_request = await self.get_request_data()
-        player = await GetPlayerAction(**get_player_request).run()
+        request_data = await self.get_request_data()
+        player = await GetPlayerAction(**request_data).run()
         return self.make_response(player)
 
 
@@ -24,9 +24,9 @@ class PlayersHandler(AbstractHandler):
         players = await GetPlayersAction().run()
         return self.make_response(players)
 
-    @request_schema(CreatePlayersRequestSchema)
+    @request_schema(CreatePlayersRequestSchema, location="json")
     @response_schema(PlayerStateSchema, many=True)
     async def post(self) -> web.Response:
-        create_players_request = await self.get_request_data()
-        player_states = await CreatePlayersAction(request=create_players_request).run()
+        request_data = await self.get_request_data()
+        player_states = await CreatePlayersAction(**request_data).run()
         return self.make_response(player_states)
