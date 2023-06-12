@@ -21,13 +21,13 @@
   ```
   curl -X POST -H "Content-Type: application/json" \
     --data "@$(pwd)/storage/test_data/competition_singles.json" \
-    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'`
+    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'
   ```
 - Upload OD:
   ```
   curl -X POST -H "Content-Type: application/json" \
     --data "@$(pwd)/storage/test_data/competition_doubles.json" \
-    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'`
+    "http://localhost:9080/api/v1/tournaments/${TOURNAMENT_ID}/competitions" | jq '.'
   ```
 
 ## Run locally without docker
